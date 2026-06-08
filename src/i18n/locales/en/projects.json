@@ -1,1 +1,50 @@
-{ "hero": { "title": "Projects & Initiatives", "subtitle": "Diverse projects serving the people and environment of the Diyala River basin" }, "search": { "placeholder": "Search projects..." }, "filter": { "all": "All", "status": "Status", "category": "Category" }, "empty": { "title": "No Projects Found", "desc": "We couldn't find any projects matching your search. Try different keywords." }, "card": { "beneficiaries": "beneficiaries", "location": "Location", "viewProject": "View Project" }, "detail": { "overview": "Overview", "gallery": "Gallery", "team": "Team", "timeline": "Timeline", "budget": "Budget", "beneficiaries": "Beneficiaries" } }
+{
+  "hero": {
+    "title": "Projects & Initiatives",
+    "subtitle": "Tangible results making a real difference in Diyala communities — from water management to economic empowerment and education."
+  },
+  "search": {
+    "placeholder": "Search projects..."
+  },
+  "filter": {
+    "label": "Filter by",
+    "all": "All Projects",
+    "active": "Active",
+    "completed": "Completed",
+    "planned": "Planned",
+    "on_hold": "On Hold"
+  },
+  "category": {
+    "all": "All Categories",
+    "water_management": "Water Management",
+    "environmental": "Environmental",
+    "community": "Community",
+    "research": "Research",
+    "education": "Education",
+    "health": "Health"
+  },
+  "status": {
+    "active": "Active",
+    "completed": "Completed",
+    "planned": "Planned",
+    "on_hold": "On Hold"
+  },
+  "card": {
+    "beneficiaries": "Beneficiaries",
+    "readMore": "Read More",
+    "budget": "Budget",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "featured": "Featured"
+  },
+  "empty": {
+    "title": "No matching projects found",
+    "subtitle": "Try adjusting your search or filter criteria"
+  },
+  "loading": "Loading projects...",
+  "error": "Failed to load data. Please try again.",
+  "count": "{{count}} Projects",
+  "sdg": {
+    "label": "Sustainable Development Goals"
+  }
+}

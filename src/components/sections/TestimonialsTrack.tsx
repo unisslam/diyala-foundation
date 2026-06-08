@@ -107,8 +107,8 @@ interface CardProps {
 
 const TestimonialCard: React.FC<CardProps> = ({ item, isRtl }) => {
   const name = isRtl ? item.author_name_ar : item.author_name_en;
-  const role = isRtl ? item.role_ar : item.role_en;
-  const body = isRtl ? item.body_ar : item.body_en;
+  const role = isRtl ? item.role_ar        : item.role_en;
+  const body = isRtl ? item.body_ar        : item.body_en;
 
   return (
     <div
@@ -121,7 +121,7 @@ const TestimonialCard: React.FC<CardProps> = ({ item, isRtl }) => {
           <Star
             key={i}
             size={14}
-            className={i < item.rating ? "fill-amber-400 text-amber-400" : "text-muted/30"}
+            className={i < item.rating ? "fill-amber-400 text-amber-400" : "fill-muted text-muted"}
           />
         ))}
       </div>
@@ -138,12 +138,23 @@ const TestimonialCard: React.FC<CardProps> = ({ item, isRtl }) => {
 
       {/* Author */}
       <div className="flex items-center gap-3 pt-2 border-t border-border/40">
-        <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
-          {name.charAt(0)}
-        </div>
+        {item.avatar_path ? (
+          <img
+            src={item.avatar_path}
+            alt={name}
+            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
+            {name.charAt(0)}
+          </div>
+        )}
         <div className="min-w-0">
           <p className="font-semibold text-sm truncate">{name}</p>
-          <p className="text-xs text-muted-foreground truncate">{role}</p>
+          {role && <p className="text-xs text-muted-foreground truncate">{role}</p>}
+          {item.source && (
+            <p className="text-[10px] text-muted-foreground/60 truncate mt-0.5">{item.source}</p>
+          )}
         </div>
       </div>
     </div>
@@ -211,7 +222,8 @@ export const TestimonialsTrack: React.FC<TestimonialsTrackProps> = ({ onSubmitCl
   const isRtl = i18n.dir() === "rtl";
   const { testimonials: liveData, loading } = useTestimonials();
 
-  const items = !loading && liveData.length > 0 ? liveData : SEED_TESTIMONIALS;
+  // Use live DB data; fall back to seed only when DB returns nothing after load
+  const items = loading ? SEED_TESTIMONIALS : (liveData.length > 0 ? liveData : SEED_TESTIMONIALS);
   const half = Math.ceil(items.length / 2);
   const row1 = items.slice(0, half);
   const row2 = items.slice(half);

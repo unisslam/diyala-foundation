@@ -1,110 +1,346 @@
+/**
+ * ContactPage.tsx
+ * ---------------
+ * Fully connected to Supabase:
+ *  - Tab 1: Contact form → INSERT INTO contact_messages
+ *  - Tab 2: Volunteer form → INSERT INTO volunteer_applications
+ * Includes Google Maps embed, contact info cards, validation.
+ */
+
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
-import { Send, MapPin, Mail, Phone, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Send, MapPin, Mail, Phone, Clock, CheckCircle, AlertCircle, Heart } from "lucide-react";
+import PageHero from "@/components/shared/PageHero";
+import { supabase } from "@/lib/supabaseClient";
 
-const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
+type TabKey = "contact" | "volunteer";
+type FormStatus = "idle" | "sending" | "success" | "error";
 
+const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
+
+/* ── Input component ─────────────────────────────────────────────────── */
+function Field({
+  id, label, required, children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}): React.ReactElement {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium mb-1.5">
+        {label}
+        {required && <span className="text-destructive ms-1">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputCls =
+  "w-full px-4 py-2.5 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm transition-colors";
+
+/* ── ContactPage ─────────────────────────────────────────────────────── */
 export default function ContactPage(): React.ReactElement {
   const { t, i18n } = useTranslation(["contact", "common"]);
   const isRtl = i18n.dir() === "rtl";
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
+  const [activeTab, setActiveTab] = useState<TabKey>("contact");
+  const [contactStatus, setContactStatus] = useState<FormStatus>("idle");
+  const [volunteerStatus, setVolunteerStatus] = useState<FormStatus>("idle");
+
+  /* ── Contact form ─────────────────────────────────────────────────── */
+  async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
-    setStatus("sending");
-    // Phase 2: connect to Supabase Edge Function
-    await new Promise((r) => setTimeout(r, 1500));
-    setStatus("success");
+    setContactStatus("sending");
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const { error } = await supabase.from("contact_messages").insert({
+        full_name: String(data.get("full_name") ?? ""),
+        email:     String(data.get("email") ?? ""),
+        phone:     String(data.get("phone") ?? "") || null,
+        subject:   String(data.get("subject") ?? ""),
+        message:   String(data.get("message") ?? ""),
+      });
+      if (error) throw error;
+      setContactStatus("success");
+      form.reset();
+    } catch {
+      setContactStatus("error");
+    }
   }
 
+  /* ── Volunteer form ───────────────────────────────────────────────── */
+  async function handleVolunteerSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
+    e.preventDefault();
+    setVolunteerStatus("sending");
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const { error } = await supabase.from("volunteer_applications").insert({
+        full_name:    String(data.get("full_name") ?? ""),
+        email:        String(data.get("email") ?? ""),
+        phone:        String(data.get("phone") ?? ""),
+        city:         String(data.get("city") ?? ""),
+        age:          Number(data.get("age")) || null,
+        skills:       String(data.get("skills") ?? "") || null,
+        availability: String(data.get("availability") ?? "") || null,
+        motivation:   String(data.get("motivation") ?? ""),
+      });
+      if (error) throw error;
+      setVolunteerStatus("success");
+      form.reset();
+    } catch {
+      setVolunteerStatus("error");
+    }
+  }
+
+  /* ── Contact info ─────────────────────────────────────────────────── */
   const contactInfo = [
-    { Icon: MapPin, label: t("contact:info.address"), value: t("contact:info.addressValue") },
-    { Icon: Mail, label: t("contact:info.email"), value: "help@diyalariver.org" },
-    { Icon: Phone, label: t("contact:info.phone"), value: "+964 770 000 0000" },
-    { Icon: Clock, label: t("contact:info.workingHours"), value: t("contact:info.workingHoursValue") },
+    { Icon: MapPin, label: t("contact:info.address"),      value: t("contact:info.addressValue") },
+    { Icon: Mail,   label: t("contact:info.email"),        value: "info@diyalariver.org" },
+    { Icon: Phone,  label: t("contact:info.phone"),        value: "+964 770 000 0000" },
+    { Icon: Clock,  label: t("contact:info.workingHours"), value: t("contact:info.workingHoursValue") },
   ];
+
+  /* ── Success / Error banners ──────────────────────────────────────── */
+  function SuccessBanner({ message }: { message: string }): React.ReactElement {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex flex-col items-center text-center py-14 gap-4"
+      >
+        <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+          <CheckCircle size={32} className="text-emerald-600 dark:text-emerald-400" />
+        </div>
+        <p className="text-foreground font-semibold">{message}</p>
+        <button
+          onClick={() => { setContactStatus("idle"); setVolunteerStatus("idle"); }}
+          className="text-sm text-primary hover:underline"
+        >
+          {isRtl ? "إرسال رسالة أخرى" : "Send another message"}
+        </button>
+      </motion.div>
+    );
+  }
+
+  function ErrorBanner(): React.ReactElement {
+    return (
+      <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 text-destructive text-sm mb-4">
+        <AlertCircle size={16} />
+        {isRtl ? "حدث خطأ، يرجى المحاولة مرة أخرى." : "An error occurred. Please try again."}
+      </div>
+    );
+  }
 
   return (
     <div dir={isRtl ? "rtl" : "ltr"}>
-      <section className="section-padding bg-gradient-to-br from-water-50 to-background">
-        <div className="container mx-auto px-4 md:px-8 max-w-5xl">
-          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <h1 className="font-display text-4xl md:text-5xl font-black mb-4 text-gradient-water">{t("contact:hero.title")}</h1>
-            <p className="text-muted-foreground text-lg">{t("contact:hero.subtitle")}</p>
-          </motion.div>
+      {/* ── HERO ────────────────────────────────────────────────────── */}
+      <PageHero
+        eyebrow={isRtl ? "تواصل معنا" : "Contact Us"}
+        titleKey="contact:hero.title"
+        subtitleKey="contact:hero.subtitle"
+        gradient="from-emerald-500/20 via-background to-background"
+      />
 
-          <div className="grid lg:grid-cols-5 gap-10">
-            {/* Contact form */}
-            <motion.div className="lg:col-span-3" initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}>
-              <div className="glass-card rounded-3xl p-8 border border-border shadow-glass">
-                <h2 className="font-display text-xl font-bold mb-6">{t("contact:form.title")}</h2>
+      <section className="section-padding bg-background">
+        <div className="container mx-auto px-4 md:px-8 max-w-6xl">
+          <div className="grid lg:grid-cols-5 gap-10 items-start">
 
-                {status === "success" ? (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                      <Send size={28} className="text-green-600" />
-                    </div>
-                    <h3 className="font-semibold text-lg mb-2">{t("contact:form.successTitle")}</h3>
-                    <p className="text-muted-foreground">{t("contact:form.successBody")}</p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="full-name" className="block text-sm font-medium mb-1.5">{t("contact:form.name")}</label>
-                        <input id="full-name" type="text" required placeholder={t("contact:form.namePlaceholder")}
-                          className="w-full px-4 py-2.5 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm" />
-                      </div>
-                      <div>
-                        <label htmlFor="email" className="block text-sm font-medium mb-1.5">{t("contact:form.email")}</label>
-                        <input id="email" type="email" required placeholder={t("contact:form.emailPlaceholder")}
-                          className="w-full px-4 py-2.5 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm" dir="ltr" />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium mb-1.5">{t("contact:form.phone")}</label>
-                      <input id="phone" type="tel" placeholder={t("contact:form.phonePlaceholder")}
-                        className="w-full px-4 py-2.5 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm" dir="ltr" />
-                    </div>
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-medium mb-1.5">{t("contact:form.subject")}</label>
-                      <input id="subject" type="text" required placeholder={t("contact:form.subjectPlaceholder")}
-                        className="w-full px-4 py-2.5 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm" />
-                    </div>
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-medium mb-1.5">{t("contact:form.message")}</label>
-                      <textarea id="message" required rows={5} placeholder={t("contact:form.messagePlaceholder")}
-                        className="w-full px-4 py-2.5 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-none" />
-                    </div>
+            {/* ── LEFT: Form ──────────────────────────────────────── */}
+            <motion.div
+              className="lg:col-span-3"
+              initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}
+            >
+              <div className="glass-card rounded-3xl p-7 border border-border shadow-glass">
+
+                {/* Tabs */}
+                <div className="flex gap-1 p-1 rounded-2xl bg-muted mb-6">
+                  {(["contact", "volunteer"] as TabKey[]).map((tab) => (
                     <button
-                      type="submit"
-                      disabled={status === "sending"}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary-dark disabled:opacity-60 transition-all duration-200"
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                        activeTab === tab
+                          ? "bg-card shadow-sm text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
                     >
-                      <Send size={16} />
-                      {status === "sending" ? t("contact:form.sending") : t("contact:form.submit")}
+                      {tab === "contact" ? <Mail size={14} /> : <Heart size={14} />}
+                      {tab === "contact"
+                        ? (isRtl ? "تواصل معنا" : "Contact Us")
+                        : (isRtl ? "تطوع معنا" : "Volunteer")}
                     </button>
-                  </form>
-                )}
+                  ))}
+                </div>
+
+                <AnimatePresence mode="wait">
+
+                  {/* ── CONTACT FORM ── */}
+                  {activeTab === "contact" && (
+                    <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      {contactStatus === "success" ? (
+                        <SuccessBanner message={t("contact:form.successBody")} />
+                      ) : (
+                        <form onSubmit={handleContactSubmit} className="space-y-4">
+                          {contactStatus === "error" && <ErrorBanner />}
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <Field id="full_name" label={t("contact:form.name")} required>
+                              <input id="full_name" name="full_name" type="text" required
+                                placeholder={t("contact:form.namePlaceholder")} className={inputCls} />
+                            </Field>
+                            <Field id="email" label={t("contact:form.email")} required>
+                              <input id="email" name="email" type="email" required
+                                placeholder={t("contact:form.emailPlaceholder")} className={inputCls} dir="ltr" />
+                            </Field>
+                          </div>
+                          <Field id="phone" label={t("contact:form.phone")}>
+                            <input id="phone" name="phone" type="tel"
+                              placeholder={t("contact:form.phonePlaceholder")} className={inputCls} dir="ltr" />
+                          </Field>
+                          <Field id="subject" label={t("contact:form.subject")} required>
+                            <input id="subject" name="subject" type="text" required
+                              placeholder={t("contact:form.subjectPlaceholder")} className={inputCls} />
+                          </Field>
+                          <Field id="message" label={t("contact:form.message")} required>
+                            <textarea id="message" name="message" rows={5} required
+                              placeholder={t("contact:form.messagePlaceholder")}
+                              className={`${inputCls} resize-none`} />
+                          </Field>
+                          <button
+                            type="submit"
+                            disabled={contactStatus === "sending"}
+                            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary-dark disabled:opacity-60 transition-all duration-200"
+                          >
+                            <Send size={16} />
+                            {contactStatus === "sending"
+                              ? (isRtl ? "جاري الإرسال..." : "Sending...")
+                              : t("contact:form.submit")}
+                          </button>
+                        </form>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {/* ── VOLUNTEER FORM ── */}
+                  {activeTab === "volunteer" && (
+                    <motion.div key="volunteer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      {volunteerStatus === "success" ? (
+                        <SuccessBanner message={isRtl ? "شكراً! تم استلام طلب تطوعك بنجاح. سنتواصل معك قريباً." : "Thank you! Your volunteer application has been received. We'll be in touch soon."} />
+                      ) : (
+                        <form onSubmit={handleVolunteerSubmit} className="space-y-4">
+                          {volunteerStatus === "error" && <ErrorBanner />}
+                          <p className="text-sm text-muted-foreground mb-2">
+                            {isRtl
+                              ? "انضم إلى فريق متطوعينا وكن جزءاً من التغيير الحقيقي في ديالى."
+                              : "Join our volunteer team and be part of real change in Diyala."}
+                          </p>
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <Field id="v_full_name" label={isRtl ? "الاسم الكامل" : "Full Name"} required>
+                              <input id="v_full_name" name="full_name" type="text" required
+                                placeholder={isRtl ? "أدخل اسمك الكامل" : "Enter your full name"} className={inputCls} />
+                            </Field>
+                            <Field id="v_email" label={isRtl ? "البريد الإلكتروني" : "Email"} required>
+                              <input id="v_email" name="email" type="email" required
+                                placeholder="email@example.com" className={inputCls} dir="ltr" />
+                            </Field>
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <Field id="v_phone" label={isRtl ? "رقم الهاتف" : "Phone"} required>
+                              <input id="v_phone" name="phone" type="tel" required
+                                placeholder="+964 77X XXX XXXX" className={inputCls} dir="ltr" />
+                            </Field>
+                            <Field id="v_city" label={isRtl ? "المدينة" : "City"} required>
+                              <input id="v_city" name="city" type="text" required
+                                placeholder={isRtl ? "مثال: بعقوبة" : "e.g. Baquba"} className={inputCls} />
+                            </Field>
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <Field id="v_age" label={isRtl ? "العمر" : "Age"}>
+                              <input id="v_age" name="age" type="number" min={16} max={70}
+                                placeholder="25" className={inputCls} dir="ltr" />
+                            </Field>
+                            <Field id="v_availability" label={isRtl ? "التفرغ الأسبوعي" : "Weekly Availability"}>
+                              <select id="v_availability" name="availability" className={inputCls}>
+                                <option value="">{isRtl ? "اختر..." : "Select..."}</option>
+                                <option value="1-2">{isRtl ? "1-2 أيام/أسبوع" : "1-2 days/week"}</option>
+                                <option value="3-4">{isRtl ? "3-4 أيام/أسبوع" : "3-4 days/week"}</option>
+                                <option value="full">{isRtl ? "وقت كامل" : "Full time"}</option>
+                                <option value="weekends">{isRtl ? "عطل نهاية الأسبوع" : "Weekends only"}</option>
+                              </select>
+                            </Field>
+                          </div>
+                          <Field id="v_skills" label={isRtl ? "المهارات والخبرات" : "Skills & Experience"}>
+                            <input id="v_skills" name="skills" type="text"
+                              placeholder={isRtl ? "مثال: تصميم، تدريس، إدارة..." : "e.g. design, teaching, management..."} className={inputCls} />
+                          </Field>
+                          <Field id="v_motivation" label={isRtl ? "لماذا تريد التطوع معنا؟" : "Why do you want to volunteer with us?"} required>
+                            <textarea id="v_motivation" name="motivation" rows={4} required
+                              placeholder={isRtl ? "أخبرنا عن دوافعك..." : "Tell us your motivations..."}
+                              className={`${inputCls} resize-none`} />
+                          </Field>
+                          <button
+                            type="submit"
+                            disabled={volunteerStatus === "sending"}
+                            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-accent text-accent-foreground font-semibold hover:bg-accent-dark disabled:opacity-60 transition-all duration-200"
+                          >
+                            <Heart size={16} />
+                            {volunteerStatus === "sending"
+                              ? (isRtl ? "جاري الإرسال..." : "Sending...")
+                              : (isRtl ? "أرسل طلب التطوع" : "Submit Volunteer Application")}
+                          </button>
+                        </form>
+                      )}
+                    </motion.div>
+                  )}
+
+                </AnimatePresence>
               </div>
             </motion.div>
 
-            {/* Contact info sidebar */}
-            <motion.div className="lg:col-span-2" initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}>
-              <div className="space-y-5">
-                <h2 className="font-display text-xl font-bold">{t("contact:info.title")}</h2>
-                {contactInfo.map(({ Icon, label, value }) => (
-                  <div key={label} className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Icon size={18} className="text-primary" />
+            {/* ── RIGHT: Info + Map ────────────────────────────────── */}
+            <motion.div
+              className="lg:col-span-2 space-y-6"
+              initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp}
+            >
+              {/* Contact info cards */}
+              <div>
+                <h2 className="font-display text-lg font-bold mb-5">
+                  {t("contact:info.title")}
+                </h2>
+                <div className="space-y-4">
+                  {contactInfo.map(({ Icon, label, value }) => (
+                    <div key={label} className="flex items-start gap-4 p-4 rounded-2xl bg-card border border-border hover:border-primary/40 transition-colors">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Icon size={18} className="text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
+                        <p className="font-medium text-sm">{value}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
-                      <p className="font-medium text-sm">{value}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              </div>
+
+              {/* Google Maps embed */}
+              <div className="rounded-2xl overflow-hidden border border-border shadow-sm">
+                <iframe
+                  title={isRtl ? "موقع المؤسسة على الخريطة" : "Foundation location on map"}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d54834.14897065693!2d44.9832077!3d33.7482453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15598a7f8c741e33%3A0x55ce459c96c77f37!2sBaqubah%2C%20Diyala!5e0!3m2!1sar!2siq!4v1686000000000!5m2!1sar!2siq"
+                  width="100%"
+                  height="220"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
               </div>
             </motion.div>
           </div>

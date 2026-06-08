@@ -20,6 +20,7 @@ import arAbout   from "./locales/ar/about.json";
 import arProjects from "./locales/ar/projects.json";
 import arNews    from "./locales/ar/news.json";
 import arContact from "./locales/ar/contact.json";
+import arJoin    from "./locales/ar/join.json";
 
 import enCommon  from "./locales/en/common.json";
 import enNav     from "./locales/en/nav.json";
@@ -28,6 +29,7 @@ import enAbout   from "./locales/en/about.json";
 import enProjects from "./locales/en/projects.json";
 import enNews    from "./locales/en/news.json";
 import enContact from "./locales/en/contact.json";
+import enJoin    from "./locales/en/join.json";
 
 export const SUPPORTED_LANGUAGES = ["ar", "en"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -50,6 +52,7 @@ i18n
         projects: arProjects,
         news:     arNews,
         contact:  arContact,
+        join:     arJoin,
       },
       en: {
         common:   enCommon,
@@ -59,6 +62,7 @@ i18n
         projects: enProjects,
         news:     enNews,
         contact:  enContact,
+        join:     enJoin,
       },
     },
     defaultNS: "common",

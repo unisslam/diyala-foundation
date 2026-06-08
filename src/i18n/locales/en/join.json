@@ -1,0 +1,161 @@
+{
+  "hero": {
+    "title": "Join the Diyala River Foundation",
+    "subtitle": "Be part of a community that believes in sustainable change. Join us as an official member and help build a better future for Diyala."
+  },
+  "types": {
+    "title": "Choose Membership Type",
+    "subtitle": "Your membership type defines the nature of your participation in foundation activities",
+    "regular": {
+      "title": "Regular Member",
+      "desc": "For individuals who wish to participate in foundation activities and programs",
+      "badge": "Most Popular"
+    },
+    "founding": {
+      "title": "Founding Member",
+      "desc": "For those who believed in the mission from the start and contributed to the foundation's establishment"
+    },
+    "student": {
+      "title": "Student Member",
+      "desc": "For university and institute students to participate in research projects",
+      "badge": "Free"
+    },
+    "honorary": {
+      "title": "Honorary Member",
+      "desc": "Granted to distinguished individuals with notable contributions in the foundation's areas of work"
+    }
+  },
+  "steps": {
+    "1": "Personal Information",
+    "2": "Contact Details",
+    "3": "Education & Career",
+    "4": "Skills & Interests",
+    "5": "Motivation & References",
+    "6": "Agreement & Signature"
+  },
+  "step1": {
+    "title": "Personal Information",
+    "fullNameAr": "Full Name in Arabic",
+    "fullNameArPlaceholder": "e.g. أحمد محمد علي",
+    "fullNameEn": "Full Name in English",
+    "fullNameEnPlaceholder": "e.g. Ahmed Mohammed Ali",
+    "dateOfBirth": "Date of Birth",
+    "nationality": "Nationality",
+    "nationalId": "National ID Number (Optional)",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female"
+  },
+  "step2": {
+    "title": "Contact Details",
+    "email": "Email Address",
+    "emailPlaceholder": "email@example.com",
+    "phonePrimary": "Primary Phone Number",
+    "phoneSecondary": "Secondary Phone (Optional)",
+    "governorate": "Governorate",
+    "city": "City / District",
+    "addressDetail": "Address Details (Optional)",
+    "emergencyContact": "Emergency Contact",
+    "emergencyName": "Name",
+    "emergencyPhone": "Phone Number",
+    "emergencyRelation": "Relationship"
+  },
+  "step3": {
+    "title": "Education & Career",
+    "educationLevel": "Highest Qualification",
+    "educationField": "Field / Specialization",
+    "institution": "University / Institution",
+    "graduationYear": "Graduation Year",
+    "currentEmployer": "Current Employer (Optional)",
+    "currentPosition": "Current Position (Optional)",
+    "yearsOfExperience": "Years of Experience",
+    "levels": {
+      "high_school": "High School",
+      "diploma": "Diploma",
+      "bachelor": "Bachelor's",
+      "master": "Master's",
+      "phd": "PhD",
+      "other": "Other"
+    }
+  },
+  "step4": {
+    "title": "Skills & Interests",
+    "skills": "Technical & Professional Skills",
+    "skillsPlaceholder": "Type a skill and press Enter (e.g. design, coding, teaching)",
+    "languages": "Languages",
+    "languagesPlaceholder": "Type a language and press Enter (e.g. Arabic, English)",
+    "areasOfInterest": "Areas of Interest",
+    "expertiseDesc": "Detailed Expertise Description (Optional)",
+    "expertiseDescPlaceholder": "Describe your relevant expertise...",
+    "availableDays": "Days Available Per Week",
+    "availableHours": "Hours Available Per Day",
+    "areas": {
+      "water_management": "Water Management",
+      "environmental": "Environment & Climate",
+      "community": "Community Development",
+      "research": "Scientific Research",
+      "education": "Education",
+      "health": "Health",
+      "media": "Media & Documentation",
+      "legal": "Legal Affairs",
+      "admin": "Administration",
+      "fundraising": "Fundraising"
+    }
+  },
+  "step5": {
+    "title": "Motivation & References",
+    "motivation": "Motivation Statement",
+    "motivationPlaceholder": "Tell us why you want to join the foundation and what you hope to achieve...",
+    "motivationHint": "Minimum 100 words",
+    "previousVolunteering": "Previous Volunteering Experience (Optional)",
+    "previousVolunteeringPlaceholder": "Have you been involved in organizations or initiatives before? List them...",
+    "howHeard": "How did you hear about us?",
+    "howHeardOptions": {
+      "social_media": "Social Media",
+      "friend": "Through a friend or contact",
+      "event": "At an event or conference",
+      "media": "Media",
+      "website": "Website",
+      "other": "Other"
+    },
+    "references": "References (Two people we can contact)",
+    "referenceName": "Name",
+    "referencePhone": "Phone Number",
+    "referenceRelation": "Relationship"
+  },
+  "step6": {
+    "title": "Agreement & Signature",
+    "termsTitle": "Terms and Conditions",
+    "termsBody": "By submitting this application, I confirm that the information provided is accurate and complete, and I agree to comply with the foundation's internal regulations and institutional values, actively participate in its activities, and not violate its principles.",
+    "codeTitle": "Code of Conduct",
+    "codeBody": "I pledge to uphold professional and ethical conduct standards, respect diversity and difference, protect member and beneficiary data, and work in the interest of the foundation and its values.",
+    "agreeTerms": "I agree to the Terms and Conditions",
+    "agreeCode": "I agree to the Code of Conduct",
+    "signatureDate": "Signature Date",
+    "submit": "Submit Membership Application"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "minWords": "Must contain at least {{min}} words",
+    "mustAgree": "You must agree to this item to continue"
+  },
+  "navigation": {
+    "prev": "Previous",
+    "next": "Next",
+    "save": "Save Draft"
+  },
+  "success": {
+    "title": "Application Submitted Successfully!",
+    "subtitle": "Your membership application has been received and will be reviewed by our team",
+    "applicationNumber": "Your Application Number",
+    "whatNext": "What's Next?",
+    "steps": {
+      "1": "You will receive a confirmation email",
+      "2": "The team will review your application within 5-10 business days",
+      "3": "You will be notified of the decision by email and phone"
+    },
+    "goHome": "Return to Homepage",
+    "newApp": "Submit New Application"
+  }
+}

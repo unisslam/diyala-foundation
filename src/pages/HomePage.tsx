@@ -55,20 +55,17 @@ const scaleIn: Variants = {
   show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-/* ── Impact Stat definition ─────────────────────────────────────────── */
-interface ImpactStat {
-  icon: React.ElementType;
-  value: string;
-  labelAr: string;
-  labelEn: string;
-}
+import { useSupabaseQuery } from "@/hooks/useSupabaseQuery";
+import type { ImpactStatRow } from "@/types/database.types";
 
-const IMPACT_STATS: ImpactStat[] = [
-  { icon: Users, value: "25,000+", labelAr: "مستفيد مباشر", labelEn: "Direct Beneficiaries" },
-  { icon: CheckCircle, value: "47", labelAr: "مشروع تنموي منجز", labelEn: "Completed Projects" },
-  { icon: Globe2, value: "6", labelAr: "أهداف SDG مستهدفة", labelEn: "SDGs Targeted" },
-  { icon: TrendingUp, value: "8+", labelAr: "سنوات من التأثير", labelEn: "Years of Impact" },
-];
+/* ── Icon map for impact stats ──────────────────────────────────────── */
+const STAT_ICON_MAP: Record<string, React.ElementType> = {
+  users:        Users,
+  checkCircle:  CheckCircle,
+  globe2:       Globe2,
+  trendingUp:   TrendingUp,
+  target:       Target,
+};
 
 /* ── SDG Card component ─────────────────────────────────────────────── */
 interface SDGCardProps {
@@ -141,6 +138,12 @@ function SDGCard({ sdg, index }: SDGCardProps): React.ReactElement {
 export default function HomePage(): React.ReactElement {
   const { t, i18n } = useTranslation(["home", "common"]);
   const isRtl = i18n.dir() === "rtl";
+
+  // Live impact stats from Supabase
+  const { data: statsData, loading: statsLoading } = useSupabaseQuery<ImpactStatRow>(
+    "impact_stats",
+    { order: { column: "display_order", ascending: true } }
+  );
 
   return (
     <div dir={isRtl ? "rtl" : "ltr"}>
@@ -284,24 +287,39 @@ export default function HomePage(): React.ReactElement {
             variants={stagger}
             className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"
           >
-            {IMPACT_STATS.map(({ icon: Icon, value, labelAr, labelEn }) => {
-              const label = isRtl ? labelAr : labelEn;
-              return (
-                <motion.div
-                  key={label}
-                  variants={fadeUp}
-                  className="flex flex-col items-center text-center p-6 rounded-3xl bg-background/5 border border-background/10 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300 group"
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
-                    <Icon size={26} className="text-primary" aria-hidden="true" />
-                  </div>
-                  <span className="font-display text-3xl md:text-4xl font-black text-background mb-1">
-                    {value}
-                  </span>
-                  <span className="text-background/60 text-sm">{label}</span>
-                </motion.div>
-              );
-            })}
+            {statsLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <motion.div key={i} variants={fadeUp}
+                    className="flex flex-col items-center text-center p-6 rounded-3xl bg-background/5 border border-background/10"
+                  >
+                    <div className="w-14 h-14 rounded-2xl shimmer mb-4" />
+                    <div className="h-10 w-20 shimmer rounded mb-2" />
+                    <div className="h-4 w-28 shimmer rounded" />
+                  </motion.div>
+                ))
+              : statsData.map((stat) => {
+                  const Icon = STAT_ICON_MAP[stat.icon_name] ?? Target;
+                  const label = isRtl ? stat.label_ar : stat.label_en;
+                  const displayValue = stat.value_number >= 1000
+                    ? `${(stat.value_number / 1000).toFixed(0)}k+`
+                    : `${stat.value_number}+`;
+                  return (
+                    <motion.div
+                      key={stat.id}
+                      variants={fadeUp}
+                      className="flex flex-col items-center text-center p-6 rounded-3xl bg-background/5 border border-background/10 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300 group"
+                    >
+                      <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
+                        <Icon size={26} className="text-primary" aria-hidden="true" />
+                      </div>
+                      <span className="font-display text-3xl md:text-4xl font-black text-background mb-1">
+                        {displayValue}
+                      </span>
+                      <span className="text-background/60 text-sm">{label}</span>
+                    </motion.div>
+                  );
+                })
+            }
           </motion.div>
         </div>
       </section>

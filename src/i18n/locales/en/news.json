@@ -1,1 +1,46 @@
-{ "hero": { "title": "Media Center", "subtitle": "News, reports, and events from the Diyala River Foundation" }, "search": { "placeholder": "Search news..." }, "filter": { "all": "All" }, "empty": { "title": "No News Found", "desc": "We couldn't find any news matching your search." }, "card": { "readMore": "Read More", "publishedOn": "Published on", "views": "views" }, "gallery": { "title": "Photo Gallery", "subtitle": "Moments from our work on the ground" } }
+{
+  "hero": {
+    "title": "Media Center",
+    "subtitle": "News, reports, announcements, and events from the Diyala River Foundation for Sustainable Development"
+  },
+  "search": {
+    "placeholder": "Search news and reports..."
+  },
+  "filter": {
+    "label": "Filter by",
+    "all": "All Content",
+    "news": "News",
+    "announcement": "Announcements",
+    "report": "Reports",
+    "event": "Events",
+    "press_release": "Press Releases"
+  },
+  "category": {
+    "news": "News",
+    "announcement": "Announcement",
+    "report": "Report",
+    "event": "Event",
+    "press_release": "Press Release"
+  },
+  "card": {
+    "readMore": "Read More",
+    "publishedOn": "Published on",
+    "views": "views",
+    "featured": "Featured",
+    "minutesRead": "min read"
+  },
+  "featured": {
+    "label": "Featured Story"
+  },
+  "empty": {
+    "title": "No matching articles found",
+    "subtitle": "Try adjusting your search or filter criteria"
+  },
+  "loadMore": "Load More",
+  "loading": "Loading news...",
+  "error": "Failed to load data. Please try again.",
+  "gallery": {
+    "title": "Photo Gallery",
+    "subtitle": "Moments from our work on the ground"
+  }
+}

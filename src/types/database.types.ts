@@ -31,6 +31,9 @@ export type ContactStatus = "new" | "read" | "replied" | "archived";
 export type VolunteerStatus = "pending" | "approved" | "rejected";
 export type TeamRole = "board" | "management" | "advisor" | "staff";
 export type TestimonialStatus = "pending" | "approved" | "rejected";
+export type MembershipType = "regular" | "founding" | "honorary" | "student";
+export type MembershipStatus = "pending" | "under_review" | "approved" | "rejected" | "waitlisted";
+export type EducationLevel = "high_school" | "diploma" | "bachelor" | "master" | "phd" | "other";
 
 // ── Row types ───────────────────────────────────────────────────────
 
@@ -56,6 +59,8 @@ export interface ProjectRow {
   beneficiaries_count: number | null;
   budget_usd: number | null;
   is_featured: boolean;
+  is_published: boolean;
+  sdg_tags: string[] | null;
   tags: string[] | null;
   external_url: string | null;
 }
@@ -164,6 +169,67 @@ export interface GalleryItemRow {
   is_active: boolean;
 }
 
+export interface MembershipApplicationRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  application_number: string | null;   // auto: DRF-2024-0001
+  // Personal
+  full_name_ar: string;
+  full_name_en: string;
+  date_of_birth: string;               // date ISO
+  nationality: string;
+  national_id: string | null;
+  gender: "male" | "female" | null;
+  // Contact
+  email: string;
+  phone_primary: string;
+  phone_secondary: string | null;
+  governorate: string;
+  city: string;
+  address_detail: string | null;
+  // Education & Career
+  education_level: EducationLevel;
+  education_field: string | null;
+  institution: string | null;
+  graduation_year: number | null;
+  current_employer: string | null;
+  current_position: string | null;
+  years_of_experience: number | null;
+  // Skills
+  skills: string[] | null;
+  languages: string[] | null;
+  areas_of_interest: string[] | null;
+  expertise_description: string | null;
+  // Availability
+  available_days_per_week: number | null;
+  available_hours_per_day: number | null;
+  // Motivation
+  motivation_statement: string;
+  previous_volunteering: string | null;
+  how_heard_about_us: string | null;
+  // References
+  reference_1_name: string | null;
+  reference_1_phone: string | null;
+  reference_1_relation: string | null;
+  reference_2_name: string | null;
+  reference_2_phone: string | null;
+  reference_2_relation: string | null;
+  // Emergency
+  emergency_contact_name: string | null;
+  emergency_contact_phone: string | null;
+  emergency_contact_relation: string | null;
+  // Membership
+  membership_type: MembershipType;
+  status: MembershipStatus;
+  reviewer_notes: string | null;
+  reviewed_at: string | null;
+  // Agreement
+  agrees_to_terms: boolean;
+  agrees_to_code_of_conduct: boolean;
+  signature_date: string | null;
+}
+
 // ── Database generic wrapper (matches Supabase gen types pattern) ───
 
 export interface Database {
@@ -209,17 +275,25 @@ export interface Database {
         Insert: Omit<GalleryItemRow, "id" | "created_at" | "updated_at"> & { id?: string };
         Update: Partial<GalleryItemRow>;
       };
+      membership_applications: {
+        Row: MembershipApplicationRow;
+        Insert: Omit<MembershipApplicationRow, "id" | "created_at" | "updated_at" | "application_number" | "status" | "reviewer_notes" | "reviewed_at"> & { id?: string };
+        Update: Partial<MembershipApplicationRow>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
-      project_status:  ProjectStatus;
-      project_category: ProjectCategory;
-      news_category:   NewsCategory;
-      contact_status:  ContactStatus;
-      volunteer_status: VolunteerStatus;
-      team_role:       TeamRole;
+      project_status:     ProjectStatus;
+      project_category:   ProjectCategory;
+      news_category:      NewsCategory;
+      contact_status:     ContactStatus;
+      volunteer_status:   VolunteerStatus;
+      team_role:          TeamRole;
       testimonial_status: TestimonialStatus;
+      membership_type:    MembershipType;
+      membership_status:  MembershipStatus;
+      education_level:    EducationLevel;
     };
   };
 }

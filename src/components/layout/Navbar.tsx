@@ -56,10 +56,11 @@ export function Navbar(): React.ReactElement {
   }
 
   const navLinks = [
-    { to: "/", label: t("nav:home") },
-    { to: "/about", label: t("nav:about") },
-    { to: "/projects", label: t("nav:projects") },
-    { to: "/news", label: t("nav:news") },
+    { to: "/",        label: t("nav:home") },
+    { to: "/about",   label: t("nav:about") },
+    { to: "/projects",label: t("nav:projects") },
+    { to: "/news",    label: t("nav:news") },
+    { to: "/gallery", label: t("nav:gallery") },
     { to: "/contact", label: t("nav:contact") },
   ] as const;
 
