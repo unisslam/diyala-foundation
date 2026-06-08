@@ -475,7 +475,12 @@ function DetailPanel({ app, onClose, onStatusChange }: {
         <div className="sticky top-0 bg-card/95 backdrop-blur border-b border-border px-5 py-4 flex items-center justify-between z-10">
           <div>
             <p className="font-bold font-display text-base">{app.full_name_ar}</p>
-            <p className="text-xs text-muted-foreground font-mono" dir="ltr">{app.application_number ?? "—"}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                {TYPE_LABEL[app.membership_type] ?? app.membership_type}
+              </span>
+              <p className="text-xs text-muted-foreground font-mono" dir="ltr">{app.application_number ?? "—"}</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {/* Export single PDF */}
@@ -497,6 +502,7 @@ function DetailPanel({ app, onClose, onStatusChange }: {
 
           {/* ① Personal */}
           <Section icon={User} title="المعلومات الشخصية">
+            <InfoRow icon={Star}     label="نوع العضوية"             value={TYPE_LABEL[app.membership_type] ?? app.membership_type} />
             <InfoRow icon={User}     label="الاسم الكامل (إنجليزي)" value={app.full_name_en} />
             <InfoRow icon={Calendar} label="تاريخ الميلاد"           value={app.date_of_birth ? new Date(app.date_of_birth).toLocaleDateString("ar-IQ") : null} />
             <InfoRow icon={User}     label="الجنس"                   value={GENDER_LABEL[app.gender ?? ""] ?? app.gender} />

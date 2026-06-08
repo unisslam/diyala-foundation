@@ -31,7 +31,7 @@ export function Footer(): React.ReactElement {
     { to: "/news", label: t("nav:news") },
     { to: "/gallery", label: t("nav:gallery") },
     { to: "/contact", label: t("nav:contact") },
-    { to: "/join-us", label: t("nav:join") },
+    { to: "/join", label: t("nav:join") },
   ];
 
   const socials: Array<{ Icon: React.ElementType; href: string; label: string }> = [
@@ -148,7 +148,7 @@ export function Footer(): React.ReactElement {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-background/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-background/50">
-          <p>{t("common:footer.rights")}</p>
+          <p>{t("common:footer.rights", { year: new Date().getFullYear() })}</p>
           <p className="flex items-center gap-1">
             {t("common:footer.madeWith")}
             <Heart size={12} className="text-accent mx-1" style={{ fill: "currentColor" }} />

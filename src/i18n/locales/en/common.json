@@ -44,7 +44,7 @@
     "press_release": "Press Release"
   },
   "footer": {
-    "rights": "© 2025 Diyala River Foundation for Sustainable Development. All rights reserved.",
+    "rights": "© {{year}} Diyala River Foundation for Sustainable Development. All rights reserved.",
     "madeWith": "Made with",
     "forIraq": "for Iraq",
     "quickLinks": "Quick Links",

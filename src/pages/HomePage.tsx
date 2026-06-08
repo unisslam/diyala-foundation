@@ -10,7 +10,7 @@
  *  5. CTA          — Engagement call-to-action
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
@@ -24,6 +24,8 @@ import {
   TrendingUp,
   ArrowRight,
   ChevronRight,
+  Share2,
+  Check,
 } from "lucide-react";
 import { FOUNDATION_SDGS } from "@/config/sdgsData";
 import type { SDGItem } from "@/types/sdg";
@@ -138,6 +140,31 @@ function SDGCard({ sdg, index }: SDGCardProps): React.ReactElement {
 export default function HomePage(): React.ReactElement {
   const { t, i18n } = useTranslation(["home", "common"]);
   const isRtl = i18n.dir() === "rtl";
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const url = window.location.origin;
+    const title = t("home:hero.headline") + " - " + t("home:hero.headlineAccent");
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          url,
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy!", err);
+      }
+    }
+  };
 
   const { data: statsData, loading: statsLoading } = useSupabaseQuery<ImpactStatRow>({
     table: "impact_stats",
@@ -463,18 +490,19 @@ export default function HomePage(): React.ReactElement {
               </Link>
               <Link
                 id="cta-projects"
-                to="/projects"
+                to="/join"
                 className="px-7 py-3 rounded-full bg-accent text-accent-foreground font-semibold hover:bg-accent-dark transition-colors"
               >
                 {t("home:cta.join")}
               </Link>
-              <Link
+              <button
                 id="cta-partner"
-                to="/contact"
-                className="px-7 py-3 rounded-full border-2 border-background/30 text-background font-semibold hover:bg-background/10 transition-colors"
+                onClick={handleShare}
+                className="flex items-center gap-2 px-7 py-3 rounded-full border-2 border-background/30 text-background font-semibold hover:bg-background/10 transition-colors"
               >
-                {t("home:cta.partner")}
-              </Link>
+                {copied ? <Check size={18} /> : <Share2 size={18} />}
+                {copied ? (isRtl ? "تم نسخ الرابط" : "Link Copied") : t("home:cta.partner")}
+              </button>
             </motion.div>
           </motion.div>
         </div>
