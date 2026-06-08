@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
   Calendar, MapPin, Users, DollarSign, Tag,
-  ChevronLeft, FolderOpen, ExternalLink, CheckCircle,
+  ChevronLeft, FolderOpen, ExternalLink, CheckCircle, Eye,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { ProjectRow, ProjectStatus, ProjectCategory } from "@/types/database.types";
@@ -73,6 +73,9 @@ export default function ProjectDetailPage(): React.ReactElement {
 
       if (!data) { setNotFound(true); setLoading(false); return; }
       setProject(data as ProjectRow);
+
+      // Increment view count (fire-and-forget)
+      try { await supabase.rpc("increment_project_views" as never, { project_id: data.id }); } catch { /* ignore */ }
 
       const { data: relData } = await supabase
         .from("projects")
@@ -274,6 +277,14 @@ export default function ProjectDetailPage(): React.ReactElement {
                   </div>
                 </div>
               )}
+              {/* Views counter */}
+              <div className="flex items-start gap-3 text-sm pt-2 border-t border-border">
+                <Eye size={15} className="text-muted-foreground mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs text-muted-foreground">{isRtl ? "عدد المشاهدات" : "Views"}</p>
+                  <p className="font-medium">{(project.views_count ?? 0).toLocaleString()}</p>
+                </div>
+              </div>
             </div>
 
             {/* CTA */}

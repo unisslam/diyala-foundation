@@ -59,8 +59,9 @@ export default function NewsDetailPage(): React.ReactElement {
       if (!data) { setNotFound(true); setLoading(false); return; }
       setArticle(data as NewsRow);
 
-      // Increment view count
-      await supabase.rpc("increment_news_views" as never, { news_id: data.id }).catch(() => {});
+      // Increment view count (fire-and-forget, ignore errors)
+      try { await supabase.rpc("increment_news_views" as never, { news_id: data.id }); } catch { /* ignore */ }
+
 
       // Load related (same category, different article)
       const { data: relData } = await supabase

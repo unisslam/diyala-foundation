@@ -60,6 +60,7 @@ export interface ProjectRow {
   budget_usd: number | null;
   is_featured: boolean;
   is_published: boolean;
+  views_count: number;              // incremented on detail page visit
   sdg_tags: string[] | null;
   tags: string[] | null;
   external_url: string | null;
