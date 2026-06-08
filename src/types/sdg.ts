@@ -5,7 +5,7 @@
  * Used by sdgsData.ts config and the SDGsGrid component.
  */
 
-import type { ComponentType } from "react";
+import type { ComponentType, CSSProperties } from "react";
 
 /** A single UN SDG entry as used by the Foundation's platform. */
 export interface SDGItem {
@@ -22,7 +22,7 @@ export interface SDGItem {
   /** Contrast-safe text color (white or dark) for use on `color` background */
   textColor: "#FFFFFF" | "#1A1A1A";
   /** Lucide icon component reference */
-  icon: ComponentType<{ size?: number; className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
+  icon: ComponentType<{ size?: number; className?: string; style?: CSSProperties; "aria-hidden"?: boolean | "true" | "false" }>;
 }
 
 /** Subset of SDGs actively targeted by the Foundation */

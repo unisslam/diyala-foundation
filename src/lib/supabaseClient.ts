@@ -10,8 +10,7 @@
  *   VITE_SUPABASE_ANON_KEY=<your-anon-public-key>
  */
 
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database.types";
+import { createClient } from "@supabase/supabase-js";
 
 // ── Validate required environment variables ─────────────────────────
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
@@ -27,7 +26,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // ── Create singleton client ─────────────────────────────────────────
-export const supabase: SupabaseClient<Database> = createClient<Database>(
+export const supabase = createClient<any>(
   supabaseUrl,
   supabaseAnonKey,
   {

@@ -42,12 +42,11 @@ interface TimelineItemProps {
   year: string;
   title: string;
   description: string;
-  index: number;
-  isRtl: boolean;
+  index?: number;
+  isRtl?: boolean;
 }
-const TimelineItem: React.FC<TimelineItemProps> = ({ year, title, description, index, isRtl }) => {
+const TimelineItem: React.FC<TimelineItemProps> = ({ year, title, description }) => {
   const [open, setOpen] = useState(false);
-  const isLeft = index % 2 === 0;
 
   return (
     <motion.div
@@ -324,7 +323,7 @@ export default function AboutPage(): React.ReactElement {
             initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {values.map(({ icon: Icon, key }, idx) => (
+            {values.map(({ icon: Icon, key }) => (
               <motion.div
                 key={key}
                 variants={fadeUp}

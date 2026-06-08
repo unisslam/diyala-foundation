@@ -14,7 +14,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Globe } from "lucide-react";
-import { applyLanguageDirection, LANGUAGE_META, SUPPORTED_LANGUAGES, type SupportedLanguage } from "@/i18n";
+import { applyLanguageDirection, LANGUAGE_META, type SupportedLanguage } from "@/i18n";
 
 // Logo component – inline to avoid extra network requests
 function DiyalaLogo({ className = "" }: { className?: string }): React.ReactElement {

@@ -418,7 +418,7 @@ export default function ContactPage(): React.ReactElement {
               <div className="rounded-2xl overflow-hidden border border-border shadow-sm">
                 <iframe
                   title={isRtl ? "موقع المؤسسة على الخريطة" : "Foundation location on map"}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d348.67066405491465!2d44.59564263226249!3d33.757226894194154!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15564d4ad6cfb4d9%3A0x6c815af6ab8b7e0a!2z2YPZiNmB2Yog2YjZgtin2LnYqSDYp9mE2KTZhNik2Kk!5e0!3m2!1sen!2siq!4v1780935496845!5m2!1sen!2siq" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d348.67066405491465!2d44.59564263226249!3d33.757226894194154!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15564d4ad6cfb4d9%3A0x6c815af6ab8b7e0a!2z2YPZiNmB2Yog2YjZgtin2LnYqSDYp9mE2KTZhNik2Kk!5e0!3m2!1sen!2siq!4v1780935496845!5m2!1sen!2siq"
                   width="100%"
                   height="220"
                   style={{ border: 0 }}

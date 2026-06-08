@@ -33,7 +33,7 @@ const stagger = {
 };
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as any } },
 };
 
 /* ── Status config ──────────────────────────────────────────────────── */
@@ -101,7 +101,7 @@ function ProjectCard({ project, isRtl }: ProjectCardProps): React.ReactElement {
         {/* SDG tags */}
         {project.sdg_tags && project.sdg_tags.length > 0 && (
           <div className="absolute top-3 start-3 flex gap-1.5 flex-wrap">
-            {project.sdg_tags.slice(0, 3).map((sdg) => (
+            {project.sdg_tags.slice(0, 3).map((sdg: string) => (
               <span
                 key={sdg}
                 className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white"

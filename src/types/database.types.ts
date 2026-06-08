@@ -249,55 +249,65 @@ export interface Database {
         Row: AppSettingRow;
         Insert: Omit<AppSettingRow, "created_at" | "updated_at"> & { created_at?: string; updated_at?: string };
         Update: Partial<AppSettingRow>;
+        Relationships: any[];
       };
       projects: {
         Row: ProjectRow;
         Insert: Omit<ProjectRow, "id" | "created_at" | "updated_at" | "views_count"> & { id?: string };
         Update: Partial<ProjectRow>;
+        Relationships: any[];
       };
       news: {
         Row: NewsRow;
         Insert: Omit<NewsRow, "id" | "created_at" | "updated_at" | "views_count"> & { id?: string };
         Update: Partial<NewsRow>;
+        Relationships: any[];
       };
       team_members: {
         Row: TeamMemberRow;
         Insert: Omit<TeamMemberRow, "id" | "created_at" | "updated_at"> & { id?: string };
         Update: Partial<TeamMemberRow>;
+        Relationships: any[];
       };
       contact_messages: {
         Row: ContactMessageRow;
         Insert: Omit<ContactMessageRow, "id" | "created_at" | "status"> & { id?: string };
         Update: Partial<ContactMessageRow>;
+        Relationships: any[];
       };
       volunteer_applications: {
         Row: VolunteerApplicationRow;
         Insert: Omit<VolunteerApplicationRow, "id" | "created_at" | "status"> & { id?: string };
         Update: Partial<VolunteerApplicationRow>;
+        Relationships: any[];
       };
       impact_stats: {
         Row: ImpactStatRow;
         Insert: Omit<ImpactStatRow, "id" | "updated_at"> & { id?: string };
         Update: Partial<ImpactStatRow>;
+        Relationships: any[];
       };
       testimonials: {
         Row: TestimonialRow;
         Insert: Omit<TestimonialRow, "id" | "created_at" | "updated_at"> & { id?: string };
         Update: Partial<TestimonialRow>;
+        Relationships: any[];
       };
       gallery_items: {
         Row: GalleryItemRow;
         Insert: Omit<GalleryItemRow, "id" | "created_at" | "updated_at"> & { id?: string };
         Update: Partial<GalleryItemRow>;
+        Relationships: any[];
       };
       membership_applications: {
         Row: MembershipApplicationRow;
         Insert: Omit<MembershipApplicationRow, "id" | "created_at" | "updated_at" | "application_number" | "status" | "reviewer_notes" | "reviewed_at"> & { id?: string };
         Update: Partial<MembershipApplicationRow>;
+        Relationships: any[];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: { [_ in never]: never };
+    Functions: { [_ in never]: never };
     Enums: {
       project_status:     ProjectStatus;
       project_category:   ProjectCategory;
@@ -310,5 +320,6 @@ export interface Database {
       membership_status:  MembershipStatus;
       education_level:    EducationLevel;
     };
+    CompositeTypes: { [_ in never]: never };
   };
 }

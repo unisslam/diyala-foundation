@@ -6,10 +6,10 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Calendar, Eye, Tag, ChevronLeft, ArrowRight, Newspaper } from "lucide-react";
+import { Calendar, Eye, Tag, ChevronLeft, Newspaper } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { NewsRow, NewsCategory } from "@/types/database.types";
 
@@ -37,7 +37,6 @@ function NewsDetailSkeleton(): React.ReactElement {
 
 export default function NewsDetailPage(): React.ReactElement {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const { i18n } = useTranslation();
   const isRtl = i18n.dir() === "rtl";
 
@@ -49,29 +48,29 @@ export default function NewsDetailPage(): React.ReactElement {
   useEffect(() => {
     async function load(): Promise<void> {
       setLoading(true);
-      const { data } = await supabase
+      const { data } = (await supabase
         .from("news")
         .select("*")
         .eq("slug", slug ?? "")
         .eq("is_published", true)
-        .maybeSingle();
+        .maybeSingle()) as any;
 
       if (!data) { setNotFound(true); setLoading(false); return; }
       setArticle(data as NewsRow);
 
       // Increment view count (fire-and-forget, ignore errors)
-      try { await supabase.rpc("increment_news_views" as never, { news_id: data.id }); } catch { /* ignore */ }
+      try { await (supabase as any).rpc("increment_news_views", { news_id: data.id }); } catch { /* ignore */ }
 
 
       // Load related (same category, different article)
-      const { data: relData } = await supabase
+      const { data: relData } = (await supabase
         .from("news")
         .select("id, title_ar, title_en, slug, cover_image_path, published_at, category, excerpt_ar, excerpt_en")
         .eq("is_published", true)
         .eq("category", data.category)
         .neq("id", data.id)
         .order("published_at", { ascending: false })
-        .limit(3);
+        .limit(3)) as any;
       setRelated((relData ?? []) as NewsRow[]);
       setLoading(false);
     }

@@ -64,26 +64,26 @@ export default function ProjectDetailPage(): React.ReactElement {
   useEffect(() => {
     async function load(): Promise<void> {
       setLoading(true);
-      const { data } = await supabase
+      const { data } = (await supabase
         .from("projects")
         .select("*")
         .eq("slug", slug ?? "")
         .eq("is_published", true)
-        .maybeSingle();
+        .maybeSingle()) as any;
 
       if (!data) { setNotFound(true); setLoading(false); return; }
       setProject(data as ProjectRow);
 
       // Increment view count (fire-and-forget)
-      try { await supabase.rpc("increment_project_views" as never, { project_id: data.id }); } catch { /* ignore */ }
+      try { await (supabase as any).rpc("increment_project_views", { project_id: data.id }); } catch { /* ignore */ }
 
-      const { data: relData } = await supabase
+      const { data: relData } = (await supabase
         .from("projects")
         .select("id, title_ar, title_en, slug, cover_image_path, status, category, description_ar, description_en")
         .eq("is_published", true)
         .eq("category", data.category)
         .neq("id", data.id)
-        .limit(3);
+        .limit(3)) as any;
       setRelated((relData ?? []) as ProjectRow[]);
       setLoading(false);
     }
@@ -177,7 +177,7 @@ export default function ProjectDetailPage(): React.ReactElement {
                     <Tag size={12} /> {isRtl ? "أهداف التنمية المستدامة" : "SDG Goals"}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {project.sdg_tags.map((tag) => (
+                    {project.sdg_tags.map((tag: string) => (
                       <span key={tag} className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">{tag}</span>
                     ))}
                   </div>
@@ -187,7 +187,7 @@ export default function ProjectDetailPage(): React.ReactElement {
               {/* Tags */}
               {project.tags && project.tags.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
+                  {project.tags.map((tag: string) => (
                     <span key={tag} className="px-2.5 py-1 rounded-full bg-muted text-muted-foreground text-xs">{tag}</span>
                   ))}
                 </div>
@@ -211,7 +211,7 @@ export default function ProjectDetailPage(): React.ReactElement {
                   {isRtl ? "صور المشروع" : "Project Photos"}
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {project.gallery_paths.map((path, i) => (
+                  {project.gallery_paths.map((path: string, i: number) => (
                     <button
                       key={i}
                       onClick={() => setLightbox(path)}

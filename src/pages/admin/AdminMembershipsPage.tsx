@@ -11,7 +11,7 @@
  *  • Status management with reviewer notes
  */
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Download, X, CheckCircle, Clock, XCircle,
@@ -374,7 +374,7 @@ function exportExcel(rows: MembershipApplicationRow[], label = ""): void {
   const ws = XLSX.utils.aoa_to_sheet(aoa, { cellStyles: true });
 
   // Auto column widths based on longest content per column
-  const colWidths = COLS.map((c, ci) => {
+  const colWidths = COLS.map((c) => {
     const headerLen = c.h.length;
     const dataMax = rows.reduce((max, r) => {
       const val = String(c.v(r));

@@ -14,16 +14,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui:     ['framer-motion', 'lucide-react'],
-          data:   ['@supabase/supabase-js', '@tanstack/react-query'],
-          i18n:   ['react-i18next', 'i18next', 'i18next-browser-languagedetector'],
-        },
-      },
-    },
-  },
+
 })

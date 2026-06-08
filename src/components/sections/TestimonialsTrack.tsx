@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Star, Quote } from "lucide-react";

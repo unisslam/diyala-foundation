@@ -27,6 +27,7 @@ const SEED_TEAM: TeamMember[] = [
     linkedin_url: null,
     display_order: 1,
     is_active: true,
+    membership_application_id: null,
   },
   {
     id: "tm-2",
@@ -46,6 +47,7 @@ const SEED_TEAM: TeamMember[] = [
     linkedin_url: null,
     display_order: 2,
     is_active: true,
+    membership_application_id: null,
   },
   {
     id: "tm-3",
@@ -65,6 +67,7 @@ const SEED_TEAM: TeamMember[] = [
     linkedin_url: null,
     display_order: 3,
     is_active: true,
+    membership_application_id: null,
   },
 ];
 
@@ -89,10 +92,10 @@ const MemberCard: React.FC<{ member: TeamMember; isRtl: boolean; index: number }
   isRtl,
   index,
 }) => {
-  const name  = isRtl ? member.full_name_ar : member.full_name_en;
+  const name  = (isRtl ? member.full_name_ar : member.full_name_en) || "";
   const title = isRtl ? member.title_ar : member.title_en;
   const bio   = isRtl ? member.bio_ar : member.bio_en;
-  const initials = name.split(" ").slice(0, 2).map((w) => w[0]).join("");
+  const initials = name.trim().split(" ").slice(0, 2).map((w) => w[0] || "").join("");
 
   return (
     <motion.article

@@ -60,7 +60,7 @@ export default function AdminTestimonialsPage(): React.ReactElement {
                     {item.rating && <span className="text-xs text-amber-500">{"★".repeat(item.rating)}</span>}
                   </div>
                   <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{item.body_ar}</p>
-                  {item.author_title_ar && <p className="text-xs text-muted-foreground mt-1">{item.author_title_ar}</p>}
+                  {item.role_ar && <p className="text-xs text-muted-foreground mt-1">{item.role_ar}</p>}
                 </div>
                 <div className="flex flex-col gap-1.5 shrink-0">
                   <button onClick={() => updateStatus(item.id, "approved")} disabled={item.status === "approved"}

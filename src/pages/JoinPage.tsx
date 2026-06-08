@@ -10,8 +10,8 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  User, Phone, GraduationCap, Star as StarIcon,
-  Heart, FileText, CheckCircle, ChevronRight, ChevronLeft,
+  User, Star as StarIcon,
+  FileText, CheckCircle, ChevronRight, ChevronLeft,
   X, Plus, Save, AlertCircle, ArrowLeft, ArrowRight,
   Shield, Award, BookOpen, Sparkles,
 } from "lucide-react";
@@ -707,7 +707,7 @@ export default function JoinPage(): React.ReactElement {
 
       const { data: result, error } = await supabase
         .from("membership_applications")
-        .insert(payload)
+        .insert(payload as any)
         .select("application_number")
         .single();
 

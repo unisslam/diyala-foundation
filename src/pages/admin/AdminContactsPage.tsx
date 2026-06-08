@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageSquare, Heart, Search, X, Eye, CheckCircle, Clock, Archive, ChevronRight, RefreshCw, Settings2, Power } from "lucide-react";
+import { MessageSquare, Heart, Search, X, Eye, CheckCircle, Archive, ChevronRight, RefreshCw, Settings2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { ContactMessageRow, ContactStatus, VolunteerApplicationRow } from "@/types/database.types";
 

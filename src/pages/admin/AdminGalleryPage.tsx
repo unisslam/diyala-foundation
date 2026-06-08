@@ -384,11 +384,7 @@ export default function AdminGalleryPage(): React.ReactElement {
     void load();
   }
 
-  const stats = {
-    total:  items.length,
-    active: items.filter((i) => i.active).length,
-    storage: items.filter((i) => i.image_path.includes("supabase")).length,
-  };
+
 
   return (
     <div dir="rtl">

@@ -145,7 +145,7 @@ export default function AdminTeamPage(): React.ReactElement {
             <div key={m.id} className={`p-5 rounded-2xl border bg-card transition-all ${m.is_active ? "border-border" : "border-dashed opacity-60"}`}>
               <div className="flex items-start justify-between mb-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold">
-                  {m.full_name_ar?.[0] || "?"}
+                  {(m.full_name_ar || "")[0] || "?"}
                 </div>
                 <div className="flex gap-1">
                   <button onClick={() => toggleActive(m)} className={`p-1.5 rounded-lg hover:bg-muted transition-colors ${m.is_active ? "text-emerald-600" : "text-muted-foreground"}`}>

@@ -68,7 +68,7 @@ function AnimatedNumber({ value }: { value: number }) {
 
   useEffect(() => {
     if (isInView) {
-      const controls = animate(count, value, { duration: 2, ease: "easeOut" });
+      const controls = animate(count, value, { duration: 0.8, ease: "easeOut" });
       return () => controls.stop();
     }
   }, [value, count, isInView]);
@@ -350,9 +350,6 @@ export default function HomePage(): React.ReactElement {
               : statsData.map((stat) => {
                 const Icon = STAT_ICON_MAP[stat.icon_name] ?? Target;
                 const label = isRtl ? stat.label_ar : stat.label_en;
-                const displayValue = stat.value_number >= 1000
-                  ? `${(stat.value_number / 1000).toFixed(0)}k+`
-                  : `${stat.value_number}+`;
                 return (
                   <motion.div
                     key={stat.id}
