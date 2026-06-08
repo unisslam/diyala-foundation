@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Droplets, Home } from "lucide-react";
+import { Home } from "lucide-react";
 
 export default function NotFoundPage(): React.ReactElement {
   const { t } = useTranslation("common");
@@ -15,9 +15,7 @@ export default function NotFoundPage(): React.ReactElement {
         transition={{ duration: 0.5, type: "spring" }}
         className="max-w-md"
       >
-        <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-8">
-          <Droplets size={48} className="text-primary animate-water-flow" />
-        </div>
+        <img src="/logo.png" alt="Logo" className="w-24 h-24 object-contain animate-water-flow mx-auto mb-8" />
         <h1 className="font-display text-7xl font-black text-primary mb-4">404</h1>
         <h2 className="font-display text-2xl font-bold mb-3">{t("errors.notFound")}</h2>
         <p className="text-muted-foreground mb-8">{t("errors.notFoundDesc")}</p>

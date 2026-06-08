@@ -143,7 +143,7 @@ export default function ContactPage(): React.ReactElement {
   const contactInfo = [
     { Icon: MapPin, label: t("contact:info.address"), value: t("contact:info.addressValue") },
     { Icon: Mail, label: t("contact:info.email"), value: "info@diyalariver.org" },
-    { Icon: Phone, label: t("contact:info.phone"), value: "+964 770 000 0000" },
+    { Icon: Phone, label: t("contact:info.phone"), value: "9647730300804" },
     { Icon: Clock, label: t("contact:info.workingHours"), value: t("contact:info.workingHoursValue") },
   ];
 
@@ -237,8 +237,8 @@ export default function ContactPage(): React.ReactElement {
                       key={tab}
                       onClick={() => setActiveTab(tab)}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${activeTab === tab
-                          ? "bg-card shadow-sm text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
+                        ? "bg-card shadow-sm text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                         }`}
                     >
                       {tab === "contact" ? <Mail size={14} /> : <Heart size={14} />}

@@ -1,4 +1,5 @@
 {
+  "siteName": "Diyala River Foundation",
   "foundation": {
     "name": "Diyala River Foundation for Sustainable Development",
     "nameShort": "Diyala Foundation",
@@ -52,7 +53,8 @@
     "newsletter": "Newsletter",
     "newsletterPlaceholder": "Your email address",
     "newsletterBtn": "Subscribe",
-    "sdgPartner": "A Local Partner for the UN Sustainable Development Goals"
+    "sdgPartner": "A Local Partner for the UN Sustainable Development Goals",
+    "addressValue": "Diyala, Republic of Iraq"
   },
   "errors": {
     "notFound": "Page Not Found",

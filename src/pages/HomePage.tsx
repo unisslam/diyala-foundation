@@ -10,9 +10,9 @@
  *  5. CTA          — Engagement call-to-action
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import { motion, animate, useMotionValue, useTransform, useInView } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -48,9 +48,34 @@ const fadeUp: Variants = {
 };
 
 const stagger: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
 };
+
+function AnimatedNumber({ value }: { value: number }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => {
+    const num = Math.round(latest);
+    if (value >= 1000) {
+      return `${(num / 1000).toFixed(0)}k+`;
+    }
+    return `${num}+`;
+  });
+
+  useEffect(() => {
+    if (isInView) {
+      const controls = animate(count, value, { duration: 2, ease: "easeOut" });
+      return () => controls.stop();
+    }
+  }, [value, count, isInView]);
+
+  return <motion.span ref={ref}>{rounded}</motion.span>;
+}
 
 const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.92 },
@@ -339,7 +364,7 @@ export default function HomePage(): React.ReactElement {
                       <Icon size={26} className="text-primary" aria-hidden="true" />
                     </div>
                     <span className="font-display text-3xl md:text-4xl font-black text-background mb-1">
-                      {displayValue}
+                      <AnimatedNumber value={stat.value_number} />
                     </span>
                     <span className="text-background/60 text-sm">{label}</span>
                   </motion.div>

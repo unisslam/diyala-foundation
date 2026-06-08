@@ -13,12 +13,21 @@ import {
   MapPin,
   Mail,
   Phone,
-  Share2,
-  Send,
-  Globe,
-  Play,
-  Link2,
 } from "lucide-react";
+
+const FacebookIcon = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
+const InstagramIcon = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
 
 export function Footer(): React.ReactElement {
   const { t, i18n } = useTranslation(["common", "nav"]);
@@ -34,12 +43,9 @@ export function Footer(): React.ReactElement {
     { to: "/join", label: t("nav:join") },
   ];
 
-  const socials: Array<{ Icon: React.ElementType; href: string; label: string }> = [
-    { Icon: Share2, href: "#", label: "Facebook" },
-    { Icon: Send, href: "#", label: "Twitter / X" },
-    { Icon: Globe, href: "#", label: "Instagram" },
-    { Icon: Play, href: "#", label: "YouTube" },
-    { Icon: Link2, href: "#", label: "LinkedIn" },
+  const socials: Array<{ Icon: React.ElementType; href: string; label: string; title: string }> = [
+    { Icon: FacebookIcon, href: "https://www.facebook.com/profile.php?id=61576828824706", label: "Facebook Foundation", title: "مؤسسة نهر ديالى - Facebook" },
+    { Icon: InstagramIcon, href: "https://www.instagram.com/diyala.river/", label: "Instagram Foundation", title: "مؤسسة نهر ديالى - Instagram" },
   ];
 
   return (
@@ -79,10 +85,13 @@ export function Footer(): React.ReactElement {
 
             {/* Social links */}
             <div className="flex items-center gap-3 flex-wrap">
-              {socials.map(({ Icon, href, label }) => (
+              {socials.map(({ Icon, href, label, title }) => (
                 <a
                   key={label}
                   href={href}
+                  title={title}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="w-9 h-9 flex items-center justify-center rounded-full bg-background/10 hover:bg-primary hover:text-background transition-all duration-200"
                 >
@@ -120,7 +129,7 @@ export function Footer(): React.ReactElement {
             <ul className="space-y-3 text-sm text-background/70" style={{ listStyle: "none", padding: 0, margin: 0 }}>
               <li className="flex items-start gap-2">
                 <MapPin size={14} className="text-primary mt-0.5 shrink-0" />
-                <span>ديالى، جمهورية العراق</span>
+                <span>{t("common:footer.addressValue")}</span>
               </li>
               <li className="flex items-start gap-2">
                 <Mail size={14} className="text-primary mt-0.5 shrink-0" />
@@ -134,11 +143,11 @@ export function Footer(): React.ReactElement {
               <li className="flex items-start gap-2">
                 <Phone size={14} className="text-primary mt-0.5 shrink-0" />
                 <a
-                  href="tel:+9647700000000"
+                  href="tel:+9647730300804"
                   className="hover:text-primary transition-colors"
                   dir="ltr"
                 >
-                  +964 770 000 0000
+                  +9647730300804
                 </a>
               </li>
             </ul>
