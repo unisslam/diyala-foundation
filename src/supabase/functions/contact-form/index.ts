@@ -51,9 +51,9 @@ function validatePayload(data: unknown): data is ContactPayload {
   const d = data as Record<string, unknown>;
   return (
     typeof d.full_name === "string" && d.full_name.trim().length >= 2 &&
-    typeof d.email    === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) &&
-    typeof d.subject  === "string" && d.subject.trim().length >= 3 &&
-    typeof d.message  === "string" && d.message.trim().length >= 10
+    typeof d.email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email) &&
+    typeof d.subject === "string" && d.subject.trim().length >= 3 &&
+    typeof d.message === "string" && d.message.trim().length >= 10
   );
 }
 
@@ -65,7 +65,7 @@ async function sendEmailNotification(
   recipient: string
 ): Promise<void> {
   const body = {
-    from: "Diyala Foundation <noreply@diyalafoundation.org>",
+    from: "Diyala Foundation <noreply@diyalariver.org>",
     to: [recipient],
     subject: `[Contact Form] ${payload.subject}`,
     html: `
@@ -137,11 +137,11 @@ Deno.serve(async (req: Request): Promise<Response> => {
     const { error: dbError } = await supabase
       .from("contact_messages")
       .insert({
-        full_name:  payload.full_name.trim(),
-        email:      payload.email.trim().toLowerCase(),
-        phone:      payload.phone?.trim() ?? null,
-        subject:    payload.subject.trim(),
-        message:    payload.message.trim(),
+        full_name: payload.full_name.trim(),
+        email: payload.email.trim().toLowerCase(),
+        phone: payload.phone?.trim() ?? null,
+        subject: payload.subject.trim(),
+        message: payload.message.trim(),
         user_agent: req.headers.get("user-agent"),
         // ip_address extracted by Supabase automatically for edge functions
       });
@@ -155,8 +155,8 @@ Deno.serve(async (req: Request): Promise<Response> => {
     }
 
     // Fire-and-forget email notification
-    const resendKey     = Deno.env.get("RESEND_API_KEY");
-    const notifyEmail   = Deno.env.get("NOTIFICATION_EMAIL");
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    const notifyEmail = Deno.env.get("NOTIFICATION_EMAIL");
     if (resendKey && notifyEmail) {
       await sendEmailNotification(payload, resendKey, notifyEmail);
     }

@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { Link }           from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   Heart,
@@ -25,19 +25,19 @@ export function Footer(): React.ReactElement {
   const isRtl = i18n.dir() === "rtl";
 
   const quickLinks = [
-    { to: "/",         label: t("nav:home")       },
-    { to: "/about",    label: t("nav:about")       },
-    { to: "/projects", label: t("nav:projects")   },
-    { to: "/news",     label: t("nav:news")        },
-    { to: "/contact",  label: t("nav:contact")    },
+    { to: "/", label: t("nav:home") },
+    { to: "/about", label: t("nav:about") },
+    { to: "/projects", label: t("nav:projects") },
+    { to: "/news", label: t("nav:news") },
+    { to: "/contact", label: t("nav:contact") },
   ];
 
   const socials: Array<{ Icon: React.ElementType; href: string; label: string }> = [
-    { Icon: Share2, href: "#", label: "Facebook"   },
-    { Icon: Send,   href: "#", label: "Twitter / X" },
-    { Icon: Globe,  href: "#", label: "Instagram"  },
-    { Icon: Play,   href: "#", label: "YouTube"    },
-    { Icon: Link2,  href: "#", label: "LinkedIn"   },
+    { Icon: Share2, href: "#", label: "Facebook" },
+    { Icon: Send, href: "#", label: "Twitter / X" },
+    { Icon: Globe, href: "#", label: "Instagram" },
+    { Icon: Play, href: "#", label: "YouTube" },
+    { Icon: Link2, href: "#", label: "LinkedIn" },
   ];
 
   return (
@@ -67,8 +67,8 @@ export function Footer(): React.ReactElement {
                 className="w-12 h-12 object-contain"
                 style={{ filter: "brightness(0) invert(1)" }}
               />
-              <span className="font-display font-bold text-lg text-background leading-tight max-w-[200px]">
-                {t("common:foundation.nameShort")}
+              <span className="font-display font-bold text-lg text-background leading-tight max-w-[230px]">
+                {t("common:foundation.name")}
               </span>
             </div>
             <p className="text-background/70 text-sm leading-relaxed mb-6 max-w-xs">
@@ -118,15 +118,15 @@ export function Footer(): React.ReactElement {
             <ul className="space-y-3 text-sm text-background/70" style={{ listStyle: "none", padding: 0, margin: 0 }}>
               <li className="flex items-start gap-2">
                 <MapPin size={14} className="text-primary mt-0.5 shrink-0" />
-                <span>بغداد، جمهورية العراق</span>
+                <span>ديالى، جمهورية العراق</span>
               </li>
               <li className="flex items-start gap-2">
                 <Mail size={14} className="text-primary mt-0.5 shrink-0" />
                 <a
-                  href="mailto:info@diyalafoundation.org"
+                  href="mailto:info@diyalariver.org"
                   className="hover:text-primary transition-colors"
                 >
-                  info@diyalafoundation.org
+                  info@diyalariver.org
                 </a>
               </li>
               <li className="flex items-start gap-2">

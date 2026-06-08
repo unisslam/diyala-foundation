@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Link, NavLink }  from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Globe } from "lucide-react";
@@ -31,7 +31,7 @@ function DiyalaLogo({ className = "" }: { className?: string }): React.ReactElem
 
 export function Navbar(): React.ReactElement {
   const { t, i18n } = useTranslation(["nav", "common"]);
-  const [isOpen,     setIsOpen]     = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const currentLang = i18n.language as SupportedLanguage;
@@ -56,10 +56,10 @@ export function Navbar(): React.ReactElement {
   }
 
   const navLinks = [
-    { to: "/",        label: t("nav:home") },
-    { to: "/about",   label: t("nav:about") },
-    { to: "/projects",label: t("nav:projects") },
-    { to: "/news",    label: t("nav:news") },
+    { to: "/", label: t("nav:home") },
+    { to: "/about", label: t("nav:about") },
+    { to: "/projects", label: t("nav:projects") },
+    { to: "/news", label: t("nav:news") },
     { to: "/contact", label: t("nav:contact") },
   ] as const;
 
@@ -72,11 +72,10 @@ export function Navbar(): React.ReactElement {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled
-          ? "glass-card shadow-glass border-b border-border/50"
-          : "bg-transparent"
-      }`}
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled
+        ? "glass-card shadow-glass border-b border-border/50"
+        : "bg-transparent"
+        }`}
     >
       <nav
         className="container mx-auto flex items-center justify-between px-4 py-3 md:px-8"
@@ -87,8 +86,8 @@ export function Navbar(): React.ReactElement {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 shrink-0" aria-label={t("common:foundation.nameShort")}>
           <DiyalaLogo className="w-12 h-12 object-contain" />
-          <span className="hidden sm:block font-display font-bold text-primary leading-tight max-w-[180px] text-sm">
-            {t("common:foundation.nameShort")}
+          <span className="hidden sm:block font-hero font-medium text-black leading-tight max-w-[230px] text-sm">
+            {t("common:foundation.name")}
           </span>
         </Link>
 
@@ -152,10 +151,9 @@ export function Navbar(): React.ReactElement {
                     to={link.to}
                     end={link.to === "/"}
                     className={({ isActive }) =>
-                      `block py-3 px-4 rounded-xl text-sm font-medium transition-colors ${
-                        isActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                      `block py-3 px-4 rounded-xl text-sm font-medium transition-colors ${isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-foreground/70 hover:bg-muted hover:text-foreground"
                       }`
                     }
                     onClick={() => setIsOpen(false)}

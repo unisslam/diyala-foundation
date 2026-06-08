@@ -19,10 +19,10 @@ export default function ContactPage(): React.ReactElement {
   }
 
   const contactInfo = [
-    { Icon: MapPin, label: t("contact:info.address"),      value: t("contact:info.addressValue") },
-    { Icon: Mail,   label: t("contact:info.email"),        value: "info@diyalafoundation.org"     },
-    { Icon: Phone,  label: t("contact:info.phone"),        value: "+964 770 000 0000"              },
-    { Icon: Clock,  label: t("contact:info.workingHours"), value: t("contact:info.workingHoursValue") },
+    { Icon: MapPin, label: t("contact:info.address"), value: t("contact:info.addressValue") },
+    { Icon: Mail, label: t("contact:info.email"), value: "help@diyalariver.org" },
+    { Icon: Phone, label: t("contact:info.phone"), value: "+964 770 000 0000" },
+    { Icon: Clock, label: t("contact:info.workingHours"), value: t("contact:info.workingHoursValue") },
   ];
 
   return (

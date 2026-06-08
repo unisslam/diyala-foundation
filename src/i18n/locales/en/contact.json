@@ -1,5 +1,8 @@
 {
-  "hero": { "title": "Contact Us", "subtitle": "We are here to answer your inquiries and suggestions" },
+  "hero": {
+    "title": "Contact Us",
+    "subtitle": "We are here to answer your inquiries and suggestions"
+  },
   "form": {
     "title": "Send Us a Message",
     "name": "Full Name",
@@ -34,7 +37,7 @@
   "info": {
     "title": "Contact Information",
     "address": "Address",
-    "addressValue": "Baghdad, Republic of Iraq",
+    "addressValue": "diyala, Republic of Iraq",
     "email": "Email",
     "phone": "Phone",
     "workingHours": "Working Hours",

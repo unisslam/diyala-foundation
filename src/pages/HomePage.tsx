@@ -28,6 +28,17 @@ import {
 import { FOUNDATION_SDGS } from "@/config/sdgsData";
 import type { SDGItem } from "@/types/sdg";
 
+const FLOATING_BUBBLES = [
+  { key: "education", color: "#C5192D", pos: "top-[15%] start-[10%]", delay: 0 },
+  { key: "work", color: "#A21942", pos: "top-[25%] end-[8%]", delay: 1.2 },
+  { key: "energy", color: "#FCC30B", pos: "top-[50%] start-[6%]", delay: 0.5 },
+  { key: "economy", color: "#A21942", pos: "bottom-[25%] end-[10%]", delay: 2.1 },
+  { key: "partnerships", color: "#19486A", pos: "bottom-[20%] start-[15%]", delay: 0.8 },
+  { key: "climate", color: "#3F7E44", pos: "top-[60%] end-[6%]", delay: 2.5 },
+  { key: "sustainability", color: "#FD9D24", pos: "top-[10%] start-[55%]", delay: 1.5 },
+  { key: "community", color: "#26BDE2", pos: "bottom-[12%] end-[40%]", delay: 1.8 },
+];
+
 /* ── Animation variants ─────────────────────────────────────────────── */
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -157,11 +168,32 @@ export default function HomePage(): React.ReactElement {
               backgroundSize: "48px 48px",
             }}
           />
-          {/* SDG color dots — decorative */}
-          <div className="absolute top-1/4 end-1/4 w-3 h-3 rounded-full opacity-60" style={{ backgroundColor: "#C5192D" }} />
-          <div className="absolute top-1/3 end-1/3 w-2 h-2 rounded-full opacity-50" style={{ backgroundColor: "#FCC30B" }} />
-          <div className="absolute bottom-1/3 start-1/4 w-3 h-3 rounded-full opacity-60" style={{ backgroundColor: "#3F7E44" }} />
-          <div className="absolute bottom-1/4 start-1/3 w-2 h-2 rounded-full opacity-50" style={{ backgroundColor: "#19486A" }} />
+          {/* SDG floating bubbles — decorative */}
+          {FLOATING_BUBBLES.map((bubble) => (
+            <motion.div
+              key={bubble.key}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: [0, -12, 0] }}
+              transition={{
+                opacity: { duration: 1, delay: bubble.delay },
+                y: {
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: bubble.delay,
+                },
+              }}
+              className={`absolute ${bubble.pos} hidden md:flex items-center gap-2 px-3.5 py-2 rounded-full bg-background/80 backdrop-blur-md border border-border shadow-sm z-0 pointer-events-none select-none`}
+            >
+              <div
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: bubble.color }}
+              />
+              <span className="text-xs font-semibold text-foreground/80">
+                {t(`home:hero.bubbles.${bubble.key}`)}
+              </span>
+            </motion.div>
+          ))}
         </div>
 
         <div className="relative z-10 container mx-auto px-4 md:px-8 text-center">
@@ -171,14 +203,7 @@ export default function HomePage(): React.ReactElement {
             animate="show"
             className="max-w-4xl mx-auto"
           >
-            {/* Badge */}
-            <motion.div
-              variants={fadeUp}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8"
-            >
-              <Target size={14} aria-hidden="true" />
-              {t("home:hero.badge")}
-            </motion.div>
+
 
             {/* H1 Headline */}
             <motion.h1
@@ -191,13 +216,7 @@ export default function HomePage(): React.ReactElement {
               <span className="text-gradient-sdg">{t("home:hero.headlineAccent")}</span>
             </motion.h1>
 
-            {/* Organisation name */}
-            <motion.p
-              variants={fadeUp}
-              className="font-display text-base md:text-lg text-muted-foreground font-medium mb-4"
-            >
-              {t("common:foundation.name")}
-            </motion.p>
+
 
             {/* Subheadline */}
             <motion.p

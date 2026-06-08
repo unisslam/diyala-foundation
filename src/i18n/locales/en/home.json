@@ -6,7 +6,17 @@
     "subheadline": "Diyala River Foundation for Sustainable Development — an independent organization implementing the UN Sustainable Development Goals in Diyala Governorate, Iraq, through innovation, community empowerment, and strategic partnerships.",
     "ctaPrimary": "Explore Our Projects",
     "ctaSecondary": "About Us",
-    "scroll": "Scroll down"
+    "scroll": "Scroll down",
+    "bubbles": {
+      "education": "Education",
+      "work": "Decent Work",
+      "energy": "Clean Energy",
+      "economy": "Economic Growth",
+      "partnerships": "Partnerships",
+      "climate": "Climate",
+      "sustainability": "Sustainability",
+      "community": "Community Support"
+    }
   },
   "impact": {
     "title": "Our Impact in Numbers",
