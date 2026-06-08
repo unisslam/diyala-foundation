@@ -139,11 +139,10 @@ export default function HomePage(): React.ReactElement {
   const { t, i18n } = useTranslation(["home", "common"]);
   const isRtl = i18n.dir() === "rtl";
 
-  // Live impact stats from Supabase
-  const { data: statsData, loading: statsLoading } = useSupabaseQuery<ImpactStatRow>(
-    "impact_stats",
-    { order: { column: "display_order", ascending: true } }
-  );
+  const { data: statsData, loading: statsLoading } = useSupabaseQuery<ImpactStatRow>({
+    table: "impact_stats",
+    orderBy: { column: "display_order", ascending: true }
+  });
 
   return (
     <div dir={isRtl ? "rtl" : "ltr"}>

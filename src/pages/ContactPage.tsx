@@ -77,10 +77,10 @@ export default function ContactPage(): React.ReactElement {
     try {
       const { error } = await supabase.from("contact_messages").insert({
         full_name: String(data.get("full_name") ?? ""),
-        email:     String(data.get("email") ?? ""),
-        phone:     String(data.get("phone") ?? "") || null,
-        subject:   String(data.get("subject") ?? ""),
-        message:   String(data.get("message") ?? ""),
+        email: String(data.get("email") ?? ""),
+        phone: String(data.get("phone") ?? "") || null,
+        subject: String(data.get("subject") ?? ""),
+        message: String(data.get("message") ?? ""),
       });
       if (error) throw error;
       setContactStatus("success");
@@ -99,14 +99,14 @@ export default function ContactPage(): React.ReactElement {
 
     try {
       const { error } = await supabase.from("volunteer_applications").insert({
-        full_name:    String(data.get("full_name") ?? ""),
-        email:        String(data.get("email") ?? ""),
-        phone:        String(data.get("phone") ?? ""),
-        city:         String(data.get("city") ?? ""),
-        age:          Number(data.get("age")) || null,
-        skills:       String(data.get("skills") ?? "") || null,
+        full_name: String(data.get("full_name") ?? ""),
+        email: String(data.get("email") ?? ""),
+        phone: String(data.get("phone") ?? ""),
+        city: String(data.get("city") ?? ""),
+        age: Number(data.get("age")) || null,
+        skills: String(data.get("skills") ?? "") || null,
         availability: String(data.get("availability") ?? "") || null,
-        motivation:   String(data.get("motivation") ?? ""),
+        motivation: String(data.get("motivation") ?? ""),
       });
       if (error) throw error;
       setVolunteerStatus("success");
@@ -118,10 +118,10 @@ export default function ContactPage(): React.ReactElement {
 
   /* ── Contact info ─────────────────────────────────────────────────── */
   const contactInfo = [
-    { Icon: MapPin, label: t("contact:info.address"),      value: t("contact:info.addressValue") },
-    { Icon: Mail,   label: t("contact:info.email"),        value: "info@diyalariver.org" },
-    { Icon: Phone,  label: t("contact:info.phone"),        value: "+964 770 000 0000" },
-    { Icon: Clock,  label: t("contact:info.workingHours"), value: t("contact:info.workingHoursValue") },
+    { Icon: MapPin, label: t("contact:info.address"), value: t("contact:info.addressValue") },
+    { Icon: Mail, label: t("contact:info.email"), value: "info@diyalariver.org" },
+    { Icon: Phone, label: t("contact:info.phone"), value: "+964 770 000 0000" },
+    { Icon: Clock, label: t("contact:info.workingHours"), value: t("contact:info.workingHoursValue") },
   ];
 
   /* ── Success / Error banners ──────────────────────────────────────── */
@@ -182,11 +182,10 @@ export default function ContactPage(): React.ReactElement {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                        activeTab === tab
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${activeTab === tab
                           ? "bg-card shadow-sm text-foreground"
                           : "text-muted-foreground hover:text-foreground"
-                      }`}
+                        }`}
                     >
                       {tab === "contact" ? <Mail size={14} /> : <Heart size={14} />}
                       {tab === "contact"
@@ -359,7 +358,7 @@ export default function ContactPage(): React.ReactElement {
               <div className="rounded-2xl overflow-hidden border border-border shadow-sm">
                 <iframe
                   title={isRtl ? "موقع المؤسسة على الخريطة" : "Foundation location on map"}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d54834.14897065693!2d44.9832077!3d33.7482453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15598a7f8c741e33%3A0x55ce459c96c77f37!2sBaqubah%2C%20Diyala!5e0!3m2!1sar!2siq!4v1686000000000!5m2!1sar!2siq"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d348.67066405491465!2d44.59564263226249!3d33.757226894194154!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15564d4ad6cfb4d9%3A0x6c815af6ab8b7e0a!2z2YPZiNmB2Yog2YjZgtin2LnYqSDYp9mE2KTZhNik2Kk!5e0!3m2!1sen!2siq!4v1780935496845!5m2!1sen!2siq" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                   width="100%"
                   height="220"
                   style={{ border: 0 }}
