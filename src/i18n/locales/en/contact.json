@@ -1,0 +1,43 @@
+{
+  "hero": { "title": "Contact Us", "subtitle": "We are here to answer your inquiries and suggestions" },
+  "form": {
+    "title": "Send Us a Message",
+    "name": "Full Name",
+    "namePlaceholder": "Enter your full name",
+    "email": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "phone": "Phone Number (optional)",
+    "phonePlaceholder": "+964 ...",
+    "subject": "Subject",
+    "subjectPlaceholder": "Message subject",
+    "message": "Message",
+    "messagePlaceholder": "Write your message here...",
+    "submit": "Send Message",
+    "sending": "Sending...",
+    "successTitle": "Message Sent Successfully!",
+    "successBody": "Thank you for reaching out. We will reply as soon as possible.",
+    "errorTitle": "An Error Occurred",
+    "errorBody": "We couldn't send your message. Please try again."
+  },
+  "volunteer": {
+    "title": "Join as a Volunteer",
+    "subtitle": "Contribute your time and skills to protecting the Diyala River",
+    "city": "City",
+    "age": "Age",
+    "skills": "Skills & Experience",
+    "skillsPlaceholder": "Describe your relevant skills...",
+    "availability": "Availability",
+    "motivation": "Why do you want to volunteer?",
+    "motivationPlaceholder": "Tell us about your motivations...",
+    "submit": "Submit Application"
+  },
+  "info": {
+    "title": "Contact Information",
+    "address": "Address",
+    "addressValue": "Baghdad, Republic of Iraq",
+    "email": "Email",
+    "phone": "Phone",
+    "workingHours": "Working Hours",
+    "workingHoursValue": "Sunday – Thursday, 9 AM – 4 PM"
+  }
+}

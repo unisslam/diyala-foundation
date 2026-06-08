@@ -1,0 +1,74 @@
+{
+  "foundation": {
+    "name": "Diyala River Foundation for Sustainable Development",
+    "nameShort": "Diyala Foundation",
+    "tagline": "Global Goals, Local Impact"
+  },
+  "actions": {
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "readMore": "Read More",
+    "getInvolved": "Get Involved",
+    "donate": "Donate",
+    "volunteer": "Volunteer",
+    "contact": "Contact Us",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "search": "Search",
+    "filter": "Filter",
+    "clearFilters": "Clear Filters",
+    "backToTop": "Back to Top",
+    "share": "Share",
+    "download": "Download"
+  },
+  "status": {
+    "planned": "Planned",
+    "active": "Active",
+    "completed": "Completed",
+    "on_hold": "On Hold"
+  },
+  "categories": {
+    "water_management": "Resource Management",
+    "environmental": "Climate & Environment",
+    "community": "Community Empowerment",
+    "research": "Research & Studies",
+    "education": "Education & Training",
+    "health": "Health & Well-being"
+  },
+  "newsCategories": {
+    "news": "News",
+    "announcement": "Announcement",
+    "report": "Report",
+    "event": "Event",
+    "press_release": "Press Release"
+  },
+  "footer": {
+    "rights": "© 2025 Diyala River Foundation for Sustainable Development. All rights reserved.",
+    "madeWith": "Made with",
+    "forIraq": "for Iraq",
+    "quickLinks": "Quick Links",
+    "followUs": "Connect with Us",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Your email address",
+    "newsletterBtn": "Subscribe",
+    "sdgPartner": "A Local Partner for the UN Sustainable Development Goals"
+  },
+  "errors": {
+    "notFound": "Page Not Found",
+    "notFoundDesc": "Sorry, the page you are looking for does not exist.",
+    "serverError": "Server Error",
+    "tryAgain": "Try Again",
+    "networkError": "Network error. Please check your internet connection."
+  },
+  "accessibility": {
+    "skipToMain": "Skip to main content",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "language": "Language",
+    "switchLanguage": "Switch language"
+  }
+}

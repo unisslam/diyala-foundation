@@ -1,0 +1,74 @@
+{
+  "foundation": {
+    "name": "مؤسسة نهر ديالى للتنمية المستدامة",
+    "nameShort": "مؤسسة نهر ديالى",
+    "tagline": "أهداف عالمية بأيدي محلية"
+  },
+  "actions": {
+    "learnMore": "اعرف المزيد",
+    "viewAll": "عرض الكل",
+    "readMore": "اقرأ المزيد",
+    "getInvolved": "شارك معنا",
+    "donate": "تبرع",
+    "volunteer": "تطوع",
+    "contact": "تواصل معنا",
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "loading": "جاري التحميل...",
+    "search": "بحث",
+    "filter": "تصفية",
+    "clearFilters": "مسح الفلاتر",
+    "backToTop": "العودة للأعلى",
+    "share": "مشاركة",
+    "download": "تنزيل"
+  },
+  "status": {
+    "planned": "مخطط",
+    "active": "قيد التنفيذ",
+    "completed": "منجز",
+    "on_hold": "معلق"
+  },
+  "categories": {
+    "water_management": "إدارة الموارد",
+    "environmental": "المناخ والبيئة",
+    "community": "المجتمع والتمكين",
+    "research": "البحث والدراسات",
+    "education": "التعليم والتدريب",
+    "health": "الصحة والرفاه"
+  },
+  "newsCategories": {
+    "news": "أخبار",
+    "announcement": "إعلانات",
+    "report": "تقارير",
+    "event": "فعاليات",
+    "press_release": "بيان صحفي"
+  },
+  "footer": {
+    "rights": "© 2025 مؤسسة نهر ديالى للتنمية المستدامة. جميع الحقوق محفوظة.",
+    "madeWith": "صُنع بـ",
+    "forIraq": "من أجل العراق",
+    "quickLinks": "روابط سريعة",
+    "followUs": "تواصل معنا",
+    "newsletter": "النشرة البريدية",
+    "newsletterPlaceholder": "بريدك الإلكتروني",
+    "newsletterBtn": "اشترك",
+    "sdgPartner": "شريك محلي لأهداف الأمم المتحدة للتنمية المستدامة"
+  },
+  "errors": {
+    "notFound": "الصفحة غير موجودة",
+    "notFoundDesc": "عذراً، الصفحة التي تبحث عنها غير موجودة.",
+    "serverError": "خطأ في الخادم",
+    "tryAgain": "حاول مجدداً",
+    "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك بالإنترنت."
+  },
+  "accessibility": {
+    "skipToMain": "الانتقال للمحتوى الرئيسي",
+    "menu": "القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "openMenu": "فتح القائمة",
+    "darkMode": "الوضع الداكن",
+    "lightMode": "الوضع المضيء",
+    "language": "اللغة",
+    "switchLanguage": "تغيير اللغة"
+  }
+}

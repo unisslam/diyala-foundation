@@ -1,0 +1,516 @@
+/* =========================================================
+   index.css – Diyala Foundation for Sustainable Development
+   ---------------------------------------------------------
+   Design System aligned with UN SDG visual identity.
+   Tailwind CSS v4 — CSS-first configuration.
+   All design tokens live in @theme {} so Tailwind can
+   auto-generate utility classes (bg-primary, border-border,
+   text-foreground, etc.) from them.
+
+   Dark-mode & RTL runtime values are in :root / .dark —
+   they override the @theme defaults via CSS cascade.
+   ========================================================= */
+
+/* ───────────────────────────────────────────────────────────
+   LOCAL FONT REGISTRY
+   Three-tier Arabic typography system:
+     1. Hero / Page titles   → ZAIN mob variable 600 (زين متحرك)
+     2. Section headings     → Zain PCV2 VF         (زين عناوين)
+     3. Body / articles      → IBM Plex Sans Arabic  (نصوص عادية)
+   All declarations MUST come before @import "tailwindcss"
+   so the faces are registered before Tailwind processes them.
+   ─────────────────────────────────────────────────────────── */
+
+/* ── 1. ZAIN mob variable 600 ─ Hero + main page title only ── */
+@font-face {
+  font-family: "ZainHero";
+  src: url("./assets/font/alfont_com_ArbFONTS-Lenos-ExtraBold-1.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── 2. Zain PCV2 VF ─ Section headings (h2, h3, cards …) ─── */
+@font-face {
+  font-family: "ZainDisplay";
+  src: url("./assets/font/alfont_com_ArbFONTS-Lenos-ExtraBold-1.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── 3. IBM Plex Sans Arabic Medium ─ Body / articles / UI ─── */
+@font-face {
+  font-family: "IBMPlexArabic";
+  src: url("./assets/font/alfont_com_IBMPlexSansArabic-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── AlShark Title ─ Legacy / fallback ──────────────────────── */
+@font-face {
+  font-family: "AlSharkTitle";
+  src: url("./assets/font/ArbFONTS-AlSharkTitle-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlSharkTitle";
+  src: url("./assets/font/ArbFONTS-AlSharkTitle-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlSharkTitle";
+  src: url("./assets/font/ArbFONTS-AlSharkTitle-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Web Fonts — Inter (LTR body) only; Outfit dropped ──────── */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════
+   @theme  —  Tailwind v4 design token registry
+   All tokens here become utility classes automatically.
+   Use hsl() wrappers; reference runtime vars for dark mode.
+   ══════════════════════════════════════════════════════════ */
+@theme {
+  /* ── Brand – Primary (UN indigo-blue, clean professional) ── */
+  --color-primary: hsl(222 72% 40%);
+  --color-primary-light: hsl(222 70% 58%);
+  --color-primary-dark: hsl(222 75% 28%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  /* ── Brand – Accent (SDG warm-amber for energy/action) ───── */
+  --color-accent: hsl(32 95% 54%);
+  --color-accent-light: hsl(32 98% 68%);
+  --color-accent-dark: hsl(32 90% 38%);
+  --color-accent-foreground: hsl(0 0% 100%);
+
+  /* ── Brand – Secondary (deep SDG navy) ──────────────────── */
+  --color-secondary: hsl(220 60% 18%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+
+  /* ── Semantic / Neutral ──────────────────────────────────── */
+  --color-background: hsl(210 20% 98%);
+  --color-foreground: hsl(220 30% 10%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(220 30% 10%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(220 30% 10%);
+  --color-muted: hsl(210 16% 93%);
+  --color-muted-foreground: hsl(215 14% 48%);
+  --color-border: hsl(210 16% 88%);
+  --color-input: hsl(210 16% 88%);
+  --color-ring: hsl(222 72% 40%);
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  /* ── Brand palette (neutral blues, no hydro-basin metaphor) */
+  --color-brand-50: hsl(220 100% 97%);
+  --color-brand-100: hsl(220 96% 92%);
+  --color-brand-200: hsl(221 90% 84%);
+  --color-brand-300: hsl(221 82% 72%);
+  --color-brand-400: hsl(222 72% 58%);
+  --color-brand-500: hsl(222 72% 40%);
+  /* = primary */
+  --color-brand-600: hsl(222 75% 32%);
+  --color-brand-700: hsl(222 78% 24%);
+  --color-brand-800: hsl(220 60% 18%);
+  --color-brand-900: hsl(220 55% 12%);
+
+  /* ── UN SDG Official Color Palette ──────────────────────── */
+  --color-sdg-4: #C5192D;
+  /* Quality Education            – red          */
+  --color-sdg-7: #FCC30B;
+  /* Affordable & Clean Energy    – yellow       */
+  --color-sdg-8: #A21942;
+  /* Decent Work & Economic Growth– dark magenta */
+  --color-sdg-11: #FD9D24;
+  /* Sustainable Cities           – orange       */
+  --color-sdg-13: #3F7E44;
+  /* Climate Action               – dark green   */
+  --color-sdg-17: #19486A;
+  /* Partnerships for the Goals   – dark navy    */
+
+  /* ── Border Radius ────────────────────────────────────── */
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-fluid: 9999px;
+  --border-radius-sm: 0.5rem;
+  --border-radius-md: 0.625rem;
+  --border-radius-lg: 0.75rem;
+  --border-radius-xl: 1rem;
+  --border-radius-2xl: 1.25rem;
+  --border-radius-3xl: 1.5rem;
+  --border-radius-fluid: 9999px;
+
+  /* ── Typography ─────────────────────────────────────────────────
+   *
+   *  FONT ROLE MAP:
+   *  ┌──────────────────────┬──────────────────┬──────────────────┐
+   *  │ Role                 │ Token            │ Face             │
+   *  ├──────────────────────┼──────────────────┼──────────────────┤
+   *  │ Hero h1 / page title │ --font-family-hero    │ ZainHero         │
+   *  │ Section headings     │ --font-family-display │ ZainDisplay      │
+   *  │ Arabic body/articles │ --font-family-arabic  │ IBMPlexArabic    │
+   *  │ Latin body           │ --font-family-sans    │ Inter            │
+   *  └──────────────────────┴──────────────────┴──────────────────┘
+   * ──────────────────────────────────────────────────────────── */
+
+  /* Hero & main page titles (هيرو وعناوين الصفحات الرئيسية) */
+  --font-family-hero: "ZainHero", "AlSharkTitle", system-ui, sans-serif;
+  /* Section & component headings (العناوين الرئيسية) */
+  --font-family-display: "ZainDisplay", "AlSharkTitle", system-ui, sans-serif;
+  /* Arabic body / articles / UI labels (النصوص الاعتيادية) */
+  --font-family-arabic: "IBMPlexArabic", "Noto Sans Arabic", system-ui, sans-serif;
+  /* Latin / LTR body text */
+  --font-family-sans: "IBMPlexArabic", "Inter", system-ui, sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* ── Spacing extras ───────────────────────────────────── */
+  --spacing-18: 4.5rem;
+  --spacing-88: 22rem;
+  --spacing-128: 32rem;
+
+  /* ── Box Shadows ─────────────────────────────────────── */
+  --shadow-glass: 0 8px 32px 0 rgba(34, 60, 120, 0.12);
+  --shadow-card-hover: 0 20px 60px -12px rgba(34, 60, 120, 0.20);
+  --shadow-accent-glow: 0 0 40px 0 rgba(230, 140, 30, 0.28);
+  --shadow-brand-drop: 0 4px 24px 0 rgba(34, 60, 120, 0.30);
+
+  /* ── Animations ──────────────────────────────────────── */
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-ripple: ripple 1s ease-out forwards;
+  --animate-fade-up: fade-up 0.6s ease-out forwards;
+
+  /* ── Keyframes ───────────────────────────────────────── */
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0% {
+      transform: scale(0.92);
+      opacity: 0;
+    }
+
+    60% {
+      transform: scale(1.04);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-up {
+    0% {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Runtime overrides – Dark Mode
+   Override @theme defaults via CSS custom properties.
+   ══════════════════════════════════════════════════════════ */
+.dark {
+  --color-primary: hsl(222 65% 58%);
+  --color-primary-light: hsl(222 65% 70%);
+  --color-primary-dark: hsl(222 68% 38%);
+  --color-primary-foreground: hsl(220 30% 8%);
+
+  --color-accent: hsl(32 90% 60%);
+  --color-accent-light: hsl(32 95% 72%);
+  --color-accent-dark: hsl(32 85% 42%);
+  --color-accent-foreground: hsl(220 30% 8%);
+
+  --color-secondary: hsl(220 50% 28%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+
+  --color-background: hsl(220 30% 7%);
+  --color-foreground: hsl(210 20% 96%);
+  --color-card: hsl(220 28% 11%);
+  --color-card-foreground: hsl(210 20% 96%);
+  --color-popover: hsl(220 28% 11%);
+  --color-popover-foreground: hsl(210 20% 96%);
+  --color-muted: hsl(220 22% 17%);
+  --color-muted-foreground: hsl(215 14% 58%);
+  --color-border: hsl(220 22% 19%);
+  --color-input: hsl(220 22% 19%);
+  --color-ring: hsl(222 65% 58%);
+  --color-destructive: hsl(0 65% 55%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Base Layer – global resets & typography
+   ══════════════════════════════════════════════════════════ */
+@layer base {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-family-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* RTL: switch to Arabic typeface */
+  [dir="rtl"] body,
+  [dir="rtl"] {
+    font-family: var(--font-family-arabic);
+  }
+
+  /* Display headings — all use ZainDisplay (section titles) */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    color: var(--color-foreground);
+  }
+
+  /* RTL headings — keep ZainDisplay; IBM Plex is body-only */
+  [dir="rtl"] h1,
+  [dir="rtl"] h2,
+  [dir="rtl"] h3,
+  [dir="rtl"] h4,
+  [dir="rtl"] h5,
+  [dir="rtl"] h6 {
+    font-family: var(--font-family-display);
+    letter-spacing: normal;
+  }
+
+  /* Focus rings */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-muted);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--color-primary) 40%, transparent);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklch, var(--color-primary) 60%, transparent);
+  }
+
+  /* Text selection */
+  ::selection {
+    background: color-mix(in oklch, var(--color-primary) 20%, transparent);
+    color: var(--color-primary-dark);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Utilities Layer – custom classes
+   ══════════════════════════════════════════════════════════ */
+@layer utilities {
+
+  /* ── Hero font — ZainHero (Hero h1 + page titles only) ──── */
+  /* Apply via class "font-hero" on hero h1 elements            */
+  .font-hero {
+    font-family: var(--font-family-hero);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── Glassmorphism ──────────────────────────────────────── */
+  .glass {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(34, 60, 120, 0.15);
+  }
+
+  .dark .glass-card {
+    background: rgba(10, 18, 35, 0.62);
+    border-color: rgba(34, 60, 120, 0.22);
+  }
+
+  /* ── Section accent overlay (geometric, no water metaphor) ─ */
+  .section-accent {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-accent::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%,
+        rgba(34, 60, 120, 0.08) 0%,
+        transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Keep water-ripple as alias for backward compat */
+  .water-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .water-ripple::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(34, 60, 120, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── Gradient text ──────────────────────────────────────── */
+  /* SDG gradient: UN blue → warm amber */
+  .text-gradient-sdg {
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Legacy alias kept for any existing usages */
+  .text-gradient-water {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-accent {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Section spacing ────────────────────────────────────── */
+  .section-padding {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  @media (min-width: 768px) {
+    .section-padding {
+      padding-top: 7rem;
+      padding-bottom: 7rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-padding {
+      padding-top: 9rem;
+      padding-bottom: 9rem;
+    }
+  }
+
+  /* ── RTL prose ──────────────────────────────────────────── */
+  .prose-rtl {
+    direction: rtl;
+    text-align: right;
+    line-height: 2;
+  }
+
+  /* ── Shimmer skeleton ───────────────────────────────────── */
+  .shimmer {
+    background: linear-gradient(90deg,
+        var(--color-muted) 0%,
+        color-mix(in oklch, var(--color-primary) 10%, var(--color-muted)) 50%,
+        var(--color-muted) 100%);
+    background-size: 200% 100%;
+    animation: shimmer-sweep 1.5s infinite;
+  }
+
+  @keyframes shimmer-sweep {
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* ── Asymmetric grid ────────────────────────────────────── */
+  .grid-asymm {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  }
+}

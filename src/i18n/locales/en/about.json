@@ -1,0 +1,15 @@
+{
+  "hero": { "title": "About Us", "subtitle": "A leading Iraqi organization working for environmental sustainability and community development" },
+  "vision": { "title": "Our Vision", "body": "An Iraq where the environment flourishes and sustainable development is achieved, where all citizens enjoy clean water, fresh air, and fertile land as an inherent right." },
+  "mission": { "title": "Our Mission", "body": "We are an Iraqi non-governmental civil society organization working to protect and rehabilitate the Diyala River and its watershed, empowering local communities through environmental awareness programs, natural resource management, and achieving the Sustainable Development Goals." },
+  "values": {
+    "title": "Our Values",
+    "integrity": { "title": "Integrity", "desc": "Transparency and accountability in all our work" },
+    "sustainability": { "title": "Sustainability", "desc": "Building lasting solutions for future generations" },
+    "community": { "title": "Community Partnership", "desc": "Working with communities, not just for them" },
+    "innovation": { "title": "Innovation", "desc": "Adopting the latest environmental practices" }
+  },
+  "team": { "title": "Our Leadership Team", "subtitle": "A group of experts and environmental sustainability enthusiasts" },
+  "history": { "title": "Our History", "subtitle": "A journey of work and dedication for the Diyala River" },
+  "sdgs": { "title": "Sustainable Development Goals", "subtitle": "We strive to achieve the UN Sustainable Development Goals" }
+}

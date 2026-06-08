@@ -1,0 +1,43 @@
+{
+  "hero": { "title": "تواصل معنا", "subtitle": "نحن هنا للإجابة على استفساراتك ومقترحاتك" },
+  "form": {
+    "title": "أرسل لنا رسالة",
+    "name": "الاسم الكامل",
+    "namePlaceholder": "اكتب اسمك الكامل",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "بريدك@example.com",
+    "phone": "رقم الهاتف (اختياري)",
+    "phonePlaceholder": "+964 ...",
+    "subject": "الموضوع",
+    "subjectPlaceholder": "موضوع رسالتك",
+    "message": "الرسالة",
+    "messagePlaceholder": "اكتب رسالتك هنا...",
+    "submit": "إرسال الرسالة",
+    "sending": "جاري الإرسال...",
+    "successTitle": "تم الإرسال بنجاح!",
+    "successBody": "شكراً لتواصلك معنا. سنرد عليك في أقرب وقت ممكن.",
+    "errorTitle": "حدث خطأ",
+    "errorBody": "لم نتمكن من إرسال رسالتك. يرجى المحاولة مجدداً."
+  },
+  "volunteer": {
+    "title": "انضم كمتطوع",
+    "subtitle": "ساهم بوقتك ومهاراتك في حماية نهر ديالى",
+    "city": "المدينة",
+    "age": "العمر",
+    "skills": "المهارات والخبرات",
+    "skillsPlaceholder": "صف مهاراتك ذات الصلة...",
+    "availability": "التفرغ المتاح",
+    "motivation": "لماذا تريد التطوع؟",
+    "motivationPlaceholder": "أخبرنا عن دوافعك...",
+    "submit": "تقديم الطلب"
+  },
+  "info": {
+    "title": "معلومات التواصل",
+    "address": "العنوان",
+    "addressValue": "بغداد، جمهورية العراق",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "workingHours": "ساعات العمل",
+    "workingHoursValue": "الأحد – الخميس، 9 صباحاً – 4 مساءً"
+  }
+}

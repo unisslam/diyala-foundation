@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "badge": "Local Partner for UN Sustainable Development Goals",
+    "headline": "Global Goals,",
+    "headlineAccent": "Local Impact.",
+    "subheadline": "Diyala River Foundation for Sustainable Development — an independent organization implementing the UN Sustainable Development Goals in Diyala Governorate, Iraq, through innovation, community empowerment, and strategic partnerships.",
+    "ctaPrimary": "Explore Our Projects",
+    "ctaSecondary": "About Us",
+    "scroll": "Scroll down"
+  },
+  "impact": {
+    "title": "Our Impact in Numbers",
+    "subtitle": "Real achievements on the ground across Diyala Governorate"
+  },
+  "sdgsGrid": {
+    "sectionTitle": "Our Development Goals",
+    "sectionSubtitle": "We operate within the UN SDG framework to drive systemic, measurable, and lasting change",
+    "sdg4": {
+      "title": "Quality Education",
+      "description": "Digital literacy programs, vocational training, and expanding learning opportunities for all demographics"
+    },
+    "sdg7": {
+      "title": "Affordable & Clean Energy",
+      "description": "Expanding access to renewable energy sources in underserved and rural communities"
+    },
+    "sdg8": {
+      "title": "Decent Work & Economic Growth",
+      "description": "Youth employment support, micro-enterprise development, and women's economic empowerment"
+    },
+    "sdg11": {
+      "title": "Sustainable Cities & Communities",
+      "description": "Building local governance capacity and enhancing resilience of urban and rural communities"
+    },
+    "sdg13": {
+      "title": "Climate Action",
+      "description": "Advocacy for climate adaptation and implementation of environmental sustainability initiatives"
+    },
+    "sdg17": {
+      "title": "Partnerships for the Goals",
+      "description": "Building strategic alliances with international organizations, civil society, and private sector"
+    }
+  },
+  "latestProjects": {
+    "title": "Latest Projects & Initiatives",
+    "subtitle": "Integrated programs delivering measurable progress on the UN SDGs",
+    "viewAll": "View All Projects"
+  },
+  "latestNews": {
+    "title": "Latest News",
+    "subtitle": "Stay updated with the Foundation's latest news and events",
+    "viewAll": "Media Center"
+  },
+  "mission": {
+    "title": "Our Mission",
+    "body": "We translate the United Nations Sustainable Development Goals from global concepts into tangible local programs across Diyala Governorate. Operating across education, energy, employment, and climate action sectors, we build communities capable of lasting resilience and prosperity."
+  },
+  "vision": {
+    "title": "Our Vision",
+    "body": "A Diyala Governorate that stands as a model for locally-driven sustainable development — where international standards are implemented by local hands."
+  },
+  "cta": {
+    "title": "Be a Partner in Change",
+    "subtitle": "Join us in building a sustainable Diyala and achieving all 17 UN Goals on the ground.",
+    "volunteer": "Volunteer with Us",
+    "donate": "Support Our Projects",
+    "partner": "Partner with Us"
+  }
+}
