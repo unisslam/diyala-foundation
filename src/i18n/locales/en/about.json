@@ -1,15 +1,131 @@
 {
-  "hero": { "title": "About Us", "subtitle": "A leading Iraqi organization working for environmental sustainability and community development" },
-  "vision": { "title": "Our Vision", "body": "An Iraq where the environment flourishes and sustainable development is achieved, where all citizens enjoy clean water, fresh air, and fertile land as an inherent right." },
-  "mission": { "title": "Our Mission", "body": "We are an Iraqi non-governmental civil society organization working to protect and rehabilitate the Diyala River and its watershed, empowering local communities through environmental awareness programs, natural resource management, and achieving the Sustainable Development Goals." },
-  "values": {
-    "title": "Our Values",
-    "integrity": { "title": "Integrity", "desc": "Transparency and accountability in all our work" },
-    "sustainability": { "title": "Sustainability", "desc": "Building lasting solutions for future generations" },
-    "community": { "title": "Community Partnership", "desc": "Working with communities, not just for them" },
-    "innovation": { "title": "Innovation", "desc": "Adopting the latest environmental practices" }
+  "hero": {
+    "title": "About Us",
+    "subtitle": "Discover our journey toward achieving sustainable development"
   },
-  "team": { "title": "Our Leadership Team", "subtitle": "A group of experts and environmental sustainability enthusiasts" },
-  "history": { "title": "Our History", "subtitle": "A journey of work and dedication for the Diyala River" },
-  "sdgs": { "title": "Sustainable Development Goals", "subtitle": "We strive to achieve the UN Sustainable Development Goals" }
+  "intro": {
+    "title": "About the Foundation",
+    "description": "The Diyala River Foundation for Sustainable Development is a non-governmental organization dedicated to achieving the UN Sustainable Development Goals (SDGs) in Iraq through comprehensive development initiatives. We believe that global change starts with local steps — that's why we work side-by-side with local communities to empower youth and women, promote peace, and protect the environment.",
+    "vision": "Our Vision",
+    "visionText": "A sustainable society with equal opportunities and a clean environment, governed by peace and cooperation.",
+    "mission": "Our Mission",
+    "missionText": "Empowering local communities through development initiatives focused on youth, women, and the environment, in order to create lasting positive impact in accordance with the United Nations' goals."
+  },
+  "sdgFocus": {
+    "title": "Our Commitment to the SDGs",
+    "description": "We localize global goals and implement them with local hands, focusing on the following goals:",
+    "goals": {
+      "4": { "title": "Quality Education", "description": "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all." },
+      "5": { "title": "Gender Equality", "description": "Achieve gender equality and empower all women and girls." },
+      "8": { "title": "Decent Work & Economic Growth", "description": "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all." },
+      "13": { "title": "Climate Action", "description": "Take urgent action to combat climate change and its impacts." },
+      "16": { "title": "Peace, Justice & Strong Institutions", "description": "Promote peaceful and inclusive societies for sustainable development." },
+      "17": { "title": "Partnerships for the Goals", "description": "Strengthen the means of implementation and revitalize the global partnership for sustainable development." }
+    }
+  },
+  "impact": {
+    "title": "Our Impact in Numbers",
+    "description": "We believe real impact is measured by tangible results on the ground."
+  },
+  "team": {
+    "title": "Leadership Team",
+    "description": "A group of local experts leading the journey of development and change."
+  },
+  "history": {
+    "title": "Milestones",
+    "description": "Key achievements of our affiliated teams (Diyala Women & Youth for Peace and Women Are Dreaming) and their community initiatives.",
+    "timeline": [
+      {
+        "year": "2024",
+        "title": "Peace Streets Initiative",
+        "description": "Cleaning, painting, and planting 5 streets in Baquba city and naming them after 5 Iraqi governorates to promote national unity — carried out by the Diyala Youth for Peace team, supported by UNDP and Hawa' Organization, in collaboration with security forces and civil defense."
+      },
+      {
+        "year": "2024",
+        "title": "Peace Halls Initiative",
+        "description": "Rehabilitating three sports halls in Diyala Governorate — including one used by champions with disabilities — by the Diyala Youth for Peace team, supported by UNDP and Hawa' Organization."
+      },
+      {
+        "year": "2024",
+        "title": "Peace Workshop",
+        "description": "Training 25 women (widows, divorcees, and wives of prisoners) in pattern-making and fashion design over 6 days by the Diyala Women for Peace team, with 10 selected for permanent work in a workshop affiliated with the Rahma Youth Forum."
+      },
+      {
+        "year": "2024",
+        "title": "Peace Podcast",
+        "description": "Launching podcast episodes focused on peacebuilding and social cohesion, initiated by the Diyala Women for Peace team to raise awareness and share positive stories."
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "Partners in Success",
+    "description": "What our partners and beneficiaries say about our initiatives.",
+    "submitBtn": "Share Your Feedback",
+    "modalTitle": "Submit a Testimonial",
+    "form": {
+      "name": "Full Name",
+      "role": "Role or Job Title",
+      "message": "Your Message",
+      "rating": "Rating",
+      "submit": "Submit Testimonial",
+      "successMessage": "Your testimonial has been submitted successfully. It will be reviewed by our team shortly."
+    }
+  },
+  "teams": {
+    "eyebrow": "Affiliated Field Teams",
+    "title": "Teams' Field Activities",
+    "description": "Tangible results achieved by the Diyala Women & Youth for Peace team and Women Are Dreaming team in 2024, supported by UNDP.",
+    "viewOnFacebook": "View on Facebook",
+    "youth": {
+      "name": "Diyala Youth for Peace",
+      "tagline": "Youth initiatives serving the community",
+      "badge": "Diyala Youth"
+    },
+    "women": {
+      "name": "Diyala Women for Peace",
+      "tagline": "Women's empowerment and peacebuilding",
+      "badge": "Diyala Women"
+    },
+    "filter": {
+      "all": "All Initiatives",
+      "youth": "Youth Team",
+      "women": "Women's Team"
+    },
+    "initiatives": {
+      "peaceStreets": {
+        "title": "Peace Streets",
+        "description": "Cleaning, painting, and planting 5 streets in Baquba and naming them after 5 Iraqi governorates to promote unity — in partnership with security forces, civil defense, and municipality.",
+        "stats": "🛣️ 5 Streets — Baquba"
+      },
+      "peaceHalls": {
+        "title": "Peace Halls",
+        "description": "Rehabilitating 3 sports halls in Diyala — including one used by champions with disabilities. Members from the Anbar Youth for Peace team also participated.",
+        "stats": "🏋️ 3 Halls — For Champions"
+      },
+      "peaceWorkshop": {
+        "title": "Peace Workshop",
+        "description": "Training 25 women (widows, divorcees, wives of prisoners) in pattern-making and design for 6 days. 10 selected for permanent work in the Rahma Youth Forum workshop.",
+        "stats": "👩‍🎨 25 Women — 6 Days"
+      },
+      "peacePodcast": {
+        "title": "Peace Podcast",
+        "description": "Podcast episodes focused on peacebuilding, social cohesion, and community integration through empowerment and self-development.",
+        "stats": "🎙️ Podcast — Community Awareness"
+      }
+    },
+    "partners": {
+      "label": "Supported by",
+      "hawa": "Hawa' Organization for Relief & Development",
+      "rahma": "Rahma Youth Forum"
+    }
+  },
+  "values": {
+    "title": "Our Core Values",
+    "items": {
+      "transparency": { "title": "Transparency", "description": "Clarity and honesty in all our work and projects." },
+      "empowerment": { "title": "Empowerment", "description": "Empowering individuals and communities to reach their full potential." },
+      "sustainability": { "title": "Sustainability", "description": "Ensuring our solutions are long-term and environmentally friendly." },
+      "collaboration": { "title": "Collaboration", "description": "Working with partners and the local community to achieve our shared goals." }
+    }
+  }
 }

@@ -43,6 +43,10 @@ do $$ begin
   create type team_role        as enum ('board','management','advisor','staff');
 exception when duplicate_object then null; end $$;
 
+do $$ begin
+  create type testimonial_status as enum ('pending','approved','rejected');
+exception when duplicate_object then null; end $$;
+
 
 -- ─── 2. Helper function – updated_at trigger ──────────────────────
 
@@ -210,7 +214,58 @@ comment on table public.volunteer_applications is
   'Volunteer sign-up forms. Restricted to admins.';
 
 
--- ─── 8. Table: impact_stats ───────────────────────────────────────
+-- ─── 8. Table: testimonials ───────────────────────────────────────
+
+create table if not exists public.testimonials (
+  id            uuid               primary key default uuid_generate_v4(),
+  created_at    timestamptz        not null default now(),
+  updated_at    timestamptz        not null default now(),
+  author_name_ar text              not null,
+  author_name_en text              not null,
+  role_ar       text               not null,
+  role_en       text               not null,
+  body_ar       text               not null,
+  body_en       text               not null,
+  rating        integer            not null check (rating between 1 and 5),
+  status        testimonial_status not null default 'pending',
+  source        text,
+  avatar_path   text
+);
+
+drop trigger if exists testimonials_updated_at on public.testimonials;
+create trigger testimonials_updated_at
+  before update on public.testimonials
+  for each row execute function public.set_updated_at();
+
+create index if not exists idx_testimonials_status on public.testimonials (status);
+
+comment on table public.testimonials is
+  'Testimonials from partners, beneficiaries, and stakeholders.';
+
+
+-- ─── 9. Table: gallery_items ──────────────────────────────────────
+
+create table if not exists public.gallery_items (
+  id            uuid        primary key default uuid_generate_v4(),
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now(),
+  title_ar      text,
+  title_en      text,
+  image_path    text        not null,
+  display_order int         not null default 0,
+  is_active     boolean     not null default true
+);
+
+drop trigger if exists gallery_items_updated_at on public.gallery_items;
+create trigger gallery_items_updated_at
+  before update on public.gallery_items
+  for each row execute function public.set_updated_at();
+
+comment on table public.gallery_items is
+  'Images for the main media gallery.';
+
+
+-- ─── 10. Table: impact_stats ──────────────────────────────────────
 
 create table if not exists public.impact_stats (
   id             uuid        primary key default uuid_generate_v4(),
@@ -229,7 +284,7 @@ values
   ('beneficiaries_total', 25000, 'إجمالي المستفيدين',     'Total Beneficiaries',    'Users',        1),
   ('projects_completed',  47,    'مشاريع منجزة',           'Completed Projects',     'CheckCircle',  2),
   ('years_active',        8,     'سنوات من العمل',          'Years of Impact',        'Calendar',     3),
-  ('river_km_restored',   120,   'كم من نهر ديالى',        'Km of Diyala River',     'Waves',        4)
+  ('partnerships',        15,    'شراكات استراتيجية',       'Strategic Partnerships', 'Globe2',       4)
 on conflict (stat_key) do nothing;
 
 
@@ -248,6 +303,8 @@ alter table public.projects               enable row level security;
 alter table public.news                   enable row level security;
 alter table public.contact_messages       enable row level security;
 alter table public.volunteer_applications enable row level security;
+alter table public.testimonials           enable row level security;
+alter table public.gallery_items          enable row level security;
 alter table public.impact_stats           enable row level security;
 
 
@@ -314,6 +371,38 @@ create policy "volunteer_applications: public insert"
 drop policy if exists "volunteer_applications: admin full access" on public.volunteer_applications;
 create policy "volunteer_applications: admin full access"
   on public.volunteer_applications for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
+
+
+-- ── testimonials ──────────────────────────────────────────────────
+-- Public: read approved, insert pending
+drop policy if exists "testimonials: public read approved" on public.testimonials;
+create policy "testimonials: public read approved"
+  on public.testimonials for select
+  using (status = 'approved');
+
+drop policy if exists "testimonials: public insert" on public.testimonials;
+create policy "testimonials: public insert"
+  on public.testimonials for insert
+  with check (true);
+
+drop policy if exists "testimonials: admin full access" on public.testimonials;
+create policy "testimonials: admin full access"
+  on public.testimonials for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
+
+
+-- ── gallery_items ─────────────────────────────────────────────────
+drop policy if exists "gallery_items: public read active" on public.gallery_items;
+create policy "gallery_items: public read active"
+  on public.gallery_items for select
+  using (is_active = true);
+
+drop policy if exists "gallery_items: admin full access" on public.gallery_items;
+create policy "gallery_items: admin full access"
+  on public.gallery_items for all
   using (auth.role() = 'service_role')
   with check (auth.role() = 'service_role');
 

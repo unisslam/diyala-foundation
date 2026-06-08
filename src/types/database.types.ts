@@ -30,6 +30,7 @@ export type NewsCategory =
 export type ContactStatus = "new" | "read" | "replied" | "archived";
 export type VolunteerStatus = "pending" | "approved" | "rejected";
 export type TeamRole = "board" | "management" | "advisor" | "staff";
+export type TestimonialStatus = "pending" | "approved" | "rejected";
 
 // ── Row types ───────────────────────────────────────────────────────
 
@@ -136,6 +137,33 @@ export interface ImpactStatRow {
   display_order: number;
 }
 
+export interface TestimonialRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  author_name_ar: string;
+  author_name_en: string;
+  role_ar: string;
+  role_en: string;
+  body_ar: string;
+  body_en: string;
+  rating: number;
+  status: TestimonialStatus;
+  source: string | null;
+  avatar_path: string | null;
+}
+
+export interface GalleryItemRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  title_ar: string | null;
+  title_en: string | null;
+  image_path: string;
+  display_order: number;
+  is_active: boolean;
+}
+
 // ── Database generic wrapper (matches Supabase gen types pattern) ───
 
 export interface Database {
@@ -171,6 +199,16 @@ export interface Database {
         Insert: Omit<ImpactStatRow, "id" | "updated_at"> & { id?: string };
         Update: Partial<ImpactStatRow>;
       };
+      testimonials: {
+        Row: TestimonialRow;
+        Insert: Omit<TestimonialRow, "id" | "created_at" | "updated_at"> & { id?: string };
+        Update: Partial<TestimonialRow>;
+      };
+      gallery_items: {
+        Row: GalleryItemRow;
+        Insert: Omit<GalleryItemRow, "id" | "created_at" | "updated_at"> & { id?: string };
+        Update: Partial<GalleryItemRow>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -181,6 +219,7 @@ export interface Database {
       contact_status:  ContactStatus;
       volunteer_status: VolunteerStatus;
       team_role:       TeamRole;
+      testimonial_status: TestimonialStatus;
     };
   };
 }
