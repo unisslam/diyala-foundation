@@ -57,9 +57,10 @@
   "errors": {
     "notFound": "Page Not Found",
     "notFoundDesc": "Sorry, the page you are looking for does not exist.",
-    "serverError": "Server Error",
+    "serverError": "An unexpected error occurred. Please try again.",
     "tryAgain": "Try Again",
-    "networkError": "Network error. Please check your internet connection."
+    "networkError": "Network error. Please check your internet connection.",
+    "rateLimited": "Sorry, you have submitted too many requests recently. Please try again in an hour."
   },
   "accessibility": {
     "skipToMain": "Skip to main content",

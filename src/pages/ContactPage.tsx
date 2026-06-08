@@ -15,7 +15,7 @@ import PageHero from "@/components/shared/PageHero";
 import { supabase } from "@/lib/supabaseClient";
 
 type TabKey = "contact" | "volunteer";
-type FormStatus = "idle" | "sending" | "success" | "error";
+type FormStatus = "idle" | "sending" | "success" | "error" | "rate_limited";
 
 const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 
@@ -74,6 +74,14 @@ export default function ContactPage(): React.ReactElement {
     const form = e.currentTarget;
     const data = new FormData(form);
 
+    // Honeypot check
+    if (data.get("bot_field")) {
+      // Silently accept without hitting DB
+      setContactStatus("success");
+      form.reset();
+      return;
+    }
+
     try {
       const { error } = await supabase.from("contact_messages").insert({
         full_name: String(data.get("full_name") ?? ""),
@@ -85,8 +93,12 @@ export default function ContactPage(): React.ReactElement {
       if (error) throw error;
       setContactStatus("success");
       form.reset();
-    } catch {
-      setContactStatus("error");
+    } catch (err: any) {
+      if (err?.message?.includes("RATE_LIMIT_EXCEEDED")) {
+        setContactStatus("rate_limited");
+      } else {
+        setContactStatus("error");
+      }
     }
   }
 
@@ -96,6 +108,13 @@ export default function ContactPage(): React.ReactElement {
     setVolunteerStatus("sending");
     const form = e.currentTarget;
     const data = new FormData(form);
+
+    // Honeypot check
+    if (data.get("bot_field")) {
+      setVolunteerStatus("success");
+      form.reset();
+      return;
+    }
 
     try {
       const { error } = await supabase.from("volunteer_applications").insert({
@@ -111,8 +130,12 @@ export default function ContactPage(): React.ReactElement {
       if (error) throw error;
       setVolunteerStatus("success");
       form.reset();
-    } catch {
-      setVolunteerStatus("error");
+    } catch (err: any) {
+      if (err?.message?.includes("RATE_LIMIT_EXCEEDED")) {
+        setVolunteerStatus("rate_limited");
+      } else {
+        setVolunteerStatus("error");
+      }
     }
   }
 
@@ -148,10 +171,41 @@ export default function ContactPage(): React.ReactElement {
 
   function ErrorBanner(): React.ReactElement {
     return (
-      <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 text-destructive text-sm mb-4">
-        <AlertCircle size={16} />
-        {isRtl ? "حدث خطأ، يرجى المحاولة مرة أخرى." : "An error occurred. Please try again."}
-      </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex flex-col items-center text-center py-14 gap-4"
+      >
+        <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+          <AlertCircle size={32} className="text-red-600 dark:text-red-400" />
+        </div>
+        <p className="text-foreground font-semibold">
+          {t("common:errors.serverError", { defaultValue: "حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى." })}
+        </p>
+        <button
+          onClick={() => { setContactStatus("idle"); setVolunteerStatus("idle"); }}
+          className="text-sm text-primary hover:underline"
+        >
+          {t("common:errors.tryAgain", { defaultValue: "المحاولة مجدداً" })}
+        </button>
+      </motion.div>
+    );
+  }
+
+  function RateLimitBanner(): React.ReactElement {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex flex-col items-center text-center py-14 gap-4"
+      >
+        <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+          <AlertCircle size={32} className="text-amber-600 dark:text-amber-400" />
+        </div>
+        <p className="text-foreground font-semibold">
+          {t("common:errors.rateLimited", { defaultValue: "عذراً، لقد قمت بإرسال عدة طلبات مؤخراً. يرجى المحاولة بعد ساعة." })}
+        </p>
+      </motion.div>
     );
   }
 
@@ -205,6 +259,9 @@ export default function ContactPage(): React.ReactElement {
                       ) : (
                         <form onSubmit={handleContactSubmit} className="space-y-4">
                           {contactStatus === "error" && <ErrorBanner />}
+                          {contactStatus === "rate_limited" && <RateLimitBanner />}
+                          {/* Honeypot field - hidden from users */}
+                          <input type="text" name="bot_field" style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
                           <div className="grid sm:grid-cols-2 gap-4">
                             <Field id="full_name" label={t("contact:form.name")} required>
                               <input id="full_name" name="full_name" type="text" required
@@ -261,6 +318,9 @@ export default function ContactPage(): React.ReactElement {
                       ) : (
                         <form onSubmit={handleVolunteerSubmit} className="space-y-4">
                           {volunteerStatus === "error" && <ErrorBanner />}
+                          {volunteerStatus === "rate_limited" && <RateLimitBanner />}
+                          {/* Honeypot field - hidden from users */}
+                          <input type="text" name="bot_field" style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
                           <p className="text-sm text-muted-foreground mb-2">
                             {isRtl
                               ? "انضم إلى فريق متطوعينا وكن جزءاً من التغيير الحقيقي في ديالى."

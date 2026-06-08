@@ -650,6 +650,16 @@ export default function JoinPage(): React.ReactElement {
     setSubmitting(true);
     setSubmitError(null);
 
+    // Honeypot check
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    if (formData.get("bot_field")) {
+      // Silently succeed
+      localStorage.removeItem(STORAGE_KEY);
+      setAppNumber("DRF-" + Math.floor(Math.random() * 100000));
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const payload = {
         membership_type:             data.membership_type,
@@ -705,8 +715,12 @@ export default function JoinPage(): React.ReactElement {
 
       localStorage.removeItem(STORAGE_KEY);
       setAppNumber(result?.application_number ?? "DRF-PENDING");
-    } catch (err) {
-      setSubmitError(isRtl ? "حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى." : "Submission failed. Please try again.");
+    } catch (err: any) {
+      if (err?.message?.includes("RATE_LIMIT_EXCEEDED")) {
+        setSubmitError(t("common:errors.rateLimited", { defaultValue: "عذراً، لقد قمت بإرسال عدة طلبات مؤخراً. يرجى المحاولة بعد ساعة." }));
+      } else {
+        setSubmitError(isRtl ? "حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى." : "Submission failed. Please try again.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -784,6 +798,8 @@ export default function JoinPage(): React.ReactElement {
                 <ProgressBar step={step} />
 
                 <form ref={formRef} onSubmit={handleSubmit} noValidate>
+                  {/* Honeypot field - hidden from users */}
+                  <input type="text" name="bot_field" style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={step}
