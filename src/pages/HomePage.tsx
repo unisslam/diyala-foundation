@@ -16,7 +16,6 @@ import { motion, animate, useMotionValue, useTransform, useInView } from "framer
 import type { Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  ArrowDown,
   Target,
   Users,
   CheckCircle,
