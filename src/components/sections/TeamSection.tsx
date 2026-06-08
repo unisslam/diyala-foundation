@@ -73,6 +73,7 @@ const roleColorMap: Record<string, string> = {
   management: "from-sdg-8/20  to-sdg-10/10  border-sdg-8/30",
   advisor:    "from-sdg-4/20  to-sdg-5/10   border-sdg-4/30",
   staff:      "from-sdg-13/20 to-sdg-15/10  border-sdg-13/30",
+  member:     "from-primary/20 to-primary/10  border-primary/30",
 };
 
 const roleBadgeMap: Record<string, string> = {
@@ -80,6 +81,7 @@ const roleBadgeMap: Record<string, string> = {
   management: "bg-sdg-8/15  text-sdg-8",
   advisor:    "bg-sdg-4/15  text-sdg-4",
   staff:      "bg-sdg-13/15 text-sdg-13",
+  member:     "bg-primary/15 text-primary",
 };
 
 const MemberCard: React.FC<{ member: TeamMember; isRtl: boolean; index: number }> = ({
@@ -171,7 +173,7 @@ const TeamSection: React.FC = () => {
   const isRtl = i18n.dir() === "rtl";
   const { teamMembers: liveData, loading } = useTeamMembers();
 
-  const members = !loading && liveData.length > 0 ? liveData : SEED_TEAM;
+  const members = [...SEED_TEAM, ...(loading ? [] : liveData)];
 
   return (
     <section

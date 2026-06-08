@@ -16,8 +16,8 @@ function TeamForm({ member, onSave, onClose }: {
   const isNew = !member?.id;
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    name_ar: member?.name_ar ?? "",
-    name_en: member?.name_en ?? "",
+    full_name_ar: member?.full_name_ar ?? "",
+    full_name_en: member?.full_name_en ?? "",
     title_ar: member?.title_ar ?? "",
     title_en: member?.title_en ?? "",
     bio_ar: member?.bio_ar ?? "",
@@ -51,9 +51,9 @@ function TeamForm({ member, onSave, onClose }: {
         <div className="p-6 space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
             <div><label className="text-xs font-medium mb-1 block">الاسم (عربي)</label>
-              <input value={form.name_ar} onChange={(e) => setForm(p => ({...p, name_ar: e.target.value}))} className={inputCls} dir="rtl" /></div>
+              <input value={form.full_name_ar} onChange={(e) => setForm(p => ({...p, full_name_ar: e.target.value}))} className={inputCls} dir="rtl" /></div>
             <div><label className="text-xs font-medium mb-1 block">Name (English)</label>
-              <input value={form.name_en} onChange={(e) => setForm(p => ({...p, name_en: e.target.value}))} className={inputCls} dir="ltr" /></div>
+              <input value={form.full_name_en} onChange={(e) => setForm(p => ({...p, full_name_en: e.target.value}))} className={inputCls} dir="ltr" /></div>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div><label className="text-xs font-medium mb-1 block">المسمى الوظيفي (عربي)</label>
@@ -68,6 +68,7 @@ function TeamForm({ member, onSave, onClose }: {
                 <option value="management">الإدارة التنفيذية</option>
                 <option value="advisor">مستشار</option>
                 <option value="staff">كادر</option>
+                <option value="member">عضو</option>
               </select></div>
             <div><label className="text-xs font-medium mb-1 block">الترتيب</label>
               <input type="number" value={form.display_order} onChange={(e) => setForm(p => ({...p, display_order: Number(e.target.value)}))} className={inputCls} dir="ltr" /></div>
@@ -113,13 +114,13 @@ export default function AdminTeamPage(): React.ReactElement {
   }
 
   async function deleteMember(m: TeamMemberRow): Promise<void> {
-    if (!confirm(`حذف "${m.name_ar}"؟`)) return;
+    if (!confirm(`حذف "${m.full_name_ar}"؟`)) return;
     await supabase.from("team_members").delete().eq("id", m.id);
     void load();
   }
 
   const ROLE_LABEL: Record<TeamMemberRow["role"], string> = {
-    board: "مجلس الإدارة", management: "إدارة تنفيذية", advisor: "مستشار", staff: "كادر",
+    board: "مجلس الإدارة", management: "إدارة تنفيذية", advisor: "مستشار", staff: "كادر", member: "عضو"
   };
 
   return (
@@ -144,7 +145,7 @@ export default function AdminTeamPage(): React.ReactElement {
             <div key={m.id} className={`p-5 rounded-2xl border bg-card transition-all ${m.is_active ? "border-border" : "border-dashed opacity-60"}`}>
               <div className="flex items-start justify-between mb-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold">
-                  {m.name_ar[0]}
+                  {m.full_name_ar?.[0] || "?"}
                 </div>
                 <div className="flex gap-1">
                   <button onClick={() => toggleActive(m)} className={`p-1.5 rounded-lg hover:bg-muted transition-colors ${m.is_active ? "text-emerald-600" : "text-muted-foreground"}`}>
@@ -158,7 +159,7 @@ export default function AdminTeamPage(): React.ReactElement {
                   </button>
                 </div>
               </div>
-              <p className="font-semibold text-sm">{m.name_ar}</p>
+              <p className="font-semibold text-sm">{m.full_name_ar}</p>
               <p className="text-xs text-muted-foreground mb-2">{m.title_ar}</p>
               <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted text-muted-foreground">
                 {ROLE_LABEL[m.role]}

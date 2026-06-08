@@ -29,7 +29,7 @@ export type NewsCategory =
 
 export type ContactStatus = "new" | "read" | "replied" | "archived";
 export type VolunteerStatus = "pending" | "approved" | "rejected";
-export type TeamRole = "board" | "management" | "advisor" | "staff";
+export type TeamRole = "board" | "management" | "advisor" | "staff" | "member";
 export type TestimonialStatus = "pending" | "approved" | "rejected";
 export type MembershipType = "regular" | "founding" | "honorary" | "student";
 export type MembershipStatus = "pending" | "under_review" | "approved" | "rejected" | "waitlisted";
@@ -103,6 +103,7 @@ export interface TeamMemberRow {
   linkedin_url: string | null;
   display_order: number;
   is_active: boolean;
+  membership_application_id: string | null;
 }
 
 export interface ContactMessageRow {
