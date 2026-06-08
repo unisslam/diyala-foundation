@@ -7,7 +7,7 @@
  * Includes Google Maps embed, contact info cards, validation.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, MapPin, Mail, Phone, Clock, CheckCircle, AlertCircle, Heart } from "lucide-react";
@@ -50,6 +50,22 @@ export default function ContactPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<TabKey>("contact");
   const [contactStatus, setContactStatus] = useState<FormStatus>("idle");
   const [volunteerStatus, setVolunteerStatus] = useState<FormStatus>("idle");
+  const [isVolunteerActive, setIsVolunteerActive] = useState<boolean>(true); // Default to true
+
+  useEffect(() => {
+    async function loadSettings() {
+      const { data, error } = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("id", "volunteer_form_active")
+        .maybeSingle();
+      if (!error && data) {
+        // value is a jsonb boolean
+        setIsVolunteerActive(data.value === true);
+      }
+    }
+    void loadSettings();
+  }, []);
 
   /* ── Contact form ─────────────────────────────────────────────────── */
   async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
@@ -231,7 +247,17 @@ export default function ContactPage(): React.ReactElement {
                   {/* ── VOLUNTEER FORM ── */}
                   {activeTab === "volunteer" && (
                     <motion.div key="volunteer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                      {volunteerStatus === "success" ? (
+                      {!isVolunteerActive ? (
+                        <div className="flex flex-col items-center justify-center text-center py-12 px-4 gap-3 bg-muted/20 rounded-2xl border border-border">
+                          <AlertCircle size={32} className="text-muted-foreground" />
+                          <p className="font-medium text-foreground">
+                            {isRtl ? "نعتذر، استمارة التطوع مغلقة حالياً." : "Sorry, the volunteer application form is currently closed."}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {isRtl ? "يرجى متابعة موقعنا لمعرفة موعد فتح باب التطوع مرة أخرى." : "Please check back later for updates."}
+                          </p>
+                        </div>
+                      ) : volunteerStatus === "success" ? (
                         <SuccessBanner message={isRtl ? "شكراً! تم استلام طلب تطوعك بنجاح. سنتواصل معك قريباً." : "Thank you! Your volunteer application has been received. We'll be in touch soon."} />
                       ) : (
                         <form onSubmit={handleVolunteerSubmit} className="space-y-4">

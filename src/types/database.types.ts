@@ -231,11 +231,24 @@ export interface MembershipApplicationRow {
   signature_date: string | null;
 }
 
+export interface AppSettingRow {
+  id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: any;
+  created_at: string;
+  updated_at: string;
+}
+
 // ── Database generic wrapper (matches Supabase gen types pattern) ───
 
 export interface Database {
   public: {
     Tables: {
+      app_settings: {
+        Row: AppSettingRow;
+        Insert: Omit<AppSettingRow, "created_at" | "updated_at"> & { created_at?: string; updated_at?: string };
+        Update: Partial<AppSettingRow>;
+      };
       projects: {
         Row: ProjectRow;
         Insert: Omit<ProjectRow, "id" | "created_at" | "updated_at" | "views_count"> & { id?: string };

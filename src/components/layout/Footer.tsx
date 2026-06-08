@@ -25,12 +25,13 @@ export function Footer(): React.ReactElement {
   const isRtl = i18n.dir() === "rtl";
 
   const quickLinks = [
-    { to: "/",         label: t("nav:home") },
-    { to: "/about",    label: t("nav:about") },
+    { to: "/", label: t("nav:home") },
+    { to: "/about", label: t("nav:about") },
     { to: "/projects", label: t("nav:projects") },
-    { to: "/news",     label: t("nav:news") },
-    { to: "/gallery",  label: t("nav:gallery") },
-    { to: "/contact",  label: t("nav:contact") },
+    { to: "/news", label: t("nav:news") },
+    { to: "/gallery", label: t("nav:gallery") },
+    { to: "/contact", label: t("nav:contact") },
+    { to: "/join-us", label: t("nav:join") },
   ];
 
   const socials: Array<{ Icon: React.ElementType; href: string; label: string }> = [

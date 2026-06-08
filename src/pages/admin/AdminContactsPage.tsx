@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageSquare, Heart, Search, X, Eye, CheckCircle, Clock, Archive, ChevronRight, RefreshCw } from "lucide-react";
+import { MessageSquare, Heart, Search, X, Eye, CheckCircle, Clock, Archive, ChevronRight, RefreshCw, Settings2, Power } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { ContactMessageRow, ContactStatus, VolunteerApplicationRow } from "@/types/database.types";
 
@@ -82,15 +82,20 @@ export default function AdminContactsPage(): React.ReactElement {
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState("");
   const [selected, setSelected]   = useState<ContactMessageRow | null>(null);
+  const [isVolunteerActive, setIsVolunteerActive] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [{ data: msgs }, { data: vols }] = await Promise.all([
+    const [{ data: msgs }, { data: vols }, { data: settings }] = await Promise.all([
       supabase.from("contact_messages").select("*").order("created_at", { ascending: false }),
       supabase.from("volunteer_applications").select("*").order("created_at", { ascending: false }),
+      supabase.from("app_settings").select("value").eq("id", "volunteer_form_active").maybeSingle()
     ]);
     setMessages((msgs ?? []) as ContactMessageRow[]);
     setVolunteers((vols ?? []) as VolunteerApplicationRow[]);
+    if (settings) {
+      setIsVolunteerActive(settings.value === true);
+    }
     setLoading(false);
   }, []);
 
@@ -100,6 +105,12 @@ export default function AdminContactsPage(): React.ReactElement {
     await supabase.from("contact_messages").update({ status }).eq("id", id);
     setSelected((p) => p?.id === id ? { ...p, status } : p);
     void load();
+  }
+
+  async function toggleVolunteerForm() {
+    const newVal = !isVolunteerActive;
+    setIsVolunteerActive(newVal);
+    await supabase.from("app_settings").upsert({ id: "volunteer_form_active", value: newVal });
   }
 
   const filteredMsgs = messages.filter((m) =>
@@ -114,14 +125,32 @@ export default function AdminContactsPage(): React.ReactElement {
         {selected && <MessageDetail msg={selected} onClose={() => setSelected(null)} onStatusChange={updateMsgStatus} />}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="font-display text-xl font-bold">الرسائل والطلبات</h1>
           <p className="text-sm text-muted-foreground">{messages.length} رسالة | {volunteers.length} طلب تطوع</p>
         </div>
-        <button onClick={load} className="p-2.5 rounded-xl border border-border hover:bg-muted text-muted-foreground" title="تحديث">
-          <RefreshCw size={15} />
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-card">
+            <Settings2 size={15} className="text-muted-foreground" />
+            <span className="text-sm font-medium">استمارة التطوع</span>
+            <button
+              onClick={toggleVolunteerForm}
+              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                isVolunteerActive ? "bg-emerald-500" : "bg-muted-foreground/30"
+              }`}
+            >
+              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                isVolunteerActive ? "translate-x-1" : "-translate-x-4"
+              }`} />
+            </button>
+            <span className="text-xs text-muted-foreground w-8">{isVolunteerActive ? "مفعلة" : "معطلة"}</span>
+          </div>
+
+          <button onClick={load} className="p-2.5 rounded-xl border border-border hover:bg-muted text-muted-foreground" title="تحديث">
+            <RefreshCw size={15} />
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
