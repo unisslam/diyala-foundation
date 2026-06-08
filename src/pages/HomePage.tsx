@@ -60,11 +60,11 @@ import type { ImpactStatRow } from "@/types/database.types";
 
 /* ── Icon map for impact stats ──────────────────────────────────────── */
 const STAT_ICON_MAP: Record<string, React.ElementType> = {
-  users:        Users,
-  checkCircle:  CheckCircle,
-  globe2:       Globe2,
-  trendingUp:   TrendingUp,
-  target:       Target,
+  users: Users,
+  checkCircle: CheckCircle,
+  globe2: Globe2,
+  trendingUp: TrendingUp,
+  target: Target,
 };
 
 /* ── SDG Card component ─────────────────────────────────────────────── */
@@ -289,36 +289,36 @@ export default function HomePage(): React.ReactElement {
           >
             {statsLoading
               ? Array.from({ length: 4 }).map((_, i) => (
-                  <motion.div key={i} variants={fadeUp}
-                    className="flex flex-col items-center text-center p-6 rounded-3xl bg-background/5 border border-background/10"
-                  >
-                    <div className="w-14 h-14 rounded-2xl shimmer mb-4" />
-                    <div className="h-10 w-20 shimmer rounded mb-2" />
-                    <div className="h-4 w-28 shimmer rounded" />
-                  </motion.div>
-                ))
+                <motion.div key={i} variants={fadeUp}
+                  className="flex flex-col items-center text-center p-6 rounded-3xl bg-background/5 border border-background/10"
+                >
+                  <div className="w-14 h-14 rounded-2xl shimmer mb-4" />
+                  <div className="h-10 w-20 shimmer rounded mb-2" />
+                  <div className="h-4 w-28 shimmer rounded" />
+                </motion.div>
+              ))
               : statsData.map((stat) => {
-                  const Icon = STAT_ICON_MAP[stat.icon_name] ?? Target;
-                  const label = isRtl ? stat.label_ar : stat.label_en;
-                  const displayValue = stat.value_number >= 1000
-                    ? `${(stat.value_number / 1000).toFixed(0)}k+`
-                    : `${stat.value_number}+`;
-                  return (
-                    <motion.div
-                      key={stat.id}
-                      variants={fadeUp}
-                      className="flex flex-col items-center text-center p-6 rounded-3xl bg-background/5 border border-background/10 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300 group"
-                    >
-                      <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
-                        <Icon size={26} className="text-primary" aria-hidden="true" />
-                      </div>
-                      <span className="font-display text-3xl md:text-4xl font-black text-background mb-1">
-                        {displayValue}
-                      </span>
-                      <span className="text-background/60 text-sm">{label}</span>
-                    </motion.div>
-                  );
-                })
+                const Icon = STAT_ICON_MAP[stat.icon_name] ?? Target;
+                const label = isRtl ? stat.label_ar : stat.label_en;
+                const displayValue = stat.value_number >= 1000
+                  ? `${(stat.value_number / 1000).toFixed(0)}k+`
+                  : `${stat.value_number}+`;
+                return (
+                  <motion.div
+                    key={stat.id}
+                    variants={fadeUp}
+                    className="flex flex-col items-center text-center p-6 rounded-3xl bg-background/5 border border-background/10 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300 group"
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
+                      <Icon size={26} className="text-primary" aria-hidden="true" />
+                    </div>
+                    <span className="font-display text-3xl md:text-4xl font-black text-background mb-1">
+                      {displayValue}
+                    </span>
+                    <span className="text-background/60 text-sm">{label}</span>
+                  </motion.div>
+                );
+              })
             }
           </motion.div>
         </div>
@@ -467,7 +467,7 @@ export default function HomePage(): React.ReactElement {
                 to="/projects"
                 className="px-7 py-3 rounded-full bg-accent text-accent-foreground font-semibold hover:bg-accent-dark transition-colors"
               >
-                {t("home:cta.donate")}
+                {t("home:cta.join")}
               </Link>
               <Link
                 id="cta-partner"

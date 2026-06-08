@@ -6,7 +6,7 @@
  *  - Desktop nav links
  *  - Language switcher (AR / EN)
  *  - Mobile hamburger menu (Framer Motion drawer)
- *  - Donate CTA button
+ *  - Join CTA button
  */
 
 import React, { useState, useEffect } from "react";
@@ -56,10 +56,10 @@ export function Navbar(): React.ReactElement {
   }
 
   const navLinks = [
-    { to: "/",        label: t("nav:home") },
-    { to: "/about",   label: t("nav:about") },
-    { to: "/projects",label: t("nav:projects") },
-    { to: "/news",    label: t("nav:news") },
+    { to: "/", label: t("nav:home") },
+    { to: "/about", label: t("nav:about") },
+    { to: "/projects", label: t("nav:projects") },
+    { to: "/news", label: t("nav:news") },
     { to: "/gallery", label: t("nav:gallery") },
     { to: "/contact", label: t("nav:contact") },
   ] as const;
@@ -115,12 +115,12 @@ export function Navbar(): React.ReactElement {
             <span>{currentLang === "ar" ? "EN" : "ع"}</span>
           </button>
 
-          {/* Donate CTA */}
+          {/* Join CTA */}
           <Link
-            to="/contact"
+            to="/join"
             className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent-dark transition-colors duration-200 shadow-accent-glow/30"
           >
-            {t("nav:donate")}
+            {t("nav:join")}
           </Link>
 
           {/* Mobile hamburger */}
@@ -169,7 +169,7 @@ export function Navbar(): React.ReactElement {
                   className="block text-center py-2.5 px-4 rounded-full bg-accent text-accent-foreground text-sm font-semibold"
                   onClick={() => setIsOpen(false)}
                 >
-                  {t("nav:donate")}
+                  {t("nav:join")}
                 </Link>
               </li>
             </ul>
