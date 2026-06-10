@@ -14,28 +14,27 @@
 /* ───────────────────────────────────────────────────────────
    LOCAL FONT REGISTRY
    Three-tier Arabic typography system:
-     1. Hero / Page titles   → ZAIN mob variable 600 (زين متحرك)
-     2. Section headings     → Zain PCV2 VF         (زين عناوين)
+     1. Hero / Page titles   → Kufam Variable (كوفام متحرك)
+     2. Section headings     → Kufam Variable (كوفام متحرك)
      3. Body / articles      → IBM Plex Sans Arabic  (نصوص عادية)
    All declarations MUST come before @import "tailwindcss"
    so the faces are registered before Tailwind processes them.
    ─────────────────────────────────────────────────────────── */
 
-/* ── 1. ZAIN mob variable 600 ─ Hero + main page title only ── */
+/* ── 1 & 2. Kufam Variable Fonts ───────────────────────────── */
 @font-face {
-  font-family: "ZainHero";
-  src: url("./assets/font/alfont_com_ArbFONTS-Lenos-ExtraBold-1.otf") format("opentype");
-  font-weight: 700;
+  font-family: "Kufam";
+  src: url("./assets/font/Kufam-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
 
-/* ── 2. Zain PCV2 VF ─ Section headings (h2, h3, cards …) ─── */
 @font-face {
-  font-family: "ZainDisplay";
-  src: url("./assets/font/alfont_com_ArbFONTS-Lenos-ExtraBold-1.otf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
+  font-family: "Kufam";
+  src: url("./assets/font/Kufam-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: italic;
   font-display: swap;
 }
 
@@ -165,17 +164,17 @@
    *  ┌──────────────────────┬──────────────────┬──────────────────┐
    *  │ Role                 │ Token            │ Face             │
    *  ├──────────────────────┼──────────────────┼──────────────────┤
-   *  │ Hero h1 / page title │ --font-family-hero    │ ZainHero         │
-   *  │ Section headings     │ --font-family-display │ ZainDisplay      │
+   *  │ Hero h1 / page title │ --font-family-hero    │ Kufam            │
+   *  │ Section headings     │ --font-family-display │ Kufam            │
    *  │ Arabic body/articles │ --font-family-arabic  │ IBMPlexArabic    │
    *  │ Latin body           │ --font-family-sans    │ Inter            │
    *  └──────────────────────┴──────────────────┴──────────────────┘
    * ──────────────────────────────────────────────────────────── */
 
   /* Hero & main page titles (هيرو وعناوين الصفحات الرئيسية) */
-  --font-family-hero: "ZainHero", "AlSharkTitle", system-ui, sans-serif;
+  --font-family-hero: "Kufam", "AlSharkTitle", system-ui, sans-serif;
   /* Section & component headings (العناوين الرئيسية) */
-  --font-family-display: "ZainDisplay", "AlSharkTitle", system-ui, sans-serif;
+  --font-family-display: "Kufam", "AlSharkTitle", system-ui, sans-serif;
   /* Arabic body / articles / UI labels (النصوص الاعتيادية) */
   --font-family-arabic: "IBMPlexArabic", "Noto Sans Arabic", system-ui, sans-serif;
   /* Latin / LTR body text */
