@@ -216,7 +216,6 @@ export default function ContactPage(): React.ReactElement {
         eyebrow={isRtl ? "تواصل معنا" : "Contact Us"}
         titleKey="contact:hero.title"
         subtitleKey="contact:hero.subtitle"
-        gradient="from-emerald-500/20 via-background to-background"
       />
 
       <section className="section-padding bg-background">

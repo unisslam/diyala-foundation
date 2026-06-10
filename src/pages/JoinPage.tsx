@@ -742,7 +742,6 @@ export default function JoinPage(): React.ReactElement {
         eyebrow={isRtl ? "عضوية رسمية" : "Official Membership"}
         titleKey="join:hero.title"
         subtitleKey="join:hero.subtitle"
-        gradient="from-accent/20 via-background to-background"
       />
 
       <section className="section-padding bg-background">

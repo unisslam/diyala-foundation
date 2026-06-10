@@ -304,7 +304,6 @@ export default function ProjectsPage(): React.ReactElement {
         eyebrow="SDG Projects"
         titleKey="projects:hero.title"
         subtitleKey="projects:hero.subtitle"
-        gradient="from-sky-500/20 via-background to-background"
       />
 
       {/* ── FILTERS + SEARCH ────────────────────────────────────────── */}

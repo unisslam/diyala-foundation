@@ -132,7 +132,6 @@ export default function GalleryPage(): React.ReactElement {
         titleEn="Photo Gallery"
         subtitleAr="لحظات من ميدان العمل — فعاليات، مشاريع، وذكريات"
         subtitleEn="Moments from the field — events, projects, and memories"
-        gradient="from-violet-600 to-blue-600"
       />
 
       <section className="container mx-auto px-4 md:px-8 py-16" dir={isRtl ? "rtl" : "ltr"}>

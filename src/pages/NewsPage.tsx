@@ -365,7 +365,6 @@ export default function NewsPage(): React.ReactElement {
         eyebrow="Media Center"
         titleKey="news:hero.title"
         subtitleKey="news:hero.subtitle"
-        gradient="from-violet-500/20 via-background to-background"
       />
 
       {/* ── STICKY FILTER BAR ───────────────────────────────────────── */}
