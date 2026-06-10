@@ -15,12 +15,30 @@
     "title": "Our Commitment to the SDGs",
     "description": "We localize global goals and implement them with local hands, focusing on the following goals:",
     "goals": {
-      "4": { "title": "Quality Education", "description": "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all." },
-      "5": { "title": "Gender Equality", "description": "Achieve gender equality and empower all women and girls." },
-      "8": { "title": "Decent Work & Economic Growth", "description": "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all." },
-      "13": { "title": "Climate Action", "description": "Take urgent action to combat climate change and its impacts." },
-      "16": { "title": "Peace, Justice & Strong Institutions", "description": "Promote peaceful and inclusive societies for sustainable development." },
-      "17": { "title": "Partnerships for the Goals", "description": "Strengthen the means of implementation and revitalize the global partnership for sustainable development." }
+      "4": {
+        "title": "Quality Education",
+        "description": "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all."
+      },
+      "5": {
+        "title": "Gender Equality",
+        "description": "Achieve gender equality and empower all women and girls."
+      },
+      "8": {
+        "title": "Decent Work & Economic Growth",
+        "description": "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all."
+      },
+      "13": {
+        "title": "Climate Action",
+        "description": "Take urgent action to combat climate change and its impacts."
+      },
+      "16": {
+        "title": "Peace, Justice & Strong Institutions",
+        "description": "Promote peaceful and inclusive societies for sustainable development."
+      },
+      "17": {
+        "title": "Partnerships for the Goals",
+        "description": "Strengthen the means of implementation and revitalize the global partnership for sustainable development."
+      }
     }
   },
   "impact": {
@@ -116,16 +134,28 @@
     "partners": {
       "label": "Supported by",
       "hawa": "Hawa' Organization for Relief & Development",
-      "rahma": "Rahma Youth Forum"
+      "rahma": "Local Community Organizations"
     }
   },
   "values": {
     "title": "Our Core Values",
     "items": {
-      "transparency": { "title": "Transparency", "description": "Clarity and honesty in all our work and projects." },
-      "empowerment": { "title": "Empowerment", "description": "Empowering individuals and communities to reach their full potential." },
-      "sustainability": { "title": "Sustainability", "description": "Ensuring our solutions are long-term and environmentally friendly." },
-      "collaboration": { "title": "Collaboration", "description": "Working with partners and the local community to achieve our shared goals." }
+      "transparency": {
+        "title": "Transparency",
+        "description": "Clarity and honesty in all our work and projects."
+      },
+      "empowerment": {
+        "title": "Empowerment",
+        "description": "Empowering individuals and communities to reach their full potential."
+      },
+      "sustainability": {
+        "title": "Sustainability",
+        "description": "Ensuring our solutions are long-term and environmentally friendly."
+      },
+      "collaboration": {
+        "title": "Collaboration",
+        "description": "Working with partners and the local community to achieve our shared goals."
+      }
     }
   }
 }
