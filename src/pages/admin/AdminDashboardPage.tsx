@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FolderOpen, Newspaper, MessageSquare, UserCheck,
-  TrendingUp, Eye, Clock, ArrowRight, Plus, Star,
+  TrendingUp, Eye, Clock, ArrowRight, Plus, Star, Users, Shield
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useState, useEffect } from "react";
@@ -24,6 +24,7 @@ interface Stats {
   memberships: number;
   pendingMemberships: number;
   newContacts: number;
+  teamMembers: number;
 }
 
 function StatCard({ icon: Icon, label, value, sub, color, to }: {
@@ -63,7 +64,15 @@ function QuickAction({ icon: Icon, label, to, color }: {
 }
 
 export default function AdminDashboardPage(): React.ReactElement {
-  const [stats, setStats] = useState<Stats>({ projects: 0, news: 0, contacts: 0, memberships: 0, pendingMemberships: 0, newContacts: 0 });
+  const [stats, setStats] = useState<Stats>({
+    projects: 0,
+    news: 0,
+    contacts: 0,
+    memberships: 0,
+    pendingMemberships: 0,
+    newContacts: 0,
+    teamMembers: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,6 +84,7 @@ export default function AdminDashboardPage(): React.ReactElement {
         { count: memberships },
         { count: pendingMemberships },
         { count: newContacts },
+        { count: teamMembers },
       ] = await Promise.all([
         supabase.from("projects").select("*", { count: "exact", head: true }),
         supabase.from("news").select("*", { count: "exact", head: true }).eq("is_published", true),
@@ -82,6 +92,7 @@ export default function AdminDashboardPage(): React.ReactElement {
         supabase.from("membership_applications").select("*", { count: "exact", head: true }),
         supabase.from("membership_applications").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("contact_messages").select("*", { count: "exact", head: true }).eq("status", "new"),
+        supabase.from("team_members").select("*", { count: "exact", head: true }),
       ]);
       setStats({
         projects: projects ?? 0,
@@ -90,6 +101,7 @@ export default function AdminDashboardPage(): React.ReactElement {
         memberships: memberships ?? 0,
         pendingMemberships: pendingMemberships ?? 0,
         newContacts: newContacts ?? 0,
+        teamMembers: teamMembers ?? 0,
       });
       setLoading(false);
     }
@@ -98,59 +110,62 @@ export default function AdminDashboardPage(): React.ReactElement {
 
   const statCards = [
     { icon: FolderOpen,    label: "المشاريع المنشورة",    value: stats.projects,    color: "bg-blue-500",    to: "/admin/projects" },
-    { icon: Newspaper,     label: "الأخبار المنشورة",      value: stats.news,        color: "bg-violet-500",  to: "/admin/news" },
-    { icon: MessageSquare, label: "رسائل التواصل",          value: stats.contacts,    color: "bg-emerald-500", to: "/admin/contacts",   sub: stats.newContacts > 0 ? `${stats.newContacts} جديدة` : undefined },
+    { icon: Newspaper,     label: "الأخبار والمقالات",      value: stats.news,        color: "bg-violet-500",  to: "/admin/news" },
+    { icon: Users,         label: "أعضاء فريق العمل",     value: stats.teamMembers, color: "bg-indigo-500",  to: "/admin/team" },
     { icon: UserCheck,     label: "طلبات العضوية",          value: stats.memberships, color: "bg-amber-500",   to: "/admin/memberships", sub: stats.pendingMemberships > 0 ? `${stats.pendingMemberships} بانتظار المراجعة` : undefined },
+    { icon: MessageSquare, label: "رسائل التواصل",          value: stats.contacts,    color: "bg-emerald-500", to: "/admin/contacts",   sub: stats.newContacts > 0 ? `${stats.newContacts} جديدة` : undefined },
   ];
 
   const quickActions = [
-    { icon: Plus,      label: "مشروع جديد",    to: "/admin/projects",     color: "bg-blue-500" },
-    { icon: Plus,      label: "خبر جديد",       to: "/admin/news",         color: "bg-violet-500" },
-    { icon: Star,      label: "الشهادات",        to: "/admin/testimonials", color: "bg-amber-500" },
-    { icon: UserCheck, label: "طلبات العضوية",   to: "/admin/memberships",  color: "bg-emerald-500" },
-    { icon: Eye,       label: "معرض الصور",       to: "/admin/gallery",      color: "bg-pink-500" },
-    { icon: TrendingUp, label: "الإحصاءات",       to: "/admin/stats",        color: "bg-teal-500" },
+    { icon: Plus,      label: "مشروع جديد",       to: "/admin/projects",     color: "bg-blue-500" },
+    { icon: Plus,      label: "خبر جديد",          to: "/admin/news",         color: "bg-violet-500" },
+    { icon: UserCheck, label: "طلبات العضوية",      to: "/admin/memberships",  color: "bg-amber-500" },
+    { icon: Users,     label: "بيت الأعضاء",       to: "/admin/team",         color: "bg-indigo-500" },
+    { icon: Eye,       label: "معرض الصور",        to: "/admin/gallery",      color: "bg-pink-500" },
+    { icon: Star,      label: "الشهادات والآراء",   to: "/admin/testimonials", color: "bg-emerald-500" },
+    { icon: TrendingUp, label: "إحصاءات التأثير",  to: "/admin/stats",        color: "bg-teal-500" },
+    { icon: Shield,    label: "إدارة المشرفين",    to: "/admin/users",        color: "bg-cyan-600" },
   ];
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="font-display text-2xl font-bold mb-1">مرحباً! 👋</h1>
-        <p className="text-muted-foreground text-sm">إليك ملخص نشاط المنصة اليوم</p>
+    <div className="space-y-6 sm:space-y-8" dir="rtl">
+      <div>
+        <h1 className="font-display text-xl sm:text-2xl font-black mb-1">مرحباً بك! 👋</h1>
+        <p className="text-muted-foreground text-xs sm:text-sm">إليك ملخص نشاط منصة مؤسسة نهر ديالى اليوم</p>
       </div>
 
-      {/* Stats */}
+      {/* Stats Cards */}
       <motion.div
         variants={stagger} initial="hidden" animate="show"
-        className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4"
       >
         {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-24 rounded-2xl shimmer" />
+          ? Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-24 rounded-3xl shimmer" />
             ))
           : statCards.map((card) => <StatCard key={card.to} {...card} />)
         }
       </motion.div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions (2 cols on small phone, 4 on tablet/desktop) */}
       <motion.div
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mb-8"
+        transition={{ delay: 0.2 }}
+        className="space-y-3"
       >
-        <h2 className="font-semibold text-sm mb-4 text-muted-foreground flex items-center gap-2">
-          <Clock size={14} />
-          إجراءات سريعة
+        <h2 className="font-bold text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+          <Clock size={15} />
+          إجراءات سريعة ومباشرة
         </h2>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-          {quickActions.map((a) => <QuickAction key={a.to} {...a} />)}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+          {quickActions.map((a) => <QuickAction key={a.label} {...a} />)}
         </div>
       </motion.div>
 
       {/* Footer note */}
-      <div className="text-center py-4">
+      <div className="text-center py-4 border-t border-border/40">
         <p className="text-xs text-muted-foreground">
-          مؤسسة نهر ديالى للتنمية المستدامة — لوحة تحكم المشرفين
+          مؤسسة نهر ديالى للتنمية المستدامة — لوحة تحكم المشرفين © {new Date().getFullYear()}
         </p>
       </div>
     </div>

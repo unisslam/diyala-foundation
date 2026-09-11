@@ -164,13 +164,13 @@ export default function AdminUsersPage(): React.ReactElement {
                 }`}
               >
                 {/* Profile Header */}
-                <div className="flex items-start justify-between flex-wrap gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/50 pb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-2xl bg-primary/10 text-primary font-display font-black text-lg flex items-center justify-center shrink-0 border border-primary/20">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary font-display font-black text-lg flex items-center justify-center shrink-0 border border-primary/20">
                       {p.full_name.charAt(0)}
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-bold font-display text-base text-foreground">{p.full_name}</h3>
                         {isSelf && (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
@@ -187,13 +187,13 @@ export default function AdminUsersPage(): React.ReactElement {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1 sm:pt-0">
                     {/* Role selector */}
                     <select
                       value={p.role}
                       disabled={isSelf}
                       onChange={(e) => void handleRoleChange(p, e.target.value as AdminRole)}
-                      className="px-3 py-1.5 rounded-xl border border-border bg-background text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                      className="px-3 py-2 rounded-xl border border-border bg-background text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 min-h-[40px]"
                     >
                       <option value="super_admin">مدير نظام شامل (Super Admin)</option>
                       <option value="membership_officer">مسؤول شؤون الأعضاء</option>
@@ -205,7 +205,7 @@ export default function AdminUsersPage(): React.ReactElement {
                     {!isSelf && (
                       <button
                         onClick={() => void handleToggleActive(p)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors ${
+                        className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors min-h-[40px] ${
                           p.is_active
                             ? "border-destructive/30 text-destructive hover:bg-destructive/10"
                             : "border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10"
@@ -231,14 +231,14 @@ export default function AdminUsersPage(): React.ReactElement {
                           type="button"
                           disabled={disabled}
                           onClick={() => void handleTogglePermission(p, key)}
-                          className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center gap-1.5 transition-all text-xs font-bold ${
+                          className={`p-3 rounded-2xl border text-center flex flex-col items-center justify-center gap-1.5 transition-all text-xs font-bold min-h-[68px] ${
                             hasPerm
-                              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300 shadow-2xs"
                               : "bg-muted/40 border-border text-muted-foreground hover:bg-muted"
-                          } ${disabled ? "cursor-default" : "cursor-pointer"}`}
+                          } ${disabled ? "cursor-default" : "cursor-pointer active:scale-95"}`}
                         >
                           <Icon size={16} className={hasPerm ? "text-emerald-600 dark:text-emerald-400" : "opacity-40"} />
-                          <span className="text-[10.5px] leading-tight line-clamp-1">{label}</span>
+                          <span className="text-[11px] leading-tight line-clamp-1">{label}</span>
                           <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${hasPerm ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"}`}>
                             {hasPerm ? "مفعل" : "معطل"}
                           </span>

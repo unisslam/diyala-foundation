@@ -140,10 +140,7 @@ export default function MemberVerificationPage(): React.ReactElement {
 
         {/* ── Official Institutional Header ── */}
         <header className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold shadow-2xs">
-            <ShieldCheck size={14} className="text-primary" />
-            <span>بوابة التحقق الرقمي الرسمية — جمهورية العراق</span>
-          </div>
+
 
           <div className="flex items-center justify-center gap-3 pt-2">
             <img

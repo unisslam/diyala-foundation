@@ -7,7 +7,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import type { ImpactStatRow } from "@/types/database.types";
-import { Save, RefreshCw } from "lucide-react";
+import { Save, RefreshCw, TrendingUp } from "lucide-react";
 
 export default function AdminStatsPage(): React.ReactElement {
   const [stats, setStats]   = useState<ImpactStatRow[]>([]);
@@ -35,41 +35,55 @@ export default function AdminStatsPage(): React.ReactElement {
     }).eq("id", stat.id);
     setSaving(null);
     setSaved(stat.id);
-    setTimeout(() => setSaved(null), 2000);
+    setTimeout(() => setSaved(null), 2500);
   }
 
   function update(id: string, key: keyof ImpactStatRow, value: unknown): void {
     setStats((prev) => prev.map((s) => s.id === id ? { ...s, [key]: value } : s));
   }
 
-  const inputCls = "w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary";
+  const inputCls = "w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary";
 
   return (
-    <div dir="rtl">
-      <div className="flex items-center justify-between mb-6">
+    <div dir="rtl" className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-xl font-bold">إحصاءات التأثير</h1>
-          <p className="text-muted-foreground text-sm">تُعرض في الصفحة الرئيسية</p>
+          <h1 className="font-display text-xl sm:text-2xl font-black text-foreground flex items-center gap-2">
+            <TrendingUp className="text-primary" size={24} />
+            إحصاءات التأثير والإنجاز
+          </h1>
+          <p className="text-muted-foreground text-xs sm:text-sm mt-0.5">
+            القيم الرقمية المعروضة في شريط الأثر بالصفحة الرئيسية للمنصة
+          </p>
         </div>
-        <button onClick={load} className="p-2.5 rounded-xl border border-border hover:bg-muted text-muted-foreground"><RefreshCw size={15} /></button>
+        <button
+          onClick={load}
+          className="p-2.5 rounded-xl border border-border hover:bg-muted text-muted-foreground transition-colors self-start sm:self-auto"
+          title="تحديث البيانات"
+        >
+          <RefreshCw size={16} />
+        </button>
       </div>
 
       {loading ? (
-        <div className="grid sm:grid-cols-2 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-40 shimmer rounded-2xl" />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-44 shimmer rounded-3xl" />)}
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {stats.map((stat) => (
-            <div key={stat.id} className="p-5 rounded-2xl border border-border bg-card space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-muted-foreground">{stat.stat_key}</span>
+            <div key={stat.id} className="p-5 rounded-3xl border border-border bg-card space-y-3.5 shadow-xs">
+              <div className="flex items-center justify-between border-b border-border/50 pb-2.5">
+                <span className="text-xs font-mono font-bold text-muted-foreground">{stat.stat_key}</span>
                 <div className="flex items-center gap-2">
-                  {saved === stat.id && <span className="text-xs text-emerald-600 font-medium">✓ محفوظ</span>}
-                  <button onClick={() => saveStat(stat)} disabled={saving === stat.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-60">
-                    <Save size={12} />
-                    {saving === stat.id ? "جاري..." : "حفظ"}
+                  {saved === stat.id && <span className="text-xs text-emerald-600 font-bold">✓ تم الحفظ</span>}
+                  <button
+                    onClick={() => void saveStat(stat)}
+                    disabled={saving === stat.id}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-60 min-h-[36px] hover:bg-primary-dark transition-colors"
+                  >
+                    <Save size={13} />
+                    {saving === stat.id ? "جاري..." : "حفظ التعديل"}
                   </button>
                 </div>
               </div>

@@ -13,7 +13,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, Plus, Trash2, Eye, EyeOff, RefreshCw,
-  X, ImageIcon, Link, Loader2, CheckCircle, AlertCircle,
+  X, ImageIcon, Link, Loader2, CheckCircle, AlertCircle, AlertTriangle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { GalleryItemRow } from "@/types/database.types";
@@ -34,7 +34,7 @@ async function compressImage(
       URL.revokeObjectURL(url);
       const ratio = Math.min(1, maxWidthPx / img.naturalWidth);
       const canvas = document.createElement("canvas");
-      canvas.width  = Math.round(img.naturalWidth  * ratio);
+      canvas.width = Math.round(img.naturalWidth * ratio);
       canvas.height = Math.round(img.naturalHeight * ratio);
       const ctx = canvas.getContext("2d");
       if (!ctx) { resolve(file); return; }
@@ -59,7 +59,7 @@ async function compressImage(
 
 // ── Format bytes ─────────────────────────────────────────────────────
 function fmtBytes(b: number): string {
-  if (b < 1024)        return `${b} B`;
+  if (b < 1024) return `${b} B`;
   if (b < 1024 * 1024) return `${(b / 1024).toFixed(0)} KB`;
   return `${(b / 1024 / 1024).toFixed(1)} MB`;
 }
@@ -84,8 +84,8 @@ interface UploadModalProps {
 }
 
 function UploadModal({ onClose, onUploaded }: UploadModalProps): React.ReactElement {
-  const [queue, setQueue]   = useState<UploadItem[]>([]);
-  const [tab, setTab]       = useState<"upload" | "url">("upload");
+  const [queue, setQueue] = useState<UploadItem[]>([]);
+  const [tab, setTab] = useState<"upload" | "url">("upload");
   const [urlForm, setUrlForm] = useState({ url: "", title_ar: "", title_en: "" });
   const [savingUrl, setSavingUrl] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -175,8 +175,8 @@ function UploadModal({ onClose, onUploaded }: UploadModalProps): React.ReactElem
     onClose();
   }
 
-  const allDone  = queue.length > 0 && queue.every((i) => i.status === "done" || i.status === "error");
-  const anyBusy  = queue.some((i) => i.status === "compressing" || i.status === "uploading");
+  const allDone = queue.length > 0 && queue.every((i) => i.status === "done" || i.status === "error");
+  const anyBusy = queue.some((i) => i.status === "compressing" || i.status === "uploading");
   const hasPending = queue.some((i) => i.status === "pending");
 
   const inputCls = "w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary";
@@ -197,15 +197,13 @@ function UploadModal({ onClose, onUploaded }: UploadModalProps): React.ReactElem
         {/* Tabs */}
         <div className="flex gap-1 p-3 border-b border-border shrink-0">
           <button onClick={() => setTab("upload")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all ${
-              tab === "upload" ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"
-            }`}>
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all ${tab === "upload" ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"
+              }`}>
             <Upload size={14} /> رفع من الجهاز
           </button>
           <button onClick={() => setTab("url")}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all ${
-              tab === "url" ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"
-            }`}>
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition-all ${tab === "url" ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"
+              }`}>
             <Link size={14} /> إدراج رابط
           </button>
         </div>
@@ -220,9 +218,8 @@ function UploadModal({ onClose, onUploaded }: UploadModalProps): React.ReactElem
                 onDragLeave={() => setDragOver(false)}
                 onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files); }}
                 onClick={() => inputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
-                  dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/30"
-                }`}
+                className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/30"
+                  }`}
               >
                 <Upload size={28} className="mx-auto mb-3 text-muted-foreground" />
                 <p className="text-sm font-medium mb-1">اسحب وأفلت الصور هنا</p>
@@ -269,12 +266,12 @@ function UploadModal({ onClose, onUploaded }: UploadModalProps): React.ReactElem
                           <p className="text-[10px] text-destructive mt-0.5">{item.error}</p>
                         )}
                         {item.status === "compressing" && <p className="text-[10px] text-amber-600">جاري الضغط...</p>}
-                        {item.status === "uploading"   && <p className="text-[10px] text-blue-600">جاري الرفع...</p>}
+                        {item.status === "uploading" && <p className="text-[10px] text-blue-600">جاري الرفع...</p>}
                       </div>
                       <div className="shrink-0">
-                        {item.status === "pending"  && <span className="text-[10px] text-muted-foreground">انتظار</span>}
-                        {item.status === "done"     && <CheckCircle size={16} className="text-emerald-500" />}
-                        {item.status === "error"    && <AlertCircle size={16} className="text-destructive" />}
+                        {item.status === "pending" && <span className="text-[10px] text-muted-foreground">انتظار</span>}
+                        {item.status === "done" && <CheckCircle size={16} className="text-emerald-500" />}
+                        {item.status === "error" && <AlertCircle size={16} className="text-destructive" />}
                         {(item.status === "compressing" || item.status === "uploading") && (
                           <Loader2 size={16} className="text-primary animate-spin" />
                         )}
@@ -332,8 +329,8 @@ function UploadModal({ onClose, onUploaded }: UploadModalProps): React.ReactElem
               className="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
             >
               {anyBusy ? <><Loader2 size={14} className="animate-spin" /> جاري الرفع...</>
-               : allDone ? "تم ✓"
-               : <><Upload size={14} /> رفع {queue.filter((i) => i.status === "pending").length} صورة</>}
+                : allDone ? "تم ✓"
+                  : <><Upload size={14} /> رفع {queue.filter((i) => i.status === "pending").length} صورة</>}
             </button>
           ) : (
             <button
@@ -352,10 +349,12 @@ function UploadModal({ onClose, onUploaded }: UploadModalProps): React.ReactElem
 
 // ── AdminGalleryPage ──────────────────────────────────────────────────
 export default function AdminGalleryPage(): React.ReactElement {
-  const [items, setItems]     = useState<GalleryItemRow[]>([]);
+  const [items, setItems] = useState<GalleryItemRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
-  const [deleting, setDeleting]    = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
+  const [deleteTarget, setDeleteTarget] = useState<GalleryItemRow | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -371,8 +370,9 @@ export default function AdminGalleryPage(): React.ReactElement {
     void load();
   }
 
-  async function deleteItem(item: GalleryItemRow): Promise<void> {
-    if (!confirm("حذف هذه الصورة؟")) return;
+  async function confirmDelete(): Promise<void> {
+    if (!deleteTarget) return;
+    const item = deleteTarget;
     setDeleting(item.id);
     // If stored in Supabase storage, delete the file too
     if (item.image_path.includes("supabase") && item.image_path.includes("/gallery/")) {
@@ -381,13 +381,20 @@ export default function AdminGalleryPage(): React.ReactElement {
     }
     await supabase.from("gallery_items").delete().eq("id", item.id);
     setDeleting(null);
+    setDeleteTarget(null);
     void load();
   }
+  const filtered = items.filter((item) => {
+    if (filter === "active") return item.is_active;
+    if (filter === "inactive") return !item.is_active;
+    return true;
+  });
 
-
+  const activeCount = items.filter((i) => i.is_active).length;
+  const inactiveCount = items.filter((i) => !i.is_active).length;
 
   return (
-    <div dir="rtl">
+    <div dir="rtl" className="space-y-6">
       <AnimatePresence>
         {showUpload && (
           <UploadModal
@@ -397,54 +404,138 @@ export default function AdminGalleryPage(): React.ReactElement {
         )}
       </AnimatePresence>
 
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteTarget && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4" dir="rtl">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-card rounded-3xl border border-border w-full max-w-md p-6 shadow-2xl space-y-4"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto">
+                <AlertTriangle size={24} />
+              </div>
+              <div className="text-center space-y-1">
+                <h3 className="font-display font-bold text-lg">تأكيد حذف الصورة</h3>
+                <p className="text-sm text-muted-foreground">
+                  هل أنت متأكد من حذف هذه الصورة نهائياً من المعرض وسجلات التخزين؟
+                </p>
+              </div>
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={Boolean(deleting)}
+                  className="flex-1 py-2.5 rounded-xl border border-border text-sm font-semibold hover:bg-muted"
+                >
+                  إلغاء
+                </button>
+                <button
+                  onClick={() => void confirmDelete()}
+                  disabled={Boolean(deleting)}
+                  className="flex-1 py-2.5 rounded-xl bg-destructive text-destructive-foreground text-sm font-semibold hover:bg-destructive/90 disabled:opacity-60"
+                >
+                  {deleting ? "جاري الحذف..." : "نعم، احذف"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-xl font-bold">معرض الصور</h1>
-          <p className="text-muted-foreground text-sm">
-            {items.length} صورة · {items.filter((i) => i.is_active).length} نشطة
+          <h1 className="font-display text-xl sm:text-2xl font-black text-foreground flex items-center gap-2">
+            <ImageIcon className="text-primary" size={24} />
+            معرض الصور
+          </h1>
+          <p className="text-muted-foreground text-xs sm:text-sm mt-0.5">
+            {items.length} صورة مسجلة · <span className="text-emerald-600 font-bold">{activeCount} نشطة</span>
           </p>
         </div>
-        <div className="flex gap-2">
-          <button onClick={load} className="p-2.5 rounded-xl border border-border hover:bg-muted text-muted-foreground" title="تحديث">
-            <RefreshCw size={15} />
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={load}
+            className="p-2.5 rounded-xl border border-border hover:bg-muted text-muted-foreground transition-colors"
+            title="تحديث المعرض"
+          >
+            <RefreshCw size={16} />
           </button>
           <button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-dark transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-dark shadow-sm transition-all active:scale-98 min-h-[44px]"
           >
-            <Upload size={15} /> إضافة صور
+            <Upload size={16} />
+            إضافة صور
           </button>
         </div>
       </div>
 
-      {/* Info banner */}
-      <div className="mb-5 p-3 rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
-        <ImageIcon size={14} className="shrink-0 mt-0.5" />
-        <span>
-          الصور المرفوعة تُضغط تلقائياً إلى WebP وتُخزَّن في Supabase Storage.
-          الحد الأقصى 8 MB للصورة الواحدة — JPEG, PNG, WebP, GIF.
-        </span>
+      {/* Filters & Info Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Filter chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors min-h-[36px] ${
+              filter === "all"
+                ? "bg-primary text-primary-foreground shadow-xs"
+                : "bg-muted/70 text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            الكل ({items.length})
+          </button>
+          <button
+            onClick={() => setFilter("active")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors min-h-[36px] ${
+              filter === "active"
+                ? "bg-emerald-600 text-white shadow-xs"
+                : "bg-muted/70 text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            النشطة ({activeCount})
+          </button>
+          <button
+            onClick={() => setFilter("inactive")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors min-h-[36px] ${
+              filter === "inactive"
+                ? "bg-slate-700 text-white shadow-xs"
+                : "bg-muted/70 text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            المخفية ({inactiveCount})
+          </button>
+        </div>
+
+        <div className="p-2.5 rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-xs text-blue-700 dark:text-blue-300 flex items-center gap-2">
+          <ImageIcon size={14} className="shrink-0" />
+          <span>تُضغط الصور تلقائياً إلى WebP لتسريع التحميل على الهواتف</span>
+        </div>
       </div>
 
       {/* Grid */}
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-square shimmer rounded-2xl" />)}
+          {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-square shimmer rounded-3xl" />)}
         </div>
-      ) : items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 gap-4 text-muted-foreground border-2 border-dashed border-border rounded-3xl">
+      ) : filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 gap-4 text-muted-foreground border-2 border-dashed border-border rounded-3xl bg-card">
           <ImageIcon size={40} className="opacity-30" />
-          <p className="text-sm">لا توجد صور بعد</p>
-          <button onClick={() => setShowUpload(true)} className="text-sm text-primary underline">أضف أول صورة</button>
+          <p className="text-sm">لا توجد صور مطابقة</p>
+          <button onClick={() => setShowUpload(true)} className="text-sm text-primary font-semibold hover:underline">
+            أضف صورة جديدة
+          </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {items.map((item) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          {filtered.map((item) => (
             <div
               key={item.id}
-              className={`relative group rounded-2xl overflow-hidden border bg-muted aspect-square transition-all ${
-                !item.is_active ? "opacity-50 border-dashed border-border" : "border-border"
+              className={`relative group rounded-3xl overflow-hidden border bg-muted aspect-square transition-all shadow-2xs ${
+                !item.is_active ? "opacity-60 border-dashed border-border" : "border-border"
               } ${deleting === item.id ? "opacity-30 pointer-events-none" : ""}`}
             >
               <img
@@ -454,42 +545,51 @@ export default function AdminGalleryPage(): React.ReactElement {
                 loading="lazy"
               />
 
-              {/* Overlay controls */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button
-                  onClick={() => toggleActive(item)}
-                  title={item.is_active ? "إخفاء" : "إظهار"}
-                  className="p-2 rounded-xl bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition-colors"
-                >
-                  {item.is_active ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-                <button
-                  onClick={() => deleteItem(item)}
-                  title="حذف"
-                  className="p-2 rounded-xl bg-white/20 backdrop-blur-sm text-white hover:bg-red-500/80 transition-colors"
-                >
-                  <Trash2 size={15} />
-                </button>
+              {/* Status and storage badge at top */}
+              <div className="absolute top-2.5 start-2.5 end-2.5 flex items-center justify-between pointer-events-none">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-md shadow-xs ${
+                  item.is_active ? "bg-emerald-500/90 text-white" : "bg-black/70 text-zinc-300"
+                }`}>
+                  {item.is_active ? "نشطة" : "مخفية"}
+                </span>
+
+                {item.image_path.includes("supabase") && (
+                  <span className="px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[9px] font-mono">
+                    Cloud
+                  </span>
+                )}
               </div>
 
-              {/* Title */}
-              {item.title_ar && (
-                <div className="absolute bottom-0 start-0 end-0 bg-gradient-to-t from-black/80 p-2 translate-y-full group-hover:translate-y-0 transition-transform">
-                  <p className="text-white text-xs truncate">{item.title_ar}</p>
+              {/* Bottom Touch Actions Bar (Persistent on mobile, hover on desktop) */}
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2.5 sm:p-3 flex items-center justify-between gap-1 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+                <div className="min-w-0 flex-1 pe-1">
+                  {item.title_ar && (
+                    <p className="text-white text-xs truncate font-semibold">{item.title_ar}</p>
+                  )}
                 </div>
-              )}
 
-              {/* Storage badge */}
-              {item.image_path.includes("supabase") && (
-                <div className="absolute top-2 start-2 px-1.5 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-mono">
-                  Storage
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => void toggleActive(item)}
+                    title={item.is_active ? "إخفاء" : "إظهار"}
+                    className="p-2 rounded-xl bg-white/20 backdrop-blur-md text-white hover:bg-white/40 active:scale-95 transition-all min-h-[34px] min-w-[34px] flex items-center justify-center shadow-xs"
+                  >
+                    {item.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                  <button
+                    onClick={() => setDeleteTarget(item)}
+                    title="حذف"
+                    className="p-2 rounded-xl bg-white/20 backdrop-blur-md text-white hover:bg-destructive/80 active:scale-95 transition-all min-h-[34px] min-w-[34px] flex items-center justify-center shadow-xs"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
-              )}
+              </div>
 
               {/* Loading overlay */}
               {deleting === item.id && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                  <Loader2 size={20} className="text-white animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                  <Loader2 size={24} className="text-white animate-spin" />
                 </div>
               )}
             </div>
