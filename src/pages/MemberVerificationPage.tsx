@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { MemberVerificationResult } from "@/types/database.types";
-import { generateQrDataUrl } from "@/lib/membershipExport";
+import { generateQrDataUrl, getMemberVerificationUrl, OFFICIAL_DOMAIN } from "@/lib/membershipExport";
 
 export default function MemberVerificationPage(): React.ReactElement {
   const { membershipNumber } = useParams<{ membershipNumber?: string }>();
@@ -64,8 +64,8 @@ export default function MemberVerificationPage(): React.ReactElement {
         setResult(res);
 
         // Generate verification page QR code for sharing
-        const currentUrl = `${window.location.origin}/verify/member/${encodeURIComponent(res.membership_number || trimmed)}`;
-        void generateQrDataUrl(currentUrl).then(setQrCodeUrl);
+        const publicVerifyUrl = getMemberVerificationUrl(res.membership_number || trimmed);
+        void generateQrDataUrl(publicVerifyUrl).then(setQrCodeUrl);
       }
     } catch (err) {
       console.error("Unexpected error during verification:", err);
@@ -93,19 +93,24 @@ export default function MemberVerificationPage(): React.ReactElement {
   };
 
   const copyLink = () => {
-    const url = window.location.href;
-    void navigator.clipboard.writeText(url);
+    const targetUrl = searchedId
+      ? getMemberVerificationUrl(result?.membership_number || searchedId)
+      : `${OFFICIAL_DOMAIN}/verify`;
+    void navigator.clipboard.writeText(targetUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const shareVerification = async () => {
+    const targetUrl = searchedId
+      ? getMemberVerificationUrl(result?.membership_number || searchedId)
+      : `${OFFICIAL_DOMAIN}/verify`;
     if (navigator.share && result) {
       try {
         await navigator.share({
           title: `التحقق من عضوية ${result.full_name_ar ?? "مؤسسة نهر ديالى"}`,
           text: `نتيجة الفحص الرقمي الرسمي لبطاقة عضوية مؤسسة نهر ديالى للتنمية المستدامة: ${result.membership_number}`,
-          url: window.location.href,
+          url: targetUrl,
         });
       } catch {
         copyLink();
@@ -357,11 +362,19 @@ export default function MemberVerificationPage(): React.ReactElement {
                   <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-3">
                       {qrCodeUrl && (
-                        <img
-                          src={qrCodeUrl}
-                          alt="QR Verification"
-                          className="w-14 h-14 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-white p-1 shrink-0 shadow-xs"
-                        />
+                        <a
+                          href={getMemberVerificationUrl(result.membership_number || searchedId)}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="فتح رابط التحقق الرسمي"
+                          className="shrink-0 group"
+                        >
+                          <img
+                            src={qrCodeUrl}
+                            alt="QR Verification"
+                            className="w-14 h-14 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-white p-1 shadow-xs group-hover:scale-105 transition-transform"
+                          />
+                        </a>
                       )}
                       <div className="text-xs space-y-0.5">
                         <p className="font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1">
@@ -393,8 +406,53 @@ export default function MemberVerificationPage(): React.ReactElement {
                   </div>
                 </div>
               </motion.div>
+            ) : result.status?.startsWith("application_") ? (
+              /* ── 2. Membership Application Under Review / Processing ── */
+              <motion.div
+                key="app_status"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-card border-2 border-blue-500/50 rounded-3xl p-6 sm:p-8 space-y-4 shadow-md text-center"
+              >
+                <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                  <Clock size={28} className="text-blue-500" />
+                </div>
+                <h2 className="font-display font-black text-lg text-foreground">
+                  طلب انتساب وعضوية قيد المراجعة والتدقيق
+                </h2>
+                <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 max-w-md mx-auto text-start space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-muted-foreground font-medium">مقدم الطلب:</span>
+                    <strong className="text-foreground">{result.full_name_ar || "—"}</strong>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-muted-foreground font-medium">رقم الطلب:</span>
+                    <span className="font-mono font-bold text-foreground" dir="ltr">{result.membership_number || searchedId}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-muted-foreground font-medium">حالة الاستمارة:</span>
+                    <span className="font-bold text-blue-600 dark:text-blue-400">
+                      {result.status === "application_under_review" ? "تحت المراجعة والتدقيق" :
+                       result.status === "application_waitlisted" ? "في قائمة الانتظار" :
+                       result.status === "application_rejected" ? "طلب معتذر عن قبوله" :
+                       "قيد الانتظار والمراجعة الإدارية"}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+                  {result.message || "طلب العضوية مسجل في قاعدة البيانات المركزية ويخضع حالياً لإجراءات التدقيق والاعتماد الإداري من قبل أمانة شؤون العضوية."}
+                </p>
+                <div className="pt-2">
+                  <Link
+                    to="/contact"
+                    className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-dark transition-colors shadow-2xs"
+                  >
+                    التواصل مع لجنة العضوية
+                  </Link>
+                </div>
+              </motion.div>
             ) : result.status === "inactive_suspended" ? (
-              /* ── 2. Inactive or Suspended Member ── */
+              /* ── 3. Inactive or Suspended Member ── */
               <motion.div
                 key="inactive"
                 initial={{ opacity: 0, scale: 0.98 }}

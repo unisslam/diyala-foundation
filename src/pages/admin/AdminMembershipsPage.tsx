@@ -20,7 +20,7 @@ import {
   ChevronRight, MessageSquare, RefreshCw,
   User, Mail, Phone, MapPin, GraduationCap, Calendar,
   FileText, Users, Star, Heart, Briefcase, Globe,
-  AlertCircle, Shield, Printer, Filter, Trash2, KeyRound,
+  AlertCircle, Shield, ShieldCheck, Printer, Filter, Trash2, KeyRound,
   ExternalLink, CreditCard
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
@@ -33,6 +33,7 @@ import {
   printOfficialApplication,
   printBatchOfficialApplications,
   exportExecutiveExcel,
+  getMemberVerificationUrl,
 } from "@/lib/membershipExport";
 import DeleteApplicationModal from "@/components/admin/DeleteApplicationModal";
 import PromoteMemberModal from "@/components/admin/PromoteMemberModal";
@@ -150,6 +151,18 @@ function DetailPanel({
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            {/* Public Verification Link */}
+            <a
+              href={getMemberVerificationUrl(app.application_number || app.id)}
+              target="_blank"
+              rel="noreferrer"
+              title="فحص العضوية في بوابة التحقق الرسمية diyalariver.org"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 text-xs font-bold transition-all"
+            >
+              <ShieldCheck size={13} className="text-emerald-600" />
+              <span className="hidden sm:inline">بوابة التحقق</span>
+            </a>
+
             {/* Print Official Letterhead PDF */}
             <button
               onClick={handlePrint}
@@ -214,7 +227,28 @@ function DetailPanel({
             )}
           </div>
 
-          {/* ① Personal */}
+          {/* Public Verification Link Bar */}
+          <div className="flex items-center justify-between bg-emerald-500/5 border border-emerald-500/20 p-2.5 px-3 rounded-2xl text-xs">
+            <div className="flex items-center gap-2 min-w-0">
+              <ShieldCheck size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <div className="truncate">
+                <p className="font-bold text-foreground text-[11px]">رابط الفحص والتحقق الرسمي (diyalariver.org):</p>
+                <p className="text-[10px] text-muted-foreground font-mono truncate" dir="ltr">
+                  {getMemberVerificationUrl(app.application_number || app.id)}
+                </p>
+              </div>
+            </div>
+            <a
+              href={getMemberVerificationUrl(app.application_number || app.id)}
+              target="_blank"
+              rel="noreferrer"
+              className="p-1.5 rounded-lg hover:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 transition-colors flex items-center gap-1 text-[11px] font-bold shrink-0"
+              title="فتح الرابط في نافذة جديدة"
+            >
+              <ExternalLink size={13} />
+              <span>فحص</span>
+            </a>
+          </div>
           <Section icon={User} title="المعلومات الشخصية">
             <InfoRow icon={Star}     label="نوع العضوية"             value={TYPE_LABEL[app.membership_type] ?? app.membership_type} />
             <InfoRow icon={User}     label="الاسم الكامل (إنجليزي)" value={app.full_name_en} />

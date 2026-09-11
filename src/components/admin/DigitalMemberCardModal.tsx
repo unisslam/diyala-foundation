@@ -9,7 +9,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { X, Printer, Download, Sparkles, Check, ShieldCheck, Calendar, User, Camera, Loader2, ExternalLink, Copy } from "lucide-react";
 import type { TeamMemberRow } from "@/types/database.types";
-import { generateQrDataUrl } from "@/lib/membershipExport";
+import { generateQrDataUrl, getMemberVerificationUrl, OFFICIAL_DOMAIN } from "@/lib/membershipExport";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -28,7 +28,7 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
   const { uploading, uploadImage } = useImageUpload("member-avatars");
 
   const memNumber = member.membership_number || `DRF-MEM-${member.id.slice(0, 6).toUpperCase()}`;
-  const verifyUrl = `${window.location.origin}/verify/member/${encodeURIComponent(memNumber)}`;
+  const verifyUrl = getMemberVerificationUrl(memNumber);
   const joinDate = member.membership_start_date
     ? new Date(member.membership_start_date).toLocaleDateString("ar-IQ")
     : new Date(member.created_at).toLocaleDateString("ar-IQ");
@@ -62,7 +62,9 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
     const printWindow = window.open("", "_blank", "width=800,height=600");
     if (!printWindow) return;
 
-    const logoUrl = `${window.location.origin}/logo.png`;
+    const logoUrl = typeof window !== "undefined" && window.location.origin.includes("diyalariver.org")
+      ? `${window.location.origin}/logo.png`
+      : `${OFFICIAL_DOMAIN}/logo.png`;
 
     const html = `<!DOCTYPE html>
     <html dir="rtl" lang="ar">
@@ -285,7 +287,12 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
             <p>صلاحية البطاقة: <strong>${expiryDate}</strong></p>
           </div>
           <div class="qr-box">
-            ${qrUrl ? `<img src="${qrUrl}" alt="QR" /><p style="font-size: 3.8pt; color: #a7f3d0; text-align: center; margin-top: 2px;">امسح للتحقق</p>` : ""}
+            ${qrUrl ? `
+              <a href="${verifyUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none; display:inline-block;">
+                <img src="${qrUrl}" alt="QR" />
+              </a>
+              <p style="font-size: 3.8pt; color: #a7f3d0; text-align: center; margin-top: 2px;">امسح للتحقق</p>
+            ` : ""}
           </div>
         </div>
       </div>
@@ -425,11 +432,19 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
               {/* QR Verification */}
               <div className="shrink-0">
                 {qrUrl ? (
-                  <img
-                    src={qrUrl}
-                    alt="QR Verification"
-                    className="w-10 h-10 rounded-md border border-white/40 bg-white p-0.5 shadow-md"
-                  />
+                  <a
+                    href={verifyUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    title="فتح بوابة التحقق الرسمية diyalariver.org"
+                    className="block group"
+                  >
+                    <img
+                      src={qrUrl}
+                      alt="QR Verification"
+                      className="w-10 h-10 rounded-md border border-white/40 bg-white p-0.5 shadow-md group-hover:scale-105 transition-transform"
+                    />
+                  </a>
                 ) : (
                   <div className="w-10 h-10 rounded bg-white/20 animate-pulse" />
                 )}

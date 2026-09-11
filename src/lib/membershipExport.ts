@@ -41,6 +41,18 @@ export const GENDER_LABEL: Record<string, string> = {
   female: "أنثى",
 };
 
+export const OFFICIAL_DOMAIN = "https://diyalariver.org";
+
+/**
+ * Returns the official public verification portal URL for a member or application.
+ * Always targets the canonical production domain https://diyalariver.org so mobile
+ * QR scanner cameras navigate directly to the official public portal.
+ */
+export function getMemberVerificationUrl(identifier: string): string {
+  const clean = (identifier || "").trim();
+  return `${OFFICIAL_DOMAIN}/verify/member/${encodeURIComponent(clean)}`;
+}
+
 /**
  * Generates a QR Code as DataURL string
  */
@@ -64,8 +76,14 @@ export async function generateQrDataUrl(text: string): Promise<string> {
 /**
  * Builds standard application HTML body for print/export
  */
-function buildApplicationHtml(app: MembershipApplicationRow, qrDataUrl: string, logoUrl: string): string {
+function buildApplicationHtml(
+  app: MembershipApplicationRow,
+  qrDataUrl: string,
+  logoUrl: string,
+  verifyUrl?: string
+): string {
   const status = STATUS_CFG[app.status] ?? { label: app.status, color: "#475569" };
+  const targetVerifyUrl = verifyUrl || getMemberVerificationUrl(app.application_number || app.id);
 
   const field = (label: string, value: string | number | null | undefined): string => {
     if (value === null || value === undefined || value === "") return "";
@@ -90,11 +108,15 @@ function buildApplicationHtml(app: MembershipApplicationRow, qrDataUrl: string, 
 
       <div class="header-col logo-center">
         <img src="${logoUrl}" alt="شعار المؤسسة" class="foundation-logo" onerror="this.style.display='none'" />
-        <div class="motto">النهر الذي يحيي العراق</div>
       </div>
 
       <div class="header-col qr-left">
-        ${qrDataUrl ? `<img src="${qrDataUrl}" alt="QR Code" class="qr-image" />` : ""}
+        ${qrDataUrl ? `
+          <a href="${targetVerifyUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none; display:inline-block;" title="التحقق الرسمي من صحة الاستمارة عبر diyalariver.org">
+            <img src="${qrDataUrl}" alt="QR Verification Code" class="qr-image" />
+          </a>
+          <div class="qr-sub">امسح للتحقق الرسمي</div>
+        ` : ""}
         <div class="doc-code">رقم الطلب: <strong dir="ltr">${app.application_number ?? "—"}</strong></div>
         <div class="doc-date">تاريخ التقديم: ${new Date(app.created_at).toLocaleDateString("ar-IQ")}</div>
       </div>
@@ -387,6 +409,15 @@ function getDocumentStyles(): string {
       background: #fff;
     }
 
+    .qr-sub {
+      font-size: 6pt;
+      font-weight: 700;
+      color: #059669;
+      text-align: center;
+      margin-top: 1.5px;
+      letter-spacing: 0.2px;
+    }
+
     .doc-code {
       font-size: 8.5pt;
       font-weight: 700;
@@ -673,9 +704,12 @@ function getDocumentStyles(): string {
  * Print a single official application dossier with QR code and institutional header
  */
 export async function printOfficialApplication(app: MembershipApplicationRow): Promise<void> {
-  const logoUrl = `${window.location.origin}/logo.png`;
-  const qrVerificationData = `DIYA-VERIFY:${app.application_number ?? app.id}:${app.full_name_en}:${app.status}:${window.location.origin}`;
-  const qrDataUrl = await generateQrDataUrl(qrVerificationData);
+  const logoUrl = typeof window !== "undefined" && window.location.origin.includes("diyalariver.org")
+    ? `${window.location.origin}/logo.png`
+    : `${OFFICIAL_DOMAIN}/logo.png`;
+  const searchId = app.application_number || app.id;
+  const verifyUrl = getMemberVerificationUrl(searchId);
+  const qrDataUrl = await generateQrDataUrl(verifyUrl);
 
   const html = `<!DOCTYPE html>
   <html dir="rtl" lang="ar">
@@ -685,7 +719,7 @@ export async function printOfficialApplication(app: MembershipApplicationRow): P
     <style>${getDocumentStyles()}</style>
   </head>
   <body>
-    ${buildApplicationHtml(app, qrDataUrl, logoUrl)}
+    ${buildApplicationHtml(app, qrDataUrl, logoUrl, verifyUrl)}
   </body>
   </html>`;
 
@@ -706,14 +740,17 @@ export async function printOfficialApplication(app: MembershipApplicationRow): P
 export async function printBatchOfficialApplications(apps: MembershipApplicationRow[]): Promise<void> {
   if (!apps.length) return;
 
-  const logoUrl = `${window.location.origin}/logo.png`;
+  const logoUrl = typeof window !== "undefined" && window.location.origin.includes("diyalariver.org")
+    ? `${window.location.origin}/logo.png`
+    : `${OFFICIAL_DOMAIN}/logo.png`;
 
   // Generate QR for all items in parallel
   const renderedPages = await Promise.all(
     apps.map(async (app) => {
-      const qrVerificationData = `DIYA-VERIFY:${app.application_number ?? app.id}:${app.full_name_en}:${app.status}:${window.location.origin}`;
-      const qrDataUrl = await generateQrDataUrl(qrVerificationData);
-      return buildApplicationHtml(app, qrDataUrl, logoUrl);
+      const searchId = app.application_number || app.id;
+      const verifyUrl = getMemberVerificationUrl(searchId);
+      const qrDataUrl = await generateQrDataUrl(verifyUrl);
+      return buildApplicationHtml(app, qrDataUrl, logoUrl, verifyUrl);
     })
   );
 
