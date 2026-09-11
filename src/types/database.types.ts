@@ -104,6 +104,49 @@ export interface TeamMemberRow {
   display_order: number;
   is_active: boolean;
   membership_application_id: string | null;
+  membership_number?: string | null;
+  membership_start_date?: string | null;
+  membership_expires_at?: string | null;
+  membership_tier?: string | null;
+  activity_score?: number | null;
+}
+
+export interface AdminPermissions {
+  can_manage_news: boolean;
+  can_manage_projects: boolean;
+  can_manage_memberships: boolean;
+  can_manage_team: boolean;
+  can_manage_messages: boolean;
+  can_manage_gallery: boolean;
+  can_manage_admins: boolean;
+}
+
+export type AdminRole = "super_admin" | "editor" | "membership_officer" | "comms_manager" | "custom";
+
+export interface AdminProfileRow {
+  id: string;
+  team_member_id: string | null;
+  full_name: string;
+  role: AdminRole;
+  permissions: AdminPermissions;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ActivityType = "workshop" | "task" | "event" | "commendation" | "meeting";
+
+export interface MemberActivityRow {
+  id: string;
+  team_member_id: string;
+  activity_type: ActivityType;
+  title: string;
+  description: string | null;
+  activity_date: string;
+  hours_spent: number;
+  status: "completed" | "in_progress" | "planned";
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ContactMessageRow {

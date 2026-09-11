@@ -37,6 +37,7 @@ const AdminGalleryPage     = React.lazy(() => import("@/pages/admin/AdminGallery
 const AdminContactsPage    = React.lazy(() => import("@/pages/admin/AdminContactsPage"));
 const AdminMembershipsPage = React.lazy(() => import("@/pages/admin/AdminMembershipsPage"));
 const AdminStatsPage       = React.lazy(() => import("@/pages/admin/AdminStatsPage"));
+const AdminUsersPage       = React.lazy(() => import("@/pages/admin/AdminUsersPage"));
 
 // ── React Query client ──────────────────────────────────────────────
 const queryClient = new QueryClient({
@@ -113,6 +114,7 @@ export default function App(): React.ReactElement {
                 <Route path="admin/contacts"     element={<AdminContactsPage />} />
                 <Route path="admin/memberships"  element={<AdminMembershipsPage />} />
                 <Route path="admin/stats"        element={<AdminStatsPage />} />
+                <Route path="admin/users"        element={<AdminUsersPage />} />
               </Route>
             </Route>
           </Routes>

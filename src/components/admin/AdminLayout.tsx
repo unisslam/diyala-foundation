@@ -13,33 +13,53 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FolderOpen, Newspaper, Users, MessageSquare,
   Star, Image, BarChart3, LogOut, Menu, X, ChevronRight,
-  UserCheck, Shield,
+  UserCheck, Shield, ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import type { AdminPermissions } from "@/types/database.types";
 
 interface NavItem {
   to: string;
   icon: React.ElementType;
   label: string;
   badge?: number;
+  perm?: keyof AdminPermissions;
+  superOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
   { to: "/admin",              icon: LayoutDashboard, label: "لوحة التحكم" },
-  { to: "/admin/projects",     icon: FolderOpen,      label: "المشاريع" },
-  { to: "/admin/news",         icon: Newspaper,       label: "الأخبار" },
-  { to: "/admin/team",         icon: Users,           label: "الفريق" },
-  { to: "/admin/testimonials", icon: Star,            label: "الشهادات" },
-  { to: "/admin/gallery",      icon: Image,           label: "المعرض" },
-  { to: "/admin/contacts",     icon: MessageSquare,   label: "الرسائل" },
-  { to: "/admin/memberships",  icon: UserCheck,       label: "طلبات العضوية" },
-  { to: "/admin/stats",        icon: BarChart3,       label: "الإحصاءات" },
+  { to: "/admin/memberships",  icon: UserCheck,       label: "طلبات العضوية",   perm: "can_manage_memberships" },
+  { to: "/admin/team",         icon: Users,           label: "فريق العمل والأعضاء", perm: "can_manage_team" },
+  { to: "/admin/projects",     icon: FolderOpen,      label: "المشاريع",         perm: "can_manage_projects" },
+  { to: "/admin/news",         icon: Newspaper,       label: "الأخبار",          perm: "can_manage_news" },
+  { to: "/admin/contacts",     icon: MessageSquare,   label: "الرسائل والتطوع",  perm: "can_manage_messages" },
+  { to: "/admin/gallery",      icon: Image,           label: "المعرض",           perm: "can_manage_gallery" },
+  { to: "/admin/testimonials", icon: Star,            label: "الشهادات",         perm: "can_manage_news" },
+  { to: "/admin/stats",        icon: BarChart3,       label: "الإحصاءات",       perm: "can_manage_projects" },
+  { to: "/admin/users",        icon: ShieldCheck,     label: "المشرفون والصلاحيات", superOnly: true },
 ];
 
-function SidebarNav({ collapsed, onClose }: { collapsed?: boolean; onClose?: () => void }): React.ReactElement {
+function SidebarNav({
+  collapsed,
+  onClose,
+  hasPermission,
+  isSuperAdmin,
+}: {
+  collapsed?: boolean;
+  onClose?: () => void;
+  hasPermission: (p: keyof AdminPermissions) => boolean;
+  isSuperAdmin: boolean;
+}): React.ReactElement {
+  const visibleItems = NAV_ITEMS.filter((item) => {
+    if (item.superOnly && !isSuperAdmin) return false;
+    if (item.perm && !hasPermission(item.perm)) return false;
+    return true;
+  });
+
   return (
     <nav className="flex flex-col gap-1 px-2">
-      {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+      {visibleItems.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}
           to={to}
@@ -65,7 +85,7 @@ function SidebarNav({ collapsed, onClose }: { collapsed?: boolean; onClose?: () 
 }
 
 export default function AdminLayout(): React.ReactElement {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut, hasPermission, isSuperAdmin } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -73,6 +93,16 @@ export default function AdminLayout(): React.ReactElement {
     await signOut();
     navigate("/admin/login");
   }
+
+  const roleTitle = isSuperAdmin
+    ? "مدير عام (Super Admin)"
+    : profile?.role === "membership_officer"
+    ? "مسؤول عضويات"
+    : profile?.role === "editor"
+    ? "محرر أخبار"
+    : profile?.role === "comms_manager"
+    ? "مسؤول تواصل"
+    : "مشرف نظام";
 
   const SidebarContent = (): React.ReactElement => (
     <div className="flex flex-col h-full">
@@ -91,25 +121,29 @@ export default function AdminLayout(): React.ReactElement {
 
       {/* Nav */}
       <div className="flex-1 overflow-y-auto py-3">
-        <SidebarNav onClose={() => setMobileOpen(false)} />
+        <SidebarNav
+          onClose={() => setMobileOpen(false)}
+          hasPermission={hasPermission}
+          isSuperAdmin={isSuperAdmin}
+        />
       </div>
 
       {/* User info */}
       <div className="p-4 border-t border-border shrink-0">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
-            {user?.email?.[0].toUpperCase()}
+            {profile?.full_name ? profile.full_name.charAt(0) : user?.email?.[0].toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium truncate">{user?.email}</p>
-            <p className="text-[10px] text-muted-foreground">مشرف</p>
+            <p className="text-xs font-semibold truncate">{profile?.full_name || user?.email}</p>
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold truncate">{roleTitle}</p>
           </div>
         </div>
         <button
           onClick={handleSignOut}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
         >
-          <LogOut size={15} />
+          <LogOut size={14} />
           تسجيل الخروج
         </button>
       </div>
