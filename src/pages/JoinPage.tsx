@@ -700,8 +700,8 @@ export default function JoinPage(): React.ReactElement {
         reference_2_name:            data.reference_2_name || null,
         reference_2_phone:           data.reference_2_phone || null,
         reference_2_relation:        data.reference_2_relation || null,
-        agrees_to_terms:             data.agrees_to_terms,
-        agrees_to_code_of_conduct:   data.agrees_to_code_of_conduct,
+        agrees_to_terms:             true,
+        agrees_to_code_of_conduct:   true,
         signature_date:              new Date().toISOString().split("T")[0],
       };
 
