@@ -25,6 +25,7 @@ const ContactPage       = React.lazy(() => import("@/pages/ContactPage"));
 const JoinPage          = React.lazy(() => import("@/pages/JoinPage"));
 const GalleryPage       = React.lazy(() => import("@/pages/GalleryPage"));
 const NotFoundPage      = React.lazy(() => import("@/pages/NotFoundPage"));
+const MemberVerificationPage = React.lazy(() => import("@/pages/MemberVerificationPage"));
 
 // Admin pages (lazy-loaded)
 const AdminLoginPage       = React.lazy(() => import("@/pages/admin/AdminLoginPage"));
@@ -95,6 +96,9 @@ export default function App(): React.ReactElement {
               <Route path="contact"         element={<ContactPage />} />
               <Route path="join"            element={<JoinPage />} />
               <Route path="gallery"         element={<GalleryPage />} />
+              <Route path="verify/member/:membershipNumber" element={<MemberVerificationPage />} />
+              <Route path="verify-member/:membershipNumber" element={<MemberVerificationPage />} />
+              <Route path="verify"          element={<MemberVerificationPage />} />
               <Route path="404"             element={<NotFoundPage />} />
               <Route path="*"              element={<Navigate to="/404" replace />} />
             </Route>

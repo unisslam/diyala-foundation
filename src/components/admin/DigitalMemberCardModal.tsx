@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { X, Printer, Download, Sparkles, Check, ShieldCheck, Calendar, User, Camera, Loader2 } from "lucide-react";
+import { X, Printer, Download, Sparkles, Check, ShieldCheck, Calendar, User, Camera, Loader2, ExternalLink, Copy } from "lucide-react";
 import type { TeamMemberRow } from "@/types/database.types";
 import { generateQrDataUrl } from "@/lib/membershipExport";
 import { useImageUpload } from "@/hooks/useImageUpload";
@@ -28,6 +28,7 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
   const { uploading, uploadImage } = useImageUpload("member-avatars");
 
   const memNumber = member.membership_number || `DRF-MEM-${member.id.slice(0, 6).toUpperCase()}`;
+  const verifyUrl = `${window.location.origin}/verify/member/${encodeURIComponent(memNumber)}`;
   const joinDate = member.membership_start_date
     ? new Date(member.membership_start_date).toLocaleDateString("ar-IQ")
     : new Date(member.created_at).toLocaleDateString("ar-IQ");
@@ -36,9 +37,8 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
     : "تجديد سنوي معتمد";
 
   useEffect(() => {
-    const qrData = `DRF-MEMBER-VERIFY:${memNumber}:${member.full_name_en || member.full_name_ar}:${window.location.origin}`;
-    void generateQrDataUrl(qrData).then(setQrUrl);
-  }, [memNumber, member.full_name_ar, member.full_name_en]);
+    void generateQrDataUrl(verifyUrl).then(setQrUrl);
+  }, [verifyUrl]);
 
   async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -285,7 +285,7 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
             <p>صلاحية البطاقة: <strong>${expiryDate}</strong></p>
           </div>
           <div class="qr-box">
-            ${qrUrl ? `<img src="${qrUrl}" alt="QR" />` : ""}
+            ${qrUrl ? `<img src="${qrUrl}" alt="QR" /><p style="font-size: 3.8pt; color: #a7f3d0; text-align: center; margin-top: 2px;">امسح للتحقق</p>` : ""}
           </div>
         </div>
       </div>
@@ -481,6 +481,40 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
               {memNumber}
               {copied ? <Check size={13} className="text-emerald-500" /> : null}
             </button>
+          </div>
+
+          {/* Public Verification Link Bar */}
+          <div className="flex items-center justify-between bg-primary/5 border border-primary/20 p-2.5 px-3 rounded-2xl text-xs">
+            <div className="flex items-center gap-2 min-w-0">
+              <ShieldCheck size={15} className="text-primary shrink-0" />
+              <div className="truncate">
+                <p className="font-bold text-foreground text-[11px]">رابط الفحص والتحقق العام (QR):</p>
+                <p className="text-[10px] text-muted-foreground font-mono truncate" dir="ltr">{verifyUrl}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  void navigator.clipboard.writeText(verifyUrl);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors"
+                title="نسخ رابط التحقق"
+              >
+                {copied ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
+              </button>
+              <a
+                href={verifyUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors flex items-center gap-1 text-[11px] font-bold"
+                title="فتح صفحة التحقق في نافذة جديدة"
+              >
+                <ExternalLink size={13} />
+              </a>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">

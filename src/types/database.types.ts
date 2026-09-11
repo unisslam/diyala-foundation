@@ -149,6 +149,28 @@ export interface MemberActivityRow {
   updated_at: string;
 }
 
+export interface MemberVerificationResult {
+  is_valid: boolean;
+  status: "valid_active" | "inactive_suspended" | "expired" | "not_found" | "error" | string;
+  member_id?: string;
+  membership_number?: string;
+  full_name_ar?: string;
+  full_name_en?: string;
+  title_ar?: string;
+  title_en?: string;
+  role?: string;
+  membership_tier?: string;
+  avatar_path?: string | null;
+  membership_start_date?: string | null;
+  membership_expires_at?: string | null;
+  activity_score?: number;
+  workshops_count?: number;
+  bio_ar?: string | null;
+  is_active?: boolean;
+  verified_at?: string;
+  message?: string;
+}
+
 export interface ContactMessageRow {
   id: string;
   created_at: string;

@@ -119,9 +119,7 @@ function TeamForm({
 
             <div className="flex-1 min-w-0">
               <label className="text-xs font-bold block text-foreground mb-0.5">الصورة الشخصية للعضو (بطاقة العضوية)</label>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                تُحفظ الصورة في مستودع <code className="text-primary font-mono text-[10px]">member-avatars</code> وتظهر على بطاقة العضوية الرقمية بدلاً من الحرف الأول.
-              </p>
+
               <div className="flex items-center gap-2 mt-2">
                 <input
                   type="file"
@@ -302,14 +300,14 @@ function TeamForm({
 }
 
 export default function AdminTeamPage(): React.ReactElement {
-  const [members, setMembers]                   = useState<TeamMemberRow[]>([]);
-  const [loading, setLoading]                   = useState(true);
-  const [search, setSearch]                     = useState("");
-  const [tab, setTab]                           = useState<TeamFilterTab>("all");
-  const [editTarget, setEditTarget]             = useState<Partial<TeamMemberRow> | null | undefined>(undefined);
-  const [cardTarget, setCardTarget]             = useState<TeamMemberRow | null>(null);
+  const [members, setMembers] = useState<TeamMemberRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [tab, setTab] = useState<TeamFilterTab>("all");
+  const [editTarget, setEditTarget] = useState<Partial<TeamMemberRow> | null | undefined>(undefined);
+  const [cardTarget, setCardTarget] = useState<TeamMemberRow | null>(null);
   const [activitiesTarget, setActivitiesTarget] = useState<TeamMemberRow | null>(null);
-  const [promoteTarget, setPromoteTarget]       = useState<TeamMemberRow | null>(null);
+  const [promoteTarget, setPromoteTarget] = useState<TeamMemberRow | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -352,11 +350,11 @@ export default function AdminTeamPage(): React.ReactElement {
   }
 
   const ROLE_LABEL: Record<TeamMemberRow["role"], { label: string; color: string }> = {
-    board:      { label: "مجلس الإدارة",   color: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300" },
-    management: { label: "إدارة تنفيذية",  color: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300" },
-    advisor:    { label: "مستشار معتمد",  color: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300" },
-    staff:      { label: "كادر وظيفي",    color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
-    member:     { label: "عضو مؤسسة",     color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" },
+    board: { label: "مجلس الإدارة", color: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300" },
+    management: { label: "إدارة تنفيذية", color: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300" },
+    advisor: { label: "مستشار معتمد", color: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300" },
+    staff: { label: "كادر وظيفي", color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" },
+    member: { label: "عضو مؤسسة", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" },
   };
 
   const filteredMembers = members.filter((m) => {
@@ -445,20 +443,19 @@ export default function AdminTeamPage(): React.ReactElement {
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1.5 no-scrollbar">
         {[
-          { key: "all",              label: "كافة الأعضاء",               count: members.length },
-          { key: "approved_members", label: "أعضاء المؤسسة المعتمدين",   count: memberCount },
-          { key: "board",            label: "مجلس الإدارة",               count: boardCount },
-          { key: "staff",            label: "الكادر التنفيذي والإداري",  count: members.filter((m) => m.role === "staff" || m.role === "management").length },
-          { key: "advisor",          label: "المستشارون",                 count: members.filter((m) => m.role === "advisor").length },
+          { key: "all", label: "كافة الأعضاء", count: members.length },
+          { key: "approved_members", label: "أعضاء المؤسسة المعتمدين", count: memberCount },
+          { key: "board", label: "مجلس الإدارة", count: boardCount },
+          { key: "staff", label: "الكادر التنفيذي والإداري", count: members.filter((m) => m.role === "staff" || m.role === "management").length },
+          { key: "advisor", label: "المستشارون", count: members.filter((m) => m.role === "advisor").length },
         ].map(({ key, label, count }) => (
           <button
             key={key}
             onClick={() => setTab(key as TeamFilterTab)}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
-              tab === key
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${tab === key
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "border border-border text-muted-foreground hover:bg-muted"
-            }`}
+              }`}
           >
             <span>{label}</span>
             <span className="opacity-75 font-mono text-[10px]">({count})</span>
@@ -496,9 +493,8 @@ export default function AdminTeamPage(): React.ReactElement {
             return (
               <div
                 key={m.id}
-                className={`p-5 rounded-3xl border bg-card shadow-xs transition-all flex flex-col justify-between space-y-4 hover:border-primary/40 ${
-                  m.is_active ? "border-border" : "border-dashed opacity-60 bg-muted/20"
-                }`}
+                className={`p-5 rounded-3xl border bg-card shadow-xs transition-all flex flex-col justify-between space-y-4 hover:border-primary/40 ${m.is_active ? "border-border" : "border-dashed opacity-60 bg-muted/20"
+                  }`}
               >
                 {/* Card Top: Avatar, Names, Role */}
                 <div>
@@ -524,9 +520,8 @@ export default function AdminTeamPage(): React.ReactElement {
                       <button
                         onClick={() => toggleActive(m)}
                         title={m.is_active ? "إخفاء من الموقع" : "إظهار على الموقع"}
-                        className={`p-1.5 rounded-lg hover:bg-muted transition-colors ${
-                          m.is_active ? "text-emerald-600" : "text-muted-foreground"
-                        }`}
+                        className={`p-1.5 rounded-lg hover:bg-muted transition-colors ${m.is_active ? "text-emerald-600" : "text-muted-foreground"
+                          }`}
                       >
                         {m.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
                       </button>
