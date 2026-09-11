@@ -7,19 +7,25 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { X, Printer, Download, Sparkles, Check, ShieldCheck, Calendar, User } from "lucide-react";
+import { X, Printer, Download, Sparkles, Check, ShieldCheck, Calendar, User, Camera, Loader2 } from "lucide-react";
 import type { TeamMemberRow } from "@/types/database.types";
 import { generateQrDataUrl } from "@/lib/membershipExport";
+import { useImageUpload } from "@/hooks/useImageUpload";
+import { supabase } from "@/lib/supabaseClient";
 
 interface DigitalMemberCardModalProps {
   member: TeamMemberRow;
   onClose: () => void;
+  onUpdate?: () => void;
 }
 
-export default function DigitalMemberCardModal({ member, onClose }: DigitalMemberCardModalProps): React.ReactElement {
+export default function DigitalMemberCardModal({ member, onClose, onUpdate }: DigitalMemberCardModalProps): React.ReactElement {
   const [qrUrl, setQrUrl] = useState<string>("");
+  const [avatarPath, setAvatarPath] = useState<string | null>(member.avatar_path ?? null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [copied, setCopied] = useState(false);
+  const { uploading, uploadImage } = useImageUpload("member-avatars");
 
   const memNumber = member.membership_number || `DRF-MEM-${member.id.slice(0, 6).toUpperCase()}`;
   const joinDate = member.membership_start_date
@@ -33,6 +39,24 @@ export default function DigitalMemberCardModal({ member, onClose }: DigitalMembe
     const qrData = `DRF-MEMBER-VERIFY:${memNumber}:${member.full_name_en || member.full_name_ar}:${window.location.origin}`;
     void generateQrDataUrl(qrData).then(setQrUrl);
   }, [memNumber, member.full_name_ar, member.full_name_en]);
+
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file);
+    if (url) {
+      if (member.id) {
+        const { data } = await supabase.from("team_members").update({ avatar_path: url }).eq("id", member.id).select("id");
+        if ((!data || data.length === 0) && member.membership_application_id) {
+          await supabase.from("team_members").update({ avatar_path: url }).eq("membership_application_id", member.membership_application_id);
+        }
+      } else if (member.membership_application_id) {
+        await supabase.from("team_members").update({ avatar_path: url }).eq("membership_application_id", member.membership_application_id);
+      }
+      setAvatarPath(url);
+      onUpdate?.();
+    }
+  }
 
   const printCard = (): void => {
     const printWindow = window.open("", "_blank", "width=800,height=600");
@@ -245,7 +269,7 @@ export default function DigitalMemberCardModal({ member, onClose }: DigitalMembe
 
         <div class="card-body">
           <div class="avatar-box">
-            ${member.avatar_path ? `<img src="${member.avatar_path}" alt="" />` : member.full_name_ar.charAt(0)}
+            ${avatarPath ? `<img src="${avatarPath}" alt="" />` : member.full_name_ar.charAt(0)}
           </div>
           <div class="member-details">
             <div class="member-name-ar">${member.full_name_ar}</div>
@@ -350,12 +374,21 @@ export default function DigitalMemberCardModal({ member, onClose }: DigitalMembe
 
             {/* Card Body */}
             <div className="flex items-center gap-3 my-auto z-10">
-              <div className="w-13 h-13 rounded-xl bg-white/10 border-2 border-emerald-300/60 flex items-center justify-center font-display font-black text-xl text-white shadow-inner overflow-hidden shrink-0">
-                {member.avatar_path ? (
-                  <img src={member.avatar_path} alt="" className="w-full h-full object-cover" />
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                title="اضغط لرفع أو تغيير الصورة الشخصية"
+                className="w-13 h-13 rounded-xl bg-white/10 border-2 border-emerald-300/60 flex items-center justify-center font-display font-black text-xl text-white shadow-inner overflow-hidden shrink-0 relative group cursor-pointer"
+              >
+                {uploading ? (
+                  <Loader2 size={20} className="animate-spin text-emerald-300" />
+                ) : avatarPath ? (
+                  <img src={avatarPath} alt="" className="w-full h-full object-cover" />
                 ) : (
                   member.full_name_ar.charAt(0)
                 )}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-xl">
+                  <Camera size={14} className="text-white" />
+                </div>
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-display font-extrabold text-sm leading-tight truncate">{member.full_name_ar}</p>
@@ -407,6 +440,36 @@ export default function DigitalMemberCardModal({ member, onClose }: DigitalMembe
 
         {/* Action Controls */}
         <div className="space-y-3">
+          {/* Avatar upload quick action */}
+          <div className="flex items-center justify-between bg-muted/40 p-2.5 px-3 rounded-2xl border border-border/50 text-xs">
+            <span className="text-muted-foreground flex items-center gap-1.5">
+              <Camera size={13} className="text-primary" /> الصورة الشخصية للبطاقة:
+            </span>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleAvatarChange}
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="font-bold text-primary hover:underline flex items-center gap-1 transition-colors"
+            >
+              {uploading ? (
+                <>
+                  <Loader2 size={12} className="animate-spin" />
+                  <span>جاري الرفع...</span>
+                </>
+              ) : avatarPath ? (
+                "تغيير الصورة الشخصية"
+              ) : (
+                "رفع صورة العضو (PNG/JPG)"
+              )}
+            </button>
+          </div>
           <div className="flex items-center justify-between bg-muted/40 p-3 rounded-2xl border border-border/50 text-xs">
             <span className="text-muted-foreground flex items-center gap-1.5">
               <User size={13} className="text-primary" /> رقم العضوية المعتمد:

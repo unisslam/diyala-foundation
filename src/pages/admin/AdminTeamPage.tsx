@@ -12,10 +12,11 @@
  *  • Full Mobile-First Responsive Design
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Plus, Edit2, Trash2, Eye, EyeOff, RefreshCw, Award,
-  CreditCard, KeyRound, UserCheck, Search, Users, BookOpen
+  CreditCard, KeyRound, UserCheck, Search, Users, BookOpen,
+  Camera, Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
@@ -24,6 +25,7 @@ import DigitalMemberCardModal from "@/components/admin/DigitalMemberCardModal";
 import MemberActivitiesModal from "@/components/admin/MemberActivitiesModal";
 import PromoteMemberModal from "@/components/admin/PromoteMemberModal";
 import { printOfficialApplication } from "@/lib/membershipExport";
+import { useImageUpload } from "@/hooks/useImageUpload";
 
 type TeamFilterTab = "all" | "approved_members" | "board" | "staff" | "advisor";
 
@@ -38,6 +40,8 @@ function TeamForm({
 }): React.ReactElement {
   const isNew = !member?.id;
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploading, uploadImage } = useImageUpload("member-avatars");
   const [form, setForm] = useState({
     full_name_ar: member?.full_name_ar ?? "",
     full_name_en: member?.full_name_en ?? "",
@@ -47,6 +51,7 @@ function TeamForm({
     bio_en: member?.bio_en ?? "",
     role: member?.role ?? "member",
     email: member?.email ?? "",
+    avatar_path: member?.avatar_path ?? "",
     linkedin_url: member?.linkedin_url ?? "",
     display_order: member?.display_order ?? 0,
     is_active: member?.is_active ?? true,
@@ -54,6 +59,15 @@ function TeamForm({
     membership_tier: member?.membership_tier ?? "regular",
     activity_score: member?.activity_score ?? 100,
   });
+
+  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file);
+    if (url) {
+      setForm((p) => ({ ...p, avatar_path: url }));
+    }
+  }
 
   async function save(): Promise<void> {
     setSaving(true);
@@ -84,6 +98,59 @@ function TeamForm({
         </div>
 
         <div className="p-6 space-y-4">
+          {/* Avatar Upload (member-avatars) */}
+          <div className="flex items-center gap-4 p-3.5 rounded-2xl bg-muted/40 border border-border/60">
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="w-16 h-16 rounded-2xl bg-background border-2 border-dashed border-border hover:border-primary flex items-center justify-center font-display font-black text-xl text-primary overflow-hidden cursor-pointer relative group transition-colors shrink-0 shadow-inner"
+              title="انقر لرفع أو تغيير الصورة الشخصية"
+            >
+              {uploading ? (
+                <Loader2 size={22} className="animate-spin text-primary" />
+              ) : form.avatar_path ? (
+                <img src={form.avatar_path} alt="" className="w-full h-full object-cover" />
+              ) : (
+                (form.full_name_ar || "?").charAt(0)
+              )}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl">
+                <Camera size={18} className="text-white" />
+              </div>
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <label className="text-xs font-bold block text-foreground mb-0.5">الصورة الشخصية للعضو (بطاقة العضوية)</label>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                تُحفظ الصورة في مستودع <code className="text-primary font-mono text-[10px]">member-avatars</code> وتظهر على بطاقة العضوية الرقمية بدلاً من الحرف الأول.
+              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="px-3 py-1 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-colors flex items-center gap-1.5"
+                >
+                  <Camera size={13} /> {form.avatar_path ? "تغيير الصورة" : "رفع صورة"}
+                </button>
+                {form.avatar_path && (
+                  <button
+                    type="button"
+                    onClick={() => setForm((p) => ({ ...p, avatar_path: "" }))}
+                    className="px-2.5 py-1 rounded-xl text-destructive hover:bg-destructive/10 text-xs font-medium transition-colors"
+                  >
+                    إزالة
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold mb-1 block">الاسم الكامل (عربي)</label>
@@ -329,6 +396,7 @@ export default function AdminTeamPage(): React.ReactElement {
           <DigitalMemberCardModal
             member={cardTarget}
             onClose={() => setCardTarget(null)}
+            onUpdate={load}
           />
         )}
         {activitiesTarget && (

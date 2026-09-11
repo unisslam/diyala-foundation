@@ -36,7 +36,7 @@ async function compressImage(file: File, maxPx = 1920, quality = 0.84): Promise<
   });
 }
 
-export function useImageUpload(bucket: "news" | "projects" | "gallery" | "team") {
+export function useImageUpload(bucket: "news" | "projects" | "gallery" | "team" | "member-avatars") {
   const [uploading, setUploading] = useState(false);
 
   async function uploadImage(file: File): Promise<string | null> {

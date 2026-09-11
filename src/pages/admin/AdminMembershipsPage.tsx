@@ -21,7 +21,7 @@ import {
   User, Mail, Phone, MapPin, GraduationCap, Calendar,
   FileText, Users, Star, Heart, Briefcase, Globe,
   AlertCircle, Shield, Printer, Filter, Trash2, KeyRound,
-  ExternalLink
+  ExternalLink, CreditCard
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { MembershipApplicationRow, MembershipStatus, MembershipType, TeamMemberRow } from "@/types/database.types";
@@ -36,6 +36,7 @@ import {
 } from "@/lib/membershipExport";
 import DeleteApplicationModal from "@/components/admin/DeleteApplicationModal";
 import PromoteMemberModal from "@/components/admin/PromoteMemberModal";
+import DigitalMemberCardModal from "@/components/admin/DigitalMemberCardModal";
 
 // ── Detail Panel ────────────────────────────────────────────────────────
 
@@ -45,12 +46,14 @@ function DetailPanel({
   onStatusChange,
   onDeleteRequest,
   onPromoteRequest,
+  onCardRequest,
 }: {
   app: MembershipApplicationRow;
   onClose: () => void;
   onStatusChange: (id: string, status: MembershipStatus, notes?: string) => Promise<void>;
   onDeleteRequest: (app: MembershipApplicationRow) => void;
   onPromoteRequest: (app: MembershipApplicationRow) => void;
+  onCardRequest: (app: MembershipApplicationRow) => void;
 }): React.ReactElement {
   const [notes, setNotes]   = useState(app.reviewer_notes ?? "");
   const [saving, setSaving] = useState(false);
@@ -187,10 +190,17 @@ function DetailPanel({
             </div>
 
             {app.status === "approved" && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => onCardRequest(app)}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-xl transition-colors border border-primary/20"
+                  title="عرض وإصدار بطاقة العضوية الرقمية بصورة شخصية"
+                >
+                  <CreditCard size={12} /> بطاقة العضوية
+                </button>
                 <Link
                   to="/admin/team"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline bg-primary/10 px-2.5 py-1 rounded-xl"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground bg-muted hover:bg-muted/80 px-2.5 py-1 rounded-xl transition-colors"
                 >
                   <ExternalLink size={12} /> صفحة الفريق
                 </Link>
@@ -541,6 +551,7 @@ export default function AdminMembershipsPage(): React.ReactElement {
   const [showExport, setShowExport]     = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<MembershipApplicationRow | null>(null);
   const [promoteTarget, setPromoteTarget] = useState<TeamMemberRow | null>(null);
+  const [cardTarget, setCardTarget] = useState<TeamMemberRow | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -565,6 +576,39 @@ export default function AdminMembershipsPage(): React.ReactElement {
   function handleApplicationDeleted(deletedId: string) {
     setApps((prev) => prev.filter((a) => a.id !== deletedId));
     if (selected?.id === deletedId) setSelected(null);
+  }
+
+  async function handleOpenCard(app: MembershipApplicationRow) {
+    const { data: member } = await supabase
+      .from("team_members")
+      .select("*")
+      .eq("membership_application_id", app.id)
+      .maybeSingle();
+
+    if (member) {
+      setCardTarget(member as TeamMemberRow);
+    } else {
+      setCardTarget({
+        id: app.id,
+        created_at: app.created_at,
+        updated_at: app.updated_at,
+        full_name_ar: app.full_name_ar,
+        full_name_en: app.full_name_en,
+        role: "member",
+        title_ar: "عضو معتمد",
+        title_en: "Approved Member",
+        bio_ar: app.motivation_statement,
+        bio_en: null,
+        avatar_path: null,
+        email: app.email,
+        linkedin_url: null,
+        display_order: 0,
+        is_active: true,
+        membership_application_id: app.id,
+        membership_number: app.application_number ? app.application_number.replace("DRF-APP-", "DRF-MEM-") : undefined,
+        activity_score: 100,
+      });
+    }
   }
 
   async function handlePromoteInitiation(app: MembershipApplicationRow) {
@@ -634,6 +678,7 @@ export default function AdminMembershipsPage(): React.ReactElement {
             onStatusChange={handleStatusChange}
             onDeleteRequest={(app) => setDeleteTarget(app)}
             onPromoteRequest={(app) => void handlePromoteInitiation(app)}
+            onCardRequest={(app) => void handleOpenCard(app)}
           />
         )}
         {showExport && (
@@ -651,6 +696,12 @@ export default function AdminMembershipsPage(): React.ReactElement {
             member={promoteTarget}
             onClose={() => setPromoteTarget(null)}
             onSuccess={() => void load()}
+          />
+        )}
+        {cardTarget && (
+          <DigitalMemberCardModal
+            member={cardTarget}
+            onClose={() => setCardTarget(null)}
           />
         )}
       </AnimatePresence>
@@ -809,6 +860,16 @@ export default function AdminMembershipsPage(): React.ReactElement {
                   </div>
 
                   <div className="flex items-center gap-1.5">
+                    {a.status === "approved" && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); void handleOpenCard(a); }}
+                        className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition-colors"
+                        title="عرض وإصدار بطاقة العضوية الرقمية بصورة شخصية"
+                      >
+                        <CreditCard size={15} />
+                      </button>
+                    )}
+
                     <button
                       onClick={() => setDeleteTarget(a)}
                       className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
@@ -899,6 +960,15 @@ export default function AdminMembershipsPage(): React.ReactElement {
                       </td>
                       <td className={`${tdCls} text-center`} onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-center gap-1.5">
+                          {a.status === "approved" && (
+                            <button
+                              onClick={() => void handleOpenCard(a)}
+                              title="عرض وإصدار بطاقة العضوية الرقمية بصورة شخصية"
+                              className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition-colors"
+                            >
+                              <CreditCard size={15} />
+                            </button>
+                          )}
                           <button
                             onClick={() => printOfficialApplication(a)}
                             title="طباعة الاستمارة الرسمية"
