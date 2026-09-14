@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { X, Printer, Download, Sparkles, Check, ShieldCheck, Calendar, User, Camera, Loader2, ExternalLink, Copy } from "lucide-react";
+import { X, Printer, Download, Check, ShieldCheck, User, Camera, Loader2, ExternalLink, Copy } from "lucide-react";
 import type { TeamMemberRow } from "@/types/database.types";
 import { generateQrDataUrl, getMemberVerificationUrl, OFFICIAL_DOMAIN } from "@/lib/membershipExport";
 import { useImageUpload } from "@/hooks/useImageUpload";
@@ -104,12 +104,13 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
 
         .card-bg-watermark {
           position: absolute;
-          top: -20px;
-          left: -20px;
-          width: 140px;
-          height: 140px;
+          top: -18px;
+          left: -25px;
+          width: 240px;
+          height: 240px;
           opacity: 0.08;
           pointer-events: none;
+          object-fit: contain;
         }
 
         .card-header {
@@ -237,12 +238,12 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
         }
 
         .qr-box img {
-          width: 32px;
-          height: 32px;
+          width: 40px;
+          height: 40px;
           border-radius: 4px;
           border: 1px solid rgba(255,255,255,0.4);
           background: #ffffff;
-          padding: 1px;
+          padding: 1.5px;
         }
 
         @media print {
@@ -263,7 +264,7 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
             <img src="${logoUrl}" alt="Logo" />
             <div class="brand-text">
               <h1>مؤسسة نهر ديالى للتنمية المستدامة</h1>
-              <p>DIYALA RIVER FOUNDATION</p>
+              <p>DIYALA RIVER FOUNDATION FOR SUSTAINABLE DEVELOPMENT</p>
             </div>
           </div>
           <div class="card-type-chip">بطاقة عضوية معتمدة</div>
@@ -357,7 +358,7 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
             <img
               src="/logo.png"
               alt=""
-              className="absolute -top-6 -start-6 w-36 h-36 opacity-10 pointer-events-none object-contain"
+              className="absolute -top-4 -start-8 w-64 h-64 opacity-10 pointer-events-none object-contain"
             />
 
             {/* Card Header */}
@@ -371,7 +372,7 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
                 />
                 <div>
                   <p className="font-display font-black text-[10.5px] leading-tight tracking-tight">مؤسسة نهر ديالى للتنمية المستدامة</p>
-                  <p className="text-[7px] text-emerald-200 tracking-wider font-mono">DIYALA RIVER FOUNDATION</p>
+                  <p className="text-[5px] text-emerald-200 tracking-wider font-mono">DIYALA RIVER FOUNDATION FOR SUSTAINABLE DEVELOPMENT</p>
                 </div>
               </div>
               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/20 border border-white/30 text-yellow-300 backdrop-blur-md">
@@ -418,12 +419,10 @@ export default function DigitalMemberCardModal({ member, onClose, onUpdate }: Di
                   <span className="font-mono font-bold text-white text-[9.5px]" dir="ltr">{memNumber}</span>
                 </p>
                 <p className="flex items-center gap-1">
-                  <Calendar size={9} className="text-emerald-300" />
                   <span>تاريخ الانتساب:</span>
                   <span className="font-semibold text-white">{joinDate}</span>
                 </p>
                 <p className="flex items-center gap-1">
-                  <Sparkles size={9} className="text-yellow-300" />
                   <span>الصلاحية:</span>
                   <span className="font-semibold text-yellow-200">{expiryDate}</span>
                 </p>

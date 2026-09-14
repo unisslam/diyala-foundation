@@ -359,8 +359,8 @@ export default function MemberVerificationPage(): React.ReactElement {
                   </div>
 
                   {/* Verification Seal & Security Info */}
-                  <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between flex-wrap gap-4">
-                    <div className="flex items-center gap-3">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-muted/40 dark:bg-muted/20 border border-border/80 flex items-center justify-between flex-wrap gap-4 shadow-2xs">
+                    <div className="flex items-center gap-3.5">
                       {qrCodeUrl && (
                         <a
                           href={getMemberVerificationUrl(result.membership_number || searchedId)}
@@ -372,19 +372,22 @@ export default function MemberVerificationPage(): React.ReactElement {
                           <img
                             src={qrCodeUrl}
                             alt="QR Verification"
-                            className="w-14 h-14 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-white p-1 shadow-xs group-hover:scale-105 transition-transform"
+                            className="w-14 h-14 rounded-xl border border-border/60 bg-white p-1 shadow-xs group-hover:scale-105 transition-transform"
                           />
                         </a>
                       )}
-                      <div className="text-xs space-y-0.5">
-                        <p className="font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1">
-                          <ShieldCheck size={14} className="text-emerald-600" /> ختم المصادقة الإلكترونية
+                      <div className="text-xs space-y-1">
+                        <p className="font-bold text-foreground flex items-center gap-1.5">
+                          <span className="w-5 h-5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                            <ShieldCheck size={13} />
+                          </span>
+                          <span>ختم المصادقة الإلكترونية</span>
                         </p>
-                        <p className="text-[10.5px] text-emerald-800/80 dark:text-emerald-300/70">
-                          رمز التحقق: <strong className="font-mono text-emerald-950 dark:text-emerald-100" dir="ltr">{result.membership_number}</strong>
+                        <p className="text-[11px] text-muted-foreground">
+                          رمز التحقق: <strong className="font-mono font-bold text-foreground" dir="ltr">{result.membership_number}</strong>
                         </p>
-                        <p className="text-[9.5px] text-muted-foreground">
-                          وقت الفحص: {new Date().toLocaleString("ar-IQ")}
+                        <p className="text-[10px] text-muted-foreground/80">
+                          وقت الفحص المعتمد: {new Date().toLocaleString("ar-IQ")}
                         </p>
                       </div>
                     </div>
@@ -392,13 +395,13 @@ export default function MemberVerificationPage(): React.ReactElement {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={shareVerification}
-                        className="px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-white dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors flex items-center gap-1.5"
+                        className="px-3.5 py-2 rounded-xl border border-border bg-background hover:bg-muted text-foreground text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-2xs"
                       >
-                        <Share2 size={13} /> مشاركة
+                        <Share2 size={13} className="text-muted-foreground" /> مشاركة
                       </button>
                       <button
                         onClick={printVerificationDoc}
-                        className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-2xs"
+                        className="px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-dark text-primary-foreground text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs"
                       >
                         <Printer size={13} /> طباعة
                       </button>
@@ -433,9 +436,9 @@ export default function MemberVerificationPage(): React.ReactElement {
                     <span className="text-muted-foreground font-medium">حالة الاستمارة:</span>
                     <span className="font-bold text-blue-600 dark:text-blue-400">
                       {result.status === "application_under_review" ? "تحت المراجعة والتدقيق" :
-                       result.status === "application_waitlisted" ? "في قائمة الانتظار" :
-                       result.status === "application_rejected" ? "طلب معتذر عن قبوله" :
-                       "قيد الانتظار والمراجعة الإدارية"}
+                        result.status === "application_waitlisted" ? "في قائمة الانتظار" :
+                          result.status === "application_rejected" ? "طلب معتذر عن قبوله" :
+                            "قيد الانتظار والمراجعة الإدارية"}
                     </span>
                   </div>
                 </div>
