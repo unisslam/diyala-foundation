@@ -577,7 +577,7 @@ function SuccessScreen({ appNumber, onReset }: { appNumber: string; onReset: () 
 export default function JoinPage(): React.ReactElement {
   const { t, i18n } = useTranslation(["join", "common"]);
   const isRtl = i18n.dir() === "rtl";
-  const formRef = useRef<HTMLFormElement>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState(1);
   const [data, setData] = useState<FormData>(() => {
@@ -643,17 +643,16 @@ export default function JoinPage(): React.ReactElement {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  async function handleSubmit(e: React.FormEvent): Promise<void> {
-    e.preventDefault();
+  async function handleSubmit(e?: React.MouseEvent | React.FormEvent): Promise<void> {
+    if (e && "preventDefault" in e) e.preventDefault();
     const err = validateStep(6);
     if (err) { setStepError(err); return; }
     setSubmitting(true);
     setSubmitError(null);
 
     // Honeypot check
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
-    if (formData.get("bot_field")) {
-      // Silently succeed
+    if (honeypotRef.current?.value) {
+      // Silently succeed (bot detected)
       localStorage.removeItem(STORAGE_KEY);
       setAppNumber("DRF-" + Math.floor(Math.random() * 100000));
       setSubmitting(false);
@@ -796,94 +795,93 @@ export default function JoinPage(): React.ReactElement {
               <div className="glass-card rounded-3xl p-6 md:p-8 border border-border shadow-glass">
                 <ProgressBar step={step} />
 
-                <form ref={formRef} onSubmit={handleSubmit} noValidate>
-                  {/* Honeypot field - hidden from users */}
-                  <input type="text" name="bot_field" style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={step}
-                      initial={{ opacity: 0, x: isRtl ? -20 : 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: isRtl ? 20 : -20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <h2 className="font-display text-lg font-bold mb-5 flex items-center gap-2">
-                        <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary text-sm font-bold flex items-center justify-center">{step}</span>
-                        {t(`steps.${step}`)}
-                      </h2>
+                {/* Honeypot field - hidden from bots */}
+                <input ref={honeypotRef} type="text" name="bot_field" style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={step}
+                    initial={{ opacity: 0, x: isRtl ? -20 : 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: isRtl ? 20 : -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="font-display text-lg font-bold mb-5 flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary text-sm font-bold flex items-center justify-center">{step}</span>
+                      {t(`steps.${step}`)}
+                    </h2>
 
-                      {step === 1 && <Step1 data={data} update={update} isRtl={isRtl} />}
-                      {step === 2 && <Step2 data={data} update={update} />}
-                      {step === 3 && <Step3 data={data} update={update} />}
-                      {step === 4 && <Step4 data={data} update={update} />}
-                      {step === 5 && <Step5 data={data} update={update} />}
-                      {step === 6 && <Step6 data={data} update={update} />}
-                    </motion.div>
-                  </AnimatePresence>
+                    {step === 1 && <Step1 data={data} update={update} isRtl={isRtl} />}
+                    {step === 2 && <Step2 data={data} update={update} />}
+                    {step === 3 && <Step3 data={data} update={update} />}
+                    {step === 4 && <Step4 data={data} update={update} />}
+                    {step === 5 && <Step5 data={data} update={update} />}
+                    {step === 6 && <Step6 data={data} update={update} />}
+                  </motion.div>
+                </AnimatePresence>
 
-                  {/* Step error */}
-                  {stepError && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="flex items-center gap-2 mt-4 p-3 rounded-xl bg-destructive/10 text-destructive text-sm"
-                    >
-                      <AlertCircle size={15} />
-                      {stepError}
-                    </motion.div>
-                  )}
+                {/* Step error */}
+                {stepError && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2 mt-4 p-3 rounded-xl bg-destructive/10 text-destructive text-sm"
+                  >
+                    <AlertCircle size={15} />
+                    {stepError}
+                  </motion.div>
+                )}
 
-                  {/* Submit error */}
-                  {submitError && (
-                    <div className="flex items-center gap-2 mt-4 p-3 rounded-xl bg-destructive/10 text-destructive text-sm">
-                      <AlertCircle size={15} />
-                      {submitError}
-                    </div>
-                  )}
-
-                  {/* Navigation buttons */}
-                  <div className="flex items-center justify-between mt-8 pt-5 border-t border-border">
-                    <button
-                      type="button"
-                      onClick={handlePrev}
-                      disabled={step === 1}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
-                    >
-                      {isRtl ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-                      {t("navigation.prev")}
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      {/* Save draft indicator */}
-                      <span className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
-                        <Save size={11} />
-                        {isRtl ? "محفوظ تلقائياً" : "Auto-saved"}
-                      </span>
-
-                      {step < TOTAL_STEPS ? (
-                        <button
-                          type="button"
-                          onClick={handleNext}
-                          className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-dark transition-colors"
-                        >
-                          {t("navigation.next")}
-                          {isRtl ? <ChevronLeft size={15} /> : <ChevronRight size={15} />}
-                        </button>
-                      ) : (
-                        <button
-                          type="submit"
-                          disabled={submitting || !data.agrees_to_terms || !data.agrees_to_code_of_conduct}
-                          className="flex items-center gap-2 px-7 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-bold hover:bg-accent-dark disabled:opacity-50 transition-colors"
-                        >
-                          <Sparkles size={15} />
-                          {submitting
-                            ? (isRtl ? "جاري الإرسال..." : "Submitting...")
-                            : t("step6.submit")}
-                        </button>
-                      )}
-                    </div>
+                {/* Submit error */}
+                {submitError && (
+                  <div className="flex items-center gap-2 mt-4 p-3 rounded-xl bg-destructive/10 text-destructive text-sm">
+                    <AlertCircle size={15} />
+                    {submitError}
                   </div>
-                </form>
+                )}
+
+                {/* Navigation buttons */}
+                <div className="flex items-center justify-between mt-8 pt-5 border-t border-border">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    disabled={step === 1}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
+                  >
+                    {isRtl ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+                    {t("navigation.prev")}
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    {/* Save draft indicator */}
+                    <span className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
+                      <Save size={11} />
+                      {isRtl ? "محفوظ تلقائياً" : "Auto-saved"}
+                    </span>
+
+                    {step < TOTAL_STEPS ? (
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary-dark transition-colors"
+                      >
+                        {t("navigation.next")}
+                        {isRtl ? <ChevronLeft size={15} /> : <ChevronRight size={15} />}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => { void handleSubmit(e); }}
+                        disabled={submitting || !data.agrees_to_terms || !data.agrees_to_code_of_conduct}
+                        className="flex items-center gap-2 px-7 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-bold hover:bg-accent-dark disabled:opacity-50 transition-colors"
+                      >
+                        <Sparkles size={15} />
+                        {submitting
+                          ? (isRtl ? "جاري الإرسال..." : "Submitting...")
+                          : t("step6.submit")}
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             </>
           )}
