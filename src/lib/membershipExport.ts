@@ -100,10 +100,8 @@ function buildApplicationHtml(
     <!-- Official Institutional Letterhead Header -->
     <header class="official-header">
       <div class="header-col meta-right">
-        <div class="country-line">جمهورية العراق</div>
-        <div class="sub-line">محافظة ديالى</div>
         <div class="foundation-name">مؤسسة نهر ديالى للتنمية المستدامة</div>
-        <div class="office-name">أمانة شؤون العضوية والانتساب</div>
+        <div class="office-name">إستمارة العضوية والإنتساب</div>
       </div>
 
       <div class="header-col logo-center">
@@ -350,28 +348,19 @@ function getDocumentStyles(): string {
       text-align: right;
     }
 
-    .country-line {
-      font-size: 9.5pt;
-      font-weight: 700;
-      color: #1e293b;
-    }
-
-    .sub-line {
-      font-size: 8.5pt;
-      color: #475569;
-    }
 
     .foundation-name {
       font-size: 11pt;
       font-weight: 900;
       color: #047857;
-      margin-top: 1px;
     }
 
     .office-name {
-      font-size: 8pt;
+      font-size: 9.5pt;
       font-weight: 700;
-      color: #64748b;
+      color: #1e3a5f;
+      margin-top: 2px;
+      letter-spacing: 0.2px;
     }
 
     .logo-center {
