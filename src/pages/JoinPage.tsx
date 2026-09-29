@@ -737,13 +737,37 @@ export default function JoinPage(): React.ReactElement {
 
   return (
     <div dir={isRtl ? "rtl" : "ltr"}>
-      <PageHero
-        eyebrow={isRtl ? "عضوية رسمية" : "Official Membership"}
-        titleKey="join:hero.title"
-        subtitleKey="join:hero.subtitle"
-      />
+      {/* Hero collapses smoothly after step 1 */}
+      <AnimatePresence initial={false}>
+        {step === 1 && !appNumber && (
+          <motion.div
+            key="page-hero"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{
+              opacity: 0,
+              height: 0,
+              transition: { opacity: { duration: 0.25 }, height: { duration: 0.4, ease: "easeInOut" } },
+            }}
+            transition={{ opacity: { duration: 0.3 }, height: { duration: 0.4, ease: "easeInOut" } }}
+            style={{ overflow: "hidden" }}
+          >
+            <PageHero
+              eyebrow={isRtl ? "عضوية رسمية" : "Official Membership"}
+              titleKey="join:hero.title"
+              subtitleKey="join:hero.subtitle"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <section className="section-padding bg-background">
+      <section
+        className={`bg-background ${
+          step > 1 && !appNumber
+            ? "pt-24 sm:pt-28 pb-16 sm:pb-20"
+            : "section-padding"
+        }`}
+      >
         <div className="container mx-auto px-4 md:px-8 max-w-3xl">
 
           {appNumber ? (
