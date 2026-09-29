@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import PageHero from "@/components/shared/PageHero";
 import { supabase } from "@/lib/supabaseClient";
 import type { MembershipType, EducationLevel } from "@/types/database.types";
+import { useMembershipTypeSettings } from "@/hooks/useMembershipTypeSettings";
 
 /* ── Constants ─────────────────────────────────────────────────────── */
 const STORAGE_KEY = "drf_membership_draft";
@@ -579,6 +580,9 @@ export default function JoinPage(): React.ReactElement {
   const isRtl = i18n.dir() === "rtl";
   const honeypotRef = useRef<HTMLInputElement>(null);
 
+  // ── Membership type settings from Supabase app_settings ──
+  const { settings: typeSettings, loading: typeSettingsLoading } = useMembershipTypeSettings();
+
   const [step, setStep] = useState(1);
   const [data, setData] = useState<FormData>(() => {
     try {
@@ -661,7 +665,7 @@ export default function JoinPage(): React.ReactElement {
 
     try {
       const payload = {
-        membership_type:             data.membership_type,
+        membership_type:             effectiveMembershipType,
         full_name_ar:                data.full_name_ar,
         full_name_en:                data.full_name_en,
         date_of_birth:               data.date_of_birth,
@@ -733,7 +737,12 @@ export default function JoinPage(): React.ReactElement {
     localStorage.removeItem(STORAGE_KEY);
   }
 
-  const membershipTypes: MembershipType[] = ["regular", "founding", "student", "honorary"];
+  // When selector is disabled, always force "regular"
+  const effectiveMembershipType: MembershipType =
+    typeSettings.enabled ? data.membership_type : "regular";
+
+  const visibleTypes: MembershipType[] =
+    typeSettings.enabled ? typeSettings.available_types : [];
 
   return (
     <div dir={isRtl ? "rtl" : "ltr"}>
@@ -774,46 +783,56 @@ export default function JoinPage(): React.ReactElement {
             <SuccessScreen appNumber={appNumber} onReset={resetForm} />
           ) : (
             <>
-              {/* ── Membership type selector (above form) ── */}
-              {step === 1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-8"
-                >
-                  <p className="text-center font-display text-lg font-bold mb-1">{t("types.title")}</p>
-                  <p className="text-center text-sm text-muted-foreground mb-5">{t("types.subtitle")}</p>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    {membershipTypes.map((type) => {
-                      const cfg = TYPE_CONFIG[type];
-                      const Icon = cfg.icon;
-                      return (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => update("membership_type", type)}
-                          className={`relative flex flex-col items-center text-center p-4 rounded-2xl border-2 transition-all duration-200 ${
-                            data.membership_type === type
-                              ? "border-primary bg-primary/5 shadow-sm"
-                              : "border-border hover:border-primary/40"
-                          }`}
-                        >
-                          {(t(`types.${type}.badge`, { defaultValue: "" })) && (
-                            <span className="absolute -top-2 start-1/2 -translate-x-1/2 rtl:translate-x-1/2 px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-[9px] font-bold whitespace-nowrap">
-                              {t(`types.${type}.badge`)}
-                            </span>
-                          )}
-                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cfg.gradient} flex items-center justify-center mb-2`}>
-                            <Icon size={18} className="text-white" />
-                          </div>
-                          <p className="font-semibold text-sm">{t(`types.${type}.title`)}</p>
-                          <p className="text-[11px] text-muted-foreground mt-1 leading-tight">{t(`types.${type}.desc`)}</p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
+              {/* ── Membership type selector — shown only when enabled from admin ── */}
+              <AnimatePresence>
+                {step === 1 && !typeSettingsLoading && typeSettings.enabled && visibleTypes.length > 1 && (
+                  <motion.div
+                    key="type-selector"
+                    initial={{ opacity: 0, y: 16, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -8, height: 0, transition: { duration: 0.25 } }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    style={{ overflow: "hidden" }}
+                    className="mb-8"
+                  >
+                    <p className="text-center font-display text-lg font-bold mb-1">{t("types.title")}</p>
+                    <p className="text-center text-sm text-muted-foreground mb-5">{t("types.subtitle")}</p>
+                    <div className={`grid gap-3 ${
+                      visibleTypes.length === 2 ? "grid-cols-2" :
+                      visibleTypes.length === 3 ? "sm:grid-cols-3" :
+                      "sm:grid-cols-2 lg:grid-cols-4"
+                    }`}>
+                      {visibleTypes.map((type) => {
+                        const cfg = TYPE_CONFIG[type];
+                        const Icon = cfg.icon;
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => update("membership_type", type)}
+                            className={`relative flex flex-col items-center text-center p-4 rounded-2xl border-2 transition-all duration-200 ${
+                              data.membership_type === type
+                                ? "border-primary bg-primary/5 shadow-sm"
+                                : "border-border hover:border-primary/40"
+                            }`}
+                          >
+                            {(t(`types.${type}.badge`, { defaultValue: "" })) && (
+                              <span className="absolute -top-2 start-1/2 -translate-x-1/2 rtl:translate-x-1/2 px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-[9px] font-bold whitespace-nowrap">
+                                {t(`types.${type}.badge`)}
+                              </span>
+                            )}
+                            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cfg.gradient} flex items-center justify-center mb-2`}>
+                              <Icon size={18} className="text-white" />
+                            </div>
+                            <p className="font-semibold text-sm">{t(`types.${type}.title`)}</p>
+                            <p className="text-[11px] text-muted-foreground mt-1 leading-tight">{t(`types.${type}.desc`)}</p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* ── Form card ── */}
               <div className="glass-card rounded-3xl p-6 md:p-8 border border-border shadow-glass">

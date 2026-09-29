@@ -21,7 +21,7 @@ import {
   User, Mail, Phone, MapPin, GraduationCap, Calendar,
   FileText, Users, Star, Heart, Briefcase, Globe,
   AlertCircle, Shield, ShieldCheck, Printer, Filter, Trash2, KeyRound,
-  ExternalLink, CreditCard
+  ExternalLink, CreditCard, ToggleLeft, ToggleRight
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { MembershipApplicationRow, MembershipStatus, MembershipType, TeamMemberRow } from "@/types/database.types";
@@ -38,6 +38,7 @@ import {
 import DeleteApplicationModal from "@/components/admin/DeleteApplicationModal";
 import PromoteMemberModal from "@/components/admin/PromoteMemberModal";
 import DigitalMemberCardModal from "@/components/admin/DigitalMemberCardModal";
+import { useMembershipTypeSettings } from "@/hooks/useMembershipTypeSettings";
 
 // ── Detail Panel ────────────────────────────────────────────────────────
 
@@ -586,6 +587,7 @@ export default function AdminMembershipsPage(): React.ReactElement {
   const [deleteTarget, setDeleteTarget] = useState<MembershipApplicationRow | null>(null);
   const [promoteTarget, setPromoteTarget] = useState<TeamMemberRow | null>(null);
   const [cardTarget, setCardTarget] = useState<TeamMemberRow | null>(null);
+  const [showTypeSettings, setShowTypeSettings] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -598,6 +600,9 @@ export default function AdminMembershipsPage(): React.ReactElement {
   }, []);
 
   useEffect(() => { void load(); }, [load]);
+
+  // ── Membership type registration settings ──
+  const { settings: typeSettings, saving: typeSaving, update: updateTypeSettings } = useMembershipTypeSettings();
 
   async function handleStatusChange(id: string, status: MembershipStatus, notes?: string): Promise<void> {
     await supabase.from("membership_applications").update({
@@ -757,6 +762,107 @@ export default function AdminMembershipsPage(): React.ReactElement {
           >
             <RefreshCw size={16} />
           </button>
+
+          {/* ── Membership type settings popover ── */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowTypeSettings((v) => !v)}
+              className={`p-2.5 rounded-xl border transition-colors ${
+                showTypeSettings
+                  ? "border-primary bg-primary/5 text-primary"
+                  : typeSettings.enabled
+                    ? "border-emerald-400/60 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 hover:bg-emerald-100"
+                    : "border-border hover:bg-muted text-muted-foreground"
+              }`}
+              title="إعدادات نوع العضوية"
+            >
+              {typeSaving
+                ? <RefreshCw size={16} className="animate-spin" />
+                : typeSettings.enabled
+                  ? <ToggleRight size={16} />
+                  : <ToggleLeft size={16} />
+              }
+            </button>
+
+            <AnimatePresence>
+              {showTypeSettings && (
+                <motion.div
+                  key="type-popover"
+                  initial={{ opacity: 0, scale: 0.95, y: -6 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -6 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute start-0 top-full mt-2 z-50 w-56 rounded-2xl border border-border bg-card shadow-xl p-3 space-y-3"
+                >
+                  {/* Toggle row */}
+                  <button
+                    type="button"
+                    disabled={typeSaving}
+                    onClick={() => void updateTypeSettings({ enabled: !typeSettings.enabled })}
+                    className="w-full flex items-center justify-between gap-2 text-sm font-medium disabled:opacity-50"
+                  >
+                    <span className="text-xs text-foreground">اختيار نوع العضوية</span>
+                    {typeSettings.enabled
+                      ? <ToggleRight size={20} className="text-emerald-500 shrink-0" />
+                      : <ToggleLeft size={20} className="text-muted-foreground shrink-0" />
+                    }
+                  </button>
+
+                  {/* Type checkboxes — only when enabled */}
+                  <AnimatePresence>
+                    {typeSettings.enabled && (
+                      <motion.div
+                        key="checks"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="pt-2 border-t border-border space-y-1.5">
+                          {(["regular", "founding", "student", "honorary"] as const).map((type) => {
+                            const labels: Record<string, string> = {
+                              regular: "عضوية عادية",
+                              founding: "عضو مؤسس",
+                              student: "عضو طالب",
+                              honorary: "عضو شرفي",
+                            };
+                            const isChecked = typeSettings.available_types.includes(type);
+                            const isRegular = type === "regular";
+                            return (
+                              <label
+                                key={type}
+                                className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer text-xs transition-colors ${
+                                  isRegular ? "opacity-50 pointer-events-none" : "hover:bg-muted"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="w-3.5 h-3.5 rounded accent-primary"
+                                  checked={isChecked}
+                                  disabled={isRegular || typeSaving}
+                                  onChange={() => {
+                                    const current = typeSettings.available_types;
+                                    const next = isChecked
+                                      ? current.filter((t) => t !== type)
+                                      : [...current, type];
+                                    const safe = (next.includes("regular") ? next : ["regular", ...next]) as MembershipType[];
+                                    void updateTypeSettings({ available_types: safe });
+                                  }}
+                                />
+                                <span>{labels[type]}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <button
             onClick={() => setShowExport(true)}
