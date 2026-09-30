@@ -1,90 +1,43 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Mail, Shield } from "lucide-react";
+import { ChevronDown, ExternalLink, Mail, Shield } from "lucide-react";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
 import type { Database } from "@/types/database.types";
 
 type TeamMember = Database["public"]["Tables"]["team_members"]["Row"];
 
-/* ── Static seed data (real board members) ───────────────────────── */
-const SEED_TEAM: TeamMember[] = [
-  {
-    id: "tm-1",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    full_name_ar: "أسيا سلام سعيد",
-    full_name_en: "Asia Salam Saeed",
-    role: "board",
-    title_ar: "الرئيس التنفيذي",
-    title_en: "Chief Executive Officer",
-    bio_ar:
-      "تقود المؤسسة نحو تحقيق أهداف التنمية المستدامة في ديالى، وتؤمن بأن التغيير الحقيقي يبدأ بتمكين المجتمعات المحلية.",
-    bio_en:
-      "Leading the Foundation toward achieving the SDGs in Diyala, believing that real change begins with empowering local communities.",
-    avatar_path: null,
-    email: "help@diyalariver.org",
-    linkedin_url: null,
-    display_order: 1,
-    is_active: true,
-    membership_application_id: null,
-  },
-  {
-    id: "tm-2",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    full_name_ar: "يونس سلام سعيد",
-    full_name_en: "Younes Salam Saeed",
-    role: "management",
-    title_ar: "المعاون التنفيذي",
-    title_en: "Executive Deputy",
-    bio_ar:
-      "يدعم التشغيل اليومي للمؤسسة ويُشرف على تنسيق المشاريع والشراكات الاستراتيجية مع المنظمات الدولية.",
-    bio_en:
-      "Supports the Foundation's daily operations and oversees the coordination of projects and strategic partnerships with international organizations.",
-    avatar_path: null,
-    email: null,
-    linkedin_url: null,
-    display_order: 2,
-    is_active: true,
-    membership_application_id: null,
-  },
-  {
-    id: "tm-3",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    full_name_ar: "نور عبدالقادر عبدالستار",
-    full_name_en: "Noor Abdulqadir Abdulsattar",
-    role: "staff",
-    title_ar: "عضو مجلس الإدارة",
-    title_en: "Board Member",
-    bio_ar:
-      "تُسهم في رسم التوجهات الاستراتيجية للمؤسسة، وتدعم مبادرات تمكين المرأة وتعزيز الشراكات المجتمعية.",
-    bio_en:
-      "Contributes to shaping the Foundation's strategic direction and supports women's empowerment initiatives and community partnerships.",
-    avatar_path: null,
-    email: null,
-    linkedin_url: null,
-    display_order: 3,
-    is_active: true,
-    membership_application_id: null,
-  },
-];
+/* ── Skeleton card shown while loading ───────────────────────────── */
+const MemberSkeleton: React.FC = () => (
+  <div className="rounded-3xl border bg-card p-7 flex flex-col gap-5 animate-pulse">
+    <div className="flex items-start gap-4">
+      <div className="w-16 h-16 rounded-2xl bg-muted flex-shrink-0" />
+      <div className="flex-1 space-y-2 pt-1">
+        <div className="h-4 bg-muted rounded w-3/4" />
+        <div className="h-3 bg-muted rounded w-1/2" />
+      </div>
+    </div>
+    <div className="space-y-2">
+      <div className="h-3 bg-muted rounded" />
+      <div className="h-3 bg-muted rounded w-5/6" />
+    </div>
+  </div>
+);
 
 const roleColorMap: Record<string, string> = {
-  board:      "from-sdg-16/20 to-sdg-17/10 border-sdg-16/30",
+  board: "from-sdg-16/20 to-sdg-17/10 border-sdg-16/30",
   management: "from-sdg-8/20  to-sdg-10/10  border-sdg-8/30",
-  advisor:    "from-sdg-4/20  to-sdg-5/10   border-sdg-4/30",
-  staff:      "from-sdg-13/20 to-sdg-15/10  border-sdg-13/30",
-  member:     "from-primary/20 to-primary/10  border-primary/30",
+  advisor: "from-sdg-4/20  to-sdg-5/10   border-sdg-4/30",
+  staff: "from-sdg-13/20 to-sdg-15/10  border-sdg-13/30",
+  member: "from-primary/20 to-primary/10  border-primary/30",
 };
 
 const roleBadgeMap: Record<string, string> = {
-  board:      "bg-sdg-16/15 text-sdg-16",
+  board: "bg-sdg-16/15 text-sdg-16",
   management: "bg-sdg-8/15  text-sdg-8",
-  advisor:    "bg-sdg-4/15  text-sdg-4",
-  staff:      "bg-sdg-13/15 text-sdg-13",
-  member:     "bg-primary/15 text-primary",
+  advisor: "bg-sdg-4/15  text-sdg-4",
+  staff: "bg-sdg-13/15 text-sdg-13",
+  member: "bg-primary/15 text-primary",
 };
 
 const MemberCard: React.FC<{ member: TeamMember; isRtl: boolean; index: number }> = ({
@@ -92,9 +45,12 @@ const MemberCard: React.FC<{ member: TeamMember; isRtl: boolean; index: number }
   isRtl,
   index,
 }) => {
-  const name  = (isRtl ? member.full_name_ar : member.full_name_en) || "";
+  const { t } = useTranslation("about");
+  const [bioOpen, setBioOpen] = useState(false);
+
+  const name = (isRtl ? member.full_name_ar : member.full_name_en) || "";
   const title = isRtl ? member.title_ar : member.title_en;
-  const bio   = isRtl ? member.bio_ar : member.bio_en;
+  const bio = isRtl ? member.bio_ar : member.bio_en;
   const initials = name.trim().split(" ").slice(0, 2).map((w) => w[0] || "").join("");
 
   return (
@@ -103,9 +59,8 @@ const MemberCard: React.FC<{ member: TeamMember; isRtl: boolean; index: number }
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.55, delay: index * 0.1 }}
-      whileHover={{ y: -6 }}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`relative rounded-3xl border bg-gradient-to-br ${roleColorMap[member.role] ?? roleColorMap.staff} p-7 flex flex-col gap-5 group transition-shadow duration-300 hover:shadow-card-hover`}
+      className={`relative rounded-3xl border bg-gradient-to-br ${roleColorMap[member.role] ?? roleColorMap.staff} p-7 flex flex-col gap-4 transition-shadow duration-300 hover:shadow-card-hover`}
     >
       {/* Top row */}
       <div className="flex items-start gap-4">
@@ -134,9 +89,36 @@ const MemberCard: React.FC<{ member: TeamMember; isRtl: boolean; index: number }
         )}
       </div>
 
-      {/* Bio */}
+      {/* Bio toggle — shown only when bio exists */}
       {bio && (
-        <p className="text-sm text-foreground/70 leading-relaxed">{bio}</p>
+        <>
+          <button
+            onClick={() => setBioOpen((prev) => !prev)}
+            className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors w-fit"
+            aria-expanded={bioOpen}
+            aria-label={bioOpen ? t("team.hideBio", "إخفاء النبذة") : t("team.showBio", "عرض النبذة")}
+          >
+            <motion.span animate={{ rotate: bioOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
+              <ChevronDown size={14} />
+            </motion.span>
+            {bioOpen ? t("team.hideBio", "إخفاء النبذة") : t("team.showBio", "عرض النبذة")}
+          </button>
+
+          <AnimatePresence initial={false}>
+            {bioOpen && (
+              <motion.p
+                key="bio"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden text-sm text-foreground/70 leading-relaxed"
+              >
+                {bio}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </>
       )}
 
       {/* Links */}
@@ -174,9 +156,7 @@ const MemberCard: React.FC<{ member: TeamMember; isRtl: boolean; index: number }
 const TeamSection: React.FC = () => {
   const { t, i18n } = useTranslation("about");
   const isRtl = i18n.dir() === "rtl";
-  const { teamMembers: liveData, loading } = useTeamMembers();
-
-  const members = [...SEED_TEAM, ...(loading ? [] : liveData)];
+  const { teamMembers: members, loading } = useTeamMembers();
 
   return (
     <section
@@ -199,10 +179,13 @@ const TeamSection: React.FC = () => {
           <p className="text-muted-foreground max-w-xl mx-auto">{t("team.description")}</p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {members.map((member, idx) => (
-            <MemberCard key={member.id} member={member} isRtl={isRtl} index={idx} />
-          ))}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+          {loading
+            ? Array.from({ length: 3 }).map((_, i) => <MemberSkeleton key={i} />)
+            : members.map((member, idx) => (
+                <MemberCard key={member.id} member={member} isRtl={isRtl} index={idx} />
+              ))
+          }
         </div>
       </div>
     </section>
