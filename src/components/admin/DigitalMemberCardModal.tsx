@@ -25,10 +25,12 @@ import {
   Loader2,
   ExternalLink,
   Copy,
+  Image as ImageIcon,
 } from "lucide-react";
 import type { TeamMemberRow } from "@/types/database.types";
 import { generateQrDataUrl, getMemberVerificationUrl } from "@/lib/membershipExport";
 import { generateMemberIdCardSvg } from "@/lib/idCardSvgGenerator";
+import { THMANYAH_EMBEDDED_FONTS_CSS } from "@/lib/thmanyahFontsBase64";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -47,6 +49,7 @@ export default function DigitalMemberCardModal({
   const [avatarPath, setAvatarPath] = useState<string | null>(member.avatar_path ?? null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [copied, setCopied] = useState(false);
+  const [downloadingPng, setDownloadingPng] = useState(false);
   const { uploading, uploadImage } = useImageUpload("member-avatars");
 
   const memNumber =
@@ -111,7 +114,7 @@ export default function DigitalMemberCardModal({
     });
   }, [member, avatarPath, qrUrl, memNumber, joinDate, expiryDate]);
 
-  // Print card at 54mm x 85.6mm standard vertical badge size
+  // Print card at 54mm x 85.6mm standard vertical badge size with guaranteed font rendering
   const printCard = (): void => {
     const printWindow = window.open("", "_blank", "width=600,height=800");
     if (!printWindow) return;
@@ -122,6 +125,52 @@ export default function DigitalMemberCardModal({
       <meta charset="UTF-8" />
       <title>بطاقة عضوية — ${member.full_name_ar}</title>
       <style>
+        /* Exact local and origin font-face for maximum fidelity during print */
+        @font-face {
+          font-family: 'ThmanyahSans';
+          src: url('${window.location.origin}/fonts/thmanyah/thmanyahsans-Bold.woff2') format('woff2');
+          font-weight: 700;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'ThmanyahSans';
+          src: url('${window.location.origin}/fonts/thmanyah/thmanyahsans-Bold.woff2') format('woff2');
+          font-weight: 800;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'ThmanyahSans';
+          src: url('${window.location.origin}/fonts/thmanyah/thmanyahsans-Medium.woff2') format('woff2');
+          font-weight: 600;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'ThmanyahSans';
+          src: url('${window.location.origin}/fonts/thmanyah/thmanyahsans-Regular.woff2') format('woff2');
+          font-weight: normal;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'ThmanyahSerifDisplay';
+          src: url('${window.location.origin}/fonts/thmanyah/thmanyahserifdisplay-Bold.woff2') format('woff2');
+          font-weight: 700;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'ThmanyahSerifDisplay';
+          src: url('${window.location.origin}/fonts/thmanyah/thmanyahserifdisplay-Bold.woff2') format('woff2');
+          font-weight: 800;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'ThmanyahSerifDisplay';
+          src: url('${window.location.origin}/fonts/thmanyah/thmanyahserifdisplay-Regular.woff2') format('woff2');
+          font-weight: normal;
+          font-style: normal;
+        }
+
+        ${THMANYAH_EMBEDDED_FONTS_CSS}
+
         @page {
           size: 54mm 85.6mm;
           margin: 0;
@@ -135,6 +184,7 @@ export default function DigitalMemberCardModal({
           min-height: 100vh;
           margin: 0;
           padding: 0;
+          font-family: 'ThmanyahSans', sans-serif;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
@@ -180,9 +230,24 @@ export default function DigitalMemberCardModal({
         ${svgMarkup}
       </div>
       <script>
-        window.onload = () => {
-          setTimeout(() => { window.print(); }, 350);
-        };
+        async function triggerPrint() {
+          try {
+            if (document.fonts && document.fonts.ready) {
+              await document.fonts.ready;
+            }
+          } catch (e) {
+            console.warn(e);
+          }
+          setTimeout(() => {
+            window.focus();
+            window.print();
+          }, 300);
+        }
+        if (document.readyState === 'complete') {
+          triggerPrint();
+        } else {
+          window.addEventListener('load', triggerPrint);
+        }
       </script>
     </body>
     </html>`;
@@ -203,6 +268,56 @@ export default function DigitalMemberCardModal({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  // Download high-res PNG image (300+ DPI equivalent for digital card sharing)
+  const downloadPng = async (): Promise<void> => {
+    try {
+      setDownloadingPng(true);
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
+      const scale = 6;
+      const width = Math.round(153.07 * scale);
+      const height = Math.round(236.98 * scale);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const img = new Image();
+      const svgBlob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, width, height);
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+        img.onerror = (e) => {
+          URL.revokeObjectURL(url);
+          reject(e);
+        };
+        img.src = url;
+      });
+
+      const pngUrl = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = pngUrl;
+      const sanitizedName = member.full_name_ar.trim().replace(/\s+/g, "_");
+      a.download = `DRF-ID-CARD-${sanitizedName}-${memNumber}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error("Failed to export PNG:", err);
+    } finally {
+      setDownloadingPng(false);
+    }
   };
 
   const copyNumber = (): void => {
@@ -383,19 +498,36 @@ export default function DigitalMemberCardModal({
           </div>
 
           {/* Action buttons */}
-          <div className="grid grid-cols-2 gap-2.5 pt-1">
+          <div className="space-y-2 pt-1">
             <button
               onClick={printCard}
-              className="py-2.5 px-4 rounded-xl bg-[#119dd9] hover:bg-[#0c82b4] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm shadow-sky-500/20"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#119dd9] hover:bg-[#0c82b4] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm shadow-sky-500/20"
             >
-              <Printer size={15} /> طباعة البطاقة (A4/ID)
+              <Printer size={15} /> طباعة البطاقة / حفظ كـ PDF (CR80/A4)
             </button>
-            <button
-              onClick={downloadSvg}
-              className="py-2.5 px-4 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold transition-colors flex items-center justify-center gap-2 text-foreground"
-            >
-              <Download size={15} /> تحميل كملف SVG عالي الدقة
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={downloadPng}
+                disabled={downloadingPng}
+                className="py-2.5 px-3 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 text-foreground disabled:opacity-60"
+              >
+                {downloadingPng ? (
+                  <Loader2 size={14} className="animate-spin text-[#119dd9]" />
+                ) : (
+                  <ImageIcon size={14} className="text-[#119dd9]" />
+                )}
+                <span>تحميل صورة (PNG)</span>
+              </button>
+              <button
+                type="button"
+                onClick={downloadSvg}
+                className="py-2.5 px-3 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 text-foreground"
+              >
+                <Download size={14} className="text-emerald-600" />
+                <span>تحميل فيكتور (SVG)</span>
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>
