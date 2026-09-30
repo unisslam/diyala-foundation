@@ -57,14 +57,21 @@ export default function DigitalMemberCardModal({
     (member.id ? `DRF-MEM-${member.id.slice(0, 6).toUpperCase()}` : "DRF-MEM-OFFICIAL");
   const verifyUrl = getMemberVerificationUrl(memNumber);
 
+  const formatDateWestern = (dateStr?: string | null): string => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+  };
+
   const joinDate = member.membership_start_date
-    ? new Date(member.membership_start_date).toLocaleDateString("ar-IQ")
+    ? formatDateWestern(member.membership_start_date)
     : member.created_at
-    ? new Date(member.created_at).toLocaleDateString("ar-IQ")
-    : new Date().toLocaleDateString("ar-IQ");
+    ? formatDateWestern(member.created_at)
+    : formatDateWestern(new Date().toISOString());
 
   const expiryDate = member.membership_expires_at
-    ? new Date(member.membership_expires_at).toLocaleDateString("ar-IQ")
+    ? formatDateWestern(member.membership_expires_at)
     : "تجديد سنوي معتمد";
 
   useEffect(() => {

@@ -34,6 +34,14 @@ function escapeXml(unsafe: string): string {
     .replace(/'/g, "&apos;");
 }
 
+function toWesternNumerals(str: string): string {
+  const indicDigits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+  return str.replace(/[٠-٩]/g, (char) => {
+    const idx = indicDigits.indexOf(char);
+    return idx !== -1 ? String(idx) : char;
+  });
+}
+
 /**
  * Generates the official member ID card as a valid, standalone SVG string.
  */
@@ -42,18 +50,22 @@ export function generateMemberIdCardSvg(data: MemberIdCardData): string {
   const safeNameEn = escapeXml((data.fullNameEn || "").toUpperCase());
   const safeTitleAr = escapeXml(data.titleAr || "عضو الهيئة العامة");
   const safeTitleEn = escapeXml((data.titleEn || "General Member").toUpperCase());
-  const safeMemNum = escapeXml(data.membershipNumber || "");
-  const safeJoinDate = escapeXml(data.joinDate || "");
-  const safeExpiryDate = escapeXml(data.expiryDate || "");
+  const safeMemNum = escapeXml(toWesternNumerals(data.membershipNumber || ""));
+  const safeJoinDate = escapeXml(toWesternNumerals(data.joinDate || ""));
+  const safeExpiryDate = escapeXml(toWesternNumerals(data.expiryDate || ""));
 
-  // Dynamic font sizing for Arabic name so it never touches the photo box at x=95.51
-  const nameArFontSize = safeNameAr.length > 25 ? "7px" : safeNameAr.length > 18 ? "7.8px" : "8.5px";
-  const nameArSvg = `<text class="cls-4" transform="translate(11.55 62)" font-size="${nameArFontSize}" font-weight="800"><tspan x="0" y="0">${safeNameAr}</tspan></text>`;
+  // Dynamic font sizing for Arabic name scaled up by 30% (+30% from 8.5px = 11.05px)
+  const nameArLen = safeNameAr.length;
+  const nameArFontSize =
+    nameArLen > 30 ? "8.1px" : nameArLen > 24 ? "9.1px" : nameArLen > 18 ? "10px" : "11px";
+  const nameArSvg = `<text class="cls-4" x="89" y="62" text-anchor="end" font-size="${nameArFontSize}" font-weight="800"><tspan x="89" y="62">${safeNameAr}</tspan></text>`;
 
-  // Dynamic font sizing for English name
-  const nameEnFontSize = safeNameEn.length > 24 ? "4.5px" : "5.2px";
+  // Dynamic font sizing for English name scaled up by 30% (+30% from 5.2px = 6.76px)
+  const nameEnLen = safeNameEn.length;
+  const nameEnFontSize =
+    nameEnLen > 30 ? "5.2px" : nameEnLen > 24 ? "5.9px" : "6.8px";
   const nameEnSvg = safeNameEn
-    ? `<text class="cls-6" transform="translate(11.55 71.5)" font-size="${nameEnFontSize}" font-weight="600" letter-spacing="0.2"><tspan x="0" y="0">${safeNameEn}</tspan></text>`
+    ? `<text class="cls-6" x="89" y="72.5" text-anchor="end" font-size="${nameEnFontSize}" font-weight="600" letter-spacing="0.2"><tspan x="89" y="72.5">${safeNameEn}</tspan></text>`
     : "";
 
   // Department section
@@ -100,7 +112,7 @@ export function generateMemberIdCardSvg(data: MemberIdCardData): string {
   // Box values
   const boxValuesSvg = `
       <!-- Dynamic Values for the 3 Badges -->
-      <text x="16" y="122.8" fill="#119dd9" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="5.8" font-weight="800" letter-spacing="0.2">
+      <text x="16" y="122.8" fill="#000000ff" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="5.8" font-weight="800" letter-spacing="0.2">
         ${safeMemNum}
       </text>
       <text x="16" y="139.5" fill="#231f20" font-family="'ThmanyahSans', 'Cairo', sans-serif" font-size="5.2" font-weight="700">
